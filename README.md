@@ -7,14 +7,17 @@ S-Expressions! Peach is heavily inspired by Clojure and @bodil's [BODOL](https:/
 
 ```clojure
 # assignment
-(= x 2)
+(def x 2) # 2
+
+# equality
+(= x 2) # true
 
 # maths and stuff
 (* x 2) # 4
 
 # data structure literals
-(= list [1 2 3 4])
-(= dict {
+(def list [1 2 3 4])
+(def dict {
   x: 1
   y: 2
 })

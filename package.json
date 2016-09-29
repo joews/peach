@@ -1,0 +1,27 @@
+{
+  "name": "peach",
+  "version": "0.1.0",
+  "description": "A tiny functional language",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jwhitfieldseed/peach.git"
+  },
+  "keywords": [
+    "peach",
+    "language",
+    "lisp"
+  ],
+  "author": "Joe Whitfield-Seed <joeseed86@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jwhitfieldseed/peach/issues"
+  },
+  "homepage": "https://github.com/jwhitfieldseed/peach#readme",
+  "devDependencies": {
+    "pegjs": "^0.10.0"
+  }
+}
