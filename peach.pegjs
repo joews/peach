@@ -3,11 +3,12 @@
 }
 
 start
-  = expression
+  = _ program:expression_list _ { return program }
 
 expression
   = name
   / number
+  / def
   / call
 
 expression_list =
@@ -15,15 +16,23 @@ expression_list =
   return [head, ...tail];
 }
 
-call = lp name:name __ args:expression_list rp {
+def = lp "def" __ name_exp:name __ value:expression rp {
+  return {
+    type: "Def",
+    name: name_exp.name,
+    value
+  }
+}
+
+call = lp name_exp:name __ args:expression_list rp {
   return {
     type: "Call",
-    name,
+    name: name_exp.name,
     args
   }
 }
 
-name = chars:[a-zA-Z]+ {
+name = chars:[a-zA-Z+=*\/]+ {
   return {
     type: "Name",
     name: chars.join("")
@@ -38,7 +47,7 @@ number = digits:[0-9]+ {
 }
 
 lp = "(" _ { return "(" }
-rp = _ ")" { return ")"}
+rp = _ ")" { return ")" }
 
 // mandatory whitespace
 __ = [ \t\r\n]+
