@@ -53,10 +53,12 @@ Peach favours:
 * Pure functions
 * Immutability
 * Clean syntax
+* Currying
 
 Peach has, for now:
 * Dynamic typing
 * Frequent stack overflows
+* Strict evaluation
 * Lots of object churn
 * A slow JavaScript interpreter
 
@@ -65,6 +67,7 @@ Peach would like:
 * A logic system to do pattern matching
 * Static typing with something like [Hindley-Milner type inference](https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system)
 * Proper tails calls
+* Lazy evaluation
 * An interactive debugger
 * Data structures with structural sharing
 * JavaScript interop

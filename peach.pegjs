@@ -7,9 +7,10 @@ start
 
 expression
   = name
-  / number
+  / numeral
   / def
-  / call
+  / list
+  / quoted
 
 expression_list =
   head:expression tail:(__ e:expression { return e })* {
@@ -24,26 +25,29 @@ def = lp "def" __ name_exp:name __ value:expression rp {
   }
 }
 
-call = lp name_exp:name __ args:expression_list rp {
-  return {
-    type: "Call",
-    name: name_exp.name,
-    args
-  }
-}
-
-name = chars:[a-zA-Z+=*\/]+ {
+name = chars:[a-zA-Z+=*\/\-_]+ {
   return {
     type: "Name",
     name: chars.join("")
   }
 }
 
-number = digits:[0-9]+ {
+numeral = digits:[0-9]+ {
   return {
-    type: "Number",
+    type: "Numeral",
     value: parseInt(digits, 10)
   };
+}
+
+list = lp values:expression_list rp {
+  return {
+    type: "List",
+    values
+  }
+}
+
+quoted = "'" expr:expression {
+  return Object.assign(expr, { isQuoted: true })
 }
 
 lp = "(" _ { return "(" }

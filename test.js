@@ -1,16 +1,9 @@
+"use strict"
 const fs = require("fs");
 const peg = require("pegjs");
 
 const parserSource = fs.readFileSync("./peach.pegjs", "utf8");
 const parser = peg.generate(parserSource);
-
-test(`
-(def x 2) (def y 5) (* (+ x y) x)
-`);
-
-// x = 2;
-// y = 5;
-// (x + y) * x;
 
 function test(src) {
   const ast = parser.parse(src);
@@ -23,7 +16,8 @@ function getRootEnv() {
   // TODO stdlibs!
   return {
     "+": (a, b) => a + b,
-    "*": (a, b) => a * b
+    "*": (a, b) => a * b,
+    map: (fn, list) => list.map(e => fn(e))
   }
 }
 
@@ -34,51 +28,96 @@ function interpret(ast) {
   return [result, env];
 }
 
+// Visit each of `nodes` in order, returning the result
+// and environment of the last node.
 function visitAll(nodes, rootEnv) {
-  let result;
-  let env = rootEnv;
+  return nodes.reduce(([, env], node) => (
+    visit(node, env)
+  ), [null, rootEnv]);
+}
 
-  nodes.forEach(node => {
-    [result, env] = visit(node, env);
-  });
-
-  return [result, env];
+function visitUnknown(node) {
+  throw new Error(`unknown node type: ${node.type}`);
+  console.log(JSON.stringify(node, null, 2));
 }
 
 function visit(node, env) {
-  switch (node.type) {
-    case "Call":
-      return call(node, env);
-    case "Def":
-      return def(node, env);
-    case "Name":
-      return read(node, env)
-    case "Number":
-      return number(node, env)
-    default:
-      throw new Error("unknown node type: " + node.type);
+  const visitor = visitors[node.type] || visitUnknownNode;
+
+  console.log(`trace: ${node.type}`)
+  return visitor(node, env);
+}
+
+const visitors = {
+  Def({ name, value }, env) {
+    if (env.hasOwnProperty(name)) {
+      throw new Error(`${name} has already been defined`);
+    }
+
+    const [result] = visit(value, env);
+    env[name] = result;
+    return [result, env];
+  },
+
+  Name({ name }, env) {
+    if (!env.hasOwnProperty(name)) {
+      throw new Error(`${name} is not defined`);
+    }
+
+    return [env[name], env];
+  },
+
+  Numeral({ value }, env) {
+    return [value, env];
+  },
+
+  List({ values, isQuoted }, env) {
+    const results = values.map((value) => visit(value, env)[0]);
+
+    if (isQuoted) {
+      return [results, env];
+    } else {
+      const [fn, ...args] = results;
+      return [apply(fn, args), env]
+    }
   }
+};
+
+function apply(fn, args) {
+  return (args.length >= fn.length)
+    ? call(fn, args)
+    : curry(fn, args);
 }
 
-function def({ name, value }, env) {
-  if (env.hasOwnProperty(name)) {
-    throw new Error(`${name} has already been defined`);
-  }
-
-  env[name] = visit(value, env)[0];
-  return [value, env];
+function call(fn, args) {
+  return fn.apply(null, args);
 }
 
-function call({ name, args }, env) {
-  const argValues = args.map((node) => visit(node, env)[0]);
-  const func = env[name];
-  return [func.apply(env, argValues), env];
+function curry(fn, appliedArgs) {
+  return fn.bind(null, ...appliedArgs);
 }
 
-function read({ name }, env) {
-  return [env[name], env];
+// setting and getting values
+test(`
+(def x 2) (def y 5) (* (+ x y) x)
+`);
+
+// quoted s-expressions
+test(`
+(def list '(1 2 3))
+`);
+
+// reference error
+try {
+  test(`(y)`);
+} catch (e) {
+  console.log(e.message);
 }
 
-function number({ value }, env) {
-  return [value, env];
-}
+// currying
+test(`
+(def plus-one (+ 1))
+(def all-plus-one (map plus-one))
+(all-plus-one '(9 8 7))
+`)
+
