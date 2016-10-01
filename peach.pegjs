@@ -118,7 +118,19 @@ lp = "(" _ { return "(" }
 rp = _ ")" { return ")" }
 
 // mandatory whitespace
-__ = [ \t\r\n]+
+__ = ignored+
 
 // optional whitespace
-_ = [ \t\r\n]*
+_ = ignored*
+
+ignored
+  = whitespace
+  / comment
+
+whitespace = [ \t\r\n]
+
+// One of the few places peach presents a syntactic choice
+// I prefer the look of # but it is reasonable to support
+//  classic Lisp-style ; commnets
+comment = comment_leader [^\n]+
+comment_leader = "#" / ";"

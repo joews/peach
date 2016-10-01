@@ -199,7 +199,16 @@ test(`
 test(`(? false 1)`); // falsy
 test(`(? 0 1)`); // truthy
 
-// strings
+// strings - easier to test without JS String literal escapes
 const strings = test(read(__dirname + "/test/str.peach"));
 console.log(strings.join("\n"));
 
+// comments
+test(`
+; I heard that commenting code is a good thing
+;; define x to be 9
+(def x 9)
+# add one to x
+(+ x 2)
+###### the program is finished ######
+`)
