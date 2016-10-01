@@ -3,24 +3,17 @@
 A cheeky functional language.
 
 # Syntax sketches
-S-Expressions! Peach is heavily inspired by Clojure and @bodil's [BODOL](https://github.com/bodil/BODOL), which I learned about from [this awesome talk](https://www.youtube.com/watch?v=DHubfS8E--o).
+S-Expressions! Peach is inspired by Clojure and @bodil's [BODOL](https://github.com/bodil/BODOL), which I learned about from [this awesome talk](https://www.youtube.com/watch?v=DHubfS8E--o).
 
 ```clojure
 # assignment
-(def x 2) # 2
+(def x 2) ; 2
 
 # equality
-(= x 2) # true
+(= x 2) ; true
 
 # maths and stuff
-(* x 2) # 4
-
-# data structure literals
-(def list [1 2 3 4])
-(def dict {
-  x: 1
-  y: 2
-})
+(* x 2) ; 4
 
 # conditionals
 (?
@@ -30,16 +23,14 @@ S-Expressions! Peach is heavily inspired by Clojure and @bodil's [BODOL](https:/
 ) # "yes"
 
 # functions
-(fn double
-  x => (* x 2)
-)
+(def double (x => (* x 2)))
+(map x (x => (pow x 2))) ; [2 4 8 16]
 
-(map list double) # [2 4 6 8]
+# currying
+(def double-all (map double))
+(double-all '(1 2 3 4)) ; (2 4 6 8)
 
-# anonymous functions
-(map x (x => (pow x 2))) # [2 4 8 16]
-
-# pattern matching
+# pattern matching (TODO)
 (fn fib
   0 => 1
   1 => 1
@@ -49,30 +40,37 @@ S-Expressions! Peach is heavily inspired by Clojure and @bodil's [BODOL](https:/
 
 # Semantics
 Peach favours:
-* Expressions
 * Pure functions
 * Immutability
-* Clean syntax
-* Currying
+* Minimal syntax
 
-Peach has, for now:
+# Features
+* [Homoiconicity](https://en.wikipedia.org/wiki/Homoiconicity) - code is data is code is data
+* Everything is an expression
+* Currying
 * Dynamic typing
-* Frequent stack overflows
 * Strict evaluation
-* Lots of object churn
-* A slow JavaScript interpreter
+* A JavaScript interpreter
 
 # Plans
-Peach would like:
-* A logic system to do pattern matching
-* Static typing with something like [Hindley-Milner type inference](https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system)
+Coming soon:
+* Multiple function clauses with pattern matching
 * Proper tails calls
-* Lazy evaluation
-* An interactive debugger
-* Data structures with structural sharing
+* Lazy iteration
+* More stdlib
+
+And then:
+* Interactive debugger
 * JavaScript interop
-* To compile to readable JavaScript
-* To self-host
+* Compile to readable JavaScript
+* IO
+* Self-hosting
+
+One day:
+* Static typing with something like [Hindley-Milner type inference](https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system)
+* _Maybe_ lazy evaluation
+* Immutable data structures with structural sharing
+
 
 
 
