@@ -1,5 +1,7 @@
 # peach
 
+[![Build](https://travis-ci.org/jwhitfieldseed/peach.svg?branch=master)](https://travis-ci.org/jwhitfieldseed/peach)
+
 A cheeky functional language.
 
 ```
