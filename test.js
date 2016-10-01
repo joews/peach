@@ -132,12 +132,9 @@ const visitors = {
   },
 
   Fn({ declaredArgs, body }, parentEnv) {
-    const env = Object.create(parentEnv);
-    declaredArgs.forEach(arg => {
-      env[arg.name] = null;
-    });
 
     const fn = (...args) => {
+      const env = Object.create(parentEnv);
       declaredArgs.forEach((arg, i) => {
         env[arg.name] = args[i];
       });
