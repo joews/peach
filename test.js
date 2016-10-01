@@ -77,6 +77,10 @@ const visitors = {
     return [value, env];
   },
 
+  Bool({ value }, env) {
+    return [value, env];
+  },
+
   List({ values, isQuoted }, env) {
     const results = values.map((value) => visit(value, env)[0]);
 
@@ -104,6 +108,20 @@ const visitors = {
     }
 
     return [fn, parentEnv];
+  },
+
+  If({ clauses }, env) {
+    for (const [test, consequent] of clauses) {
+      // TODO a formal "else" concept - for now use `true`.
+      const [testResult] = visit(test, env);
+      if (isTruthy(testResult)) {
+        return visit(consequent, env);
+      }
+    }
+
+    // TODO fail to compile if not all outcomes are accounted for;
+    // reutrn null until peach has static typing
+    return [null, env];
   }
 };
 
@@ -119,6 +137,10 @@ function call(fn, args) {
 
 function curry(fn, appliedArgs) {
   return fn.bind(null, ...appliedArgs);
+}
+
+function isTruthy(value) {
+  return value !== false && value != null;
 }
 
 // setting and getting values
@@ -153,3 +175,15 @@ test(`
   (def double (x => (* x 2)))
   (double 1001)
 `)
+
+// if
+test(`
+(?
+  false 3
+  true 4
+)
+`);
+
+// truthiness
+test(`(? false 1)`); // falsy
+test(`(? 0 1)`); // truthy

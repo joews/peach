@@ -6,16 +6,27 @@ start
   = _ program:expression_list _ { return program }
 
 expression
-  = name
-  / numeral
+  = numeral
+  / boolean
+  / name
   / def
   / list
   / quoted
   / fn
+  / if
   / lp e:expression rp { return expression }
 
 expression_list =
   head:expression tail:(__ e:expression { return e })* {
+  return [head, ...tail];
+}
+
+expression_pair = first:expression __ second:expression {
+  return [first, second];
+}
+
+expression_pair_list =
+  head:expression_pair tail:(__ p:expression_pair { return p })* {
   return [head, ...tail];
 }
 
@@ -35,6 +46,13 @@ fn = lp arg:name __ "=>" __ body:expression rp {
   }
 }
 
+if = lp "?" __ clauses:expression_pair_list rp {
+  return {
+    type: "If",
+    clauses
+  }
+}
+
 name = chars:[a-zA-Z+=*\/\-_]+ {
   return {
     type: "Name",
@@ -48,6 +66,17 @@ numeral = digits:[0-9]+ {
     value: parseInt(digits.join(""), 10)
   };
 }
+
+boolean = value:boolean_value {
+  return {
+    type: "Bool",
+    value
+  }
+}
+
+boolean_value
+  = "true" { return true }
+  / "false" { return false }
 
 list = lp values:expression_list rp {
   return {
