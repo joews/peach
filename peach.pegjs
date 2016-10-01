@@ -1,7 +1,3 @@
-{
-
-}
-
 start
   = _ program:expression_list _ { return program }
 
@@ -127,7 +123,7 @@ ignored
   = whitespace
   / comment
 
-whitespace = [ \t\r\n]
+whitespace = [ \t\r\n,]
 
 // One of the few places peach presents a syntactic choice
 // I prefer the look of # but it is reasonable to support

@@ -212,3 +212,6 @@ test(`
 (+ x 2)
 ###### the program is finished ######
 `)
+
+// commas are whitespace
+test(`'(1, 2,              ,,,,,,,,, 3)`)
