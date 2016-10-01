@@ -1,9 +1,14 @@
 "use strict"
 const fs = require("fs");
+const path = require("path");
 const peg = require("pegjs");
 
 const parserSource = fs.readFileSync("./peach.pegjs", "utf8");
 const parser = peg.generate(parserSource);
+
+function read(filePath) {
+  return fs.readFileSync(filePath, "utf8");
+}
 
 function test(src) {
   require("chalkline").green();
@@ -16,6 +21,8 @@ function test(src) {
   require("chalkline").red();
   // console.log(env);
   console.log(result);
+
+  return result;
 }
 
 function getRootEnv() {
@@ -78,6 +85,10 @@ const visitors = {
   },
 
   Bool({ value }, env) {
+    return [value, env];
+  },
+
+  Str({ value }, env) {
     return [value, env];
   },
 
@@ -187,3 +198,8 @@ test(`
 // truthiness
 test(`(? false 1)`); // falsy
 test(`(? 0 1)`); // truthy
+
+// strings
+const strings = test(read(__dirname + "/test/str.peach"));
+console.log(strings.join("\n"));
+

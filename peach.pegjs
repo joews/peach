@@ -8,6 +8,7 @@ start
 expression
   = numeral
   / boolean
+  / string
   / name
   / def
   / list
@@ -77,6 +78,30 @@ boolean = value:boolean_value {
 boolean_value
   = "true" { return true }
   / "false" { return false }
+
+string = "`" tokens:string_token* "`" {
+  return {
+    type: "Str",
+    value: tokens.join("")
+  }
+}
+
+string_token
+  = escape_sequence
+  / [^`]
+
+// \\ is a single literal backslash in JavaScript strings
+escape_sequence
+  = "\\\\" // escaped backslash
+  / "\\`" // escaped string quote
+  / "\\t" { return "\t" }
+  / "\\n" { return "\n" }
+  / "\\r" { return "\r" }
+  // TODO other escape sequences:
+  // unicode
+  // hex
+  // binary
+  // the weird whitespace things that nobody uses like \b and \v ?
 
 list = lp values:expression_list rp {
   return {
