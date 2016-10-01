@@ -24,6 +24,12 @@ function run(path) {
   }
 }
 
+const pathArg = process.argv[2];
+if (pathArg == null) {
+  console.error(`Usage: peach path/to/script.peach`);
+  process.exit(1);
+}
+
 const scriptPath = path.resolve(process.argv[2]);
 const status = run(scriptPath);
 

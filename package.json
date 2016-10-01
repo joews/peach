@@ -1,6 +1,6 @@
 {
   "name": "peach-lang",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "A tiny functional language",
   "main": "index.js",
   "scripts": {
