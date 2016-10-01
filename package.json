@@ -1,10 +1,10 @@
 {
-  "name": "peach",
+  "name": "peach-lang",
   "version": "0.1.0",
   "description": "A tiny functional language",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/jwhitfieldseed/peach#readme",
   "devDependencies": {
+    "chalkline": "0.0.5",
     "pegjs": "^0.10.0"
   }
 }

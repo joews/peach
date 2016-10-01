@@ -71,6 +71,13 @@ One day:
 * _Maybe_ lazy evaluation
 * Immutable data structures with structural sharing
 
+# Developing
 
+Use Node 6+.
+
+```bash
+npm install
+npm test
+```
 
 
