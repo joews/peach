@@ -33,10 +33,14 @@ function test(src, expected) {
 function getRootEnv() {
   // TODO stdlibs!
   return {
+    // operators
     "+": (a, b) => a + b,
+    "-": (a, b) => a - b,
     "*": (a, b) => a * b,
+    "/": (a, b) => a / b,
+    "%": (a, b) => a % b,
     ">": (a, b) => a > b,
-    ">=": (a, b) => a > b,
+    ">=": (a, b) => a >= b,
     "=": (a, b) => a === b,
     "<": (a, b) => a < b,
     "<=": (a, b) => a <= b,
@@ -49,7 +53,12 @@ function getRootEnv() {
       // that the operands are comparable if they pass the type check.
       throw new Error(`${a} and ${b} are not comparable`)
     },
-    map: (fn, list) => list.map(e => fn(e))
+
+    // lists
+    map: (fn, list) => list.map(e => fn(e)),
+
+    // utils
+    print: (...args) => { console.log(...args) }
   }
 }
 
