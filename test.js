@@ -24,7 +24,7 @@ function test(src, expected) {
   console.log(result);
 
   if (expected != void 0) {
-    assert.strictEqual(result, expected);
+    assert.deepStrictEqual(result, expected);
   }
 
   return result;
@@ -85,7 +85,7 @@ function visitUnknown(node) {
 function visit(node, env) {
   const visitor = visitors[node.type] || visitUnknown;
 
-  console.log(`trace: ${node.type}`)
+  // console.log(`trace: ${node.type}`)
   return visitor(node, env);
 }
 
@@ -250,3 +250,7 @@ test(`(> 1 0)`, true);
 test(`(<=> 1 0)`, 1);
 test(`(<=> 1 1)`, 0);
 test(`(<=> 0 1)`, -1);
+
+
+// an actual program!
+test(read(__dirname + "/test/fibonacci.peach"), [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]);
