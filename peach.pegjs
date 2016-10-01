@@ -11,6 +11,8 @@ expression
   / def
   / list
   / quoted
+  / fn
+  / lp e:expression rp { return expression }
 
 expression_list =
   head:expression tail:(__ e:expression { return e })* {
@@ -25,6 +27,14 @@ def = lp "def" __ name_exp:name __ value:expression rp {
   }
 }
 
+fn = lp arg:name __ "=>" __ body:expression rp {
+  return {
+    type: "Fn",
+    declaredArgs: [arg],
+    body
+  }
+}
+
 name = chars:[a-zA-Z+=*\/\-_]+ {
   return {
     type: "Name",
@@ -35,7 +45,7 @@ name = chars:[a-zA-Z+=*\/\-_]+ {
 numeral = digits:[0-9]+ {
   return {
     type: "Numeral",
-    value: parseInt(digits, 10)
+    value: parseInt(digits.join(""), 10)
   };
 }
 

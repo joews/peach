@@ -6,10 +6,16 @@ const parserSource = fs.readFileSync("./peach.pegjs", "utf8");
 const parser = peg.generate(parserSource);
 
 function test(src) {
+  require("chalkline").green();
   const ast = parser.parse(src);
+  // console.log(JSON.stringify(ast, null, 2));
+
+  require("chalkline").blue();
   const [result, env] = interpret(ast);
+
+  require("chalkline").red();
+  // console.log(env);
   console.log(result);
-  console.log(env);
 }
 
 function getRootEnv() {
@@ -42,7 +48,7 @@ function visitUnknown(node) {
 }
 
 function visit(node, env) {
-  const visitor = visitors[node.type] || visitUnknownNode;
+  const visitor = visitors[node.type] || visitUnknown;
 
   console.log(`trace: ${node.type}`)
   return visitor(node, env);
@@ -60,7 +66,7 @@ const visitors = {
   },
 
   Name({ name }, env) {
-    if (!env.hasOwnProperty(name)) {
+    if (!(name in env)) {
       throw new Error(`${name} is not defined`);
     }
 
@@ -80,6 +86,24 @@ const visitors = {
       const [fn, ...args] = results;
       return [apply(fn, args), env]
     }
+  },
+
+  Fn({ declaredArgs, body }, parentEnv) {
+    const env = Object.create(parentEnv);
+    declaredArgs.forEach(arg => {
+      env[arg.name] = null;
+    });
+
+    const fn = (...args) => {
+      declaredArgs.forEach((arg, i) => {
+        env[arg.name] = args[i];
+      });
+
+      const [returnValue] = visit(body, env);
+      return returnValue;
+    }
+
+    return [fn, parentEnv];
   }
 };
 
@@ -121,3 +145,11 @@ test(`
 (all-plus-one '(9 8 7))
 `)
 
+// function definition
+test(`
+  (def id (id => id))
+  (id 2)
+
+  (def double (x => (* x 2)))
+  (double 1001)
+`)
