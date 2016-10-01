@@ -1,6 +1,7 @@
 "use strict"
 const fs = require("fs");
 const path = require("path");
+const assert = require("assert");
 const peg = require("pegjs");
 
 const parserSource = fs.readFileSync("./peach.pegjs", "utf8");
@@ -10,7 +11,7 @@ function read(filePath) {
   return fs.readFileSync(filePath, "utf8");
 }
 
-function test(src) {
+function test(src, expected) {
   require("chalkline").green();
   const ast = parser.parse(src);
   // console.log(JSON.stringify(ast, null, 2));
@@ -22,6 +23,10 @@ function test(src) {
   // console.log(env);
   console.log(result);
 
+  if (expected != void 0) {
+    assert.strictEqual(result, expected);
+  }
+
   return result;
 }
 
@@ -30,6 +35,20 @@ function getRootEnv() {
   return {
     "+": (a, b) => a + b,
     "*": (a, b) => a * b,
+    ">": (a, b) => a > b,
+    ">=": (a, b) => a > b,
+    "=": (a, b) => a === b,
+    "<": (a, b) => a < b,
+    "<=": (a, b) => a <= b,
+    "<=>": (a, b) => {
+      if (a > b) return 1;
+      if (a < b) return -1;
+      if (a === b) return 0;
+      // I think this can only with NaN <=> NaN in JS. It should be possible
+      // to ignore this case when peach has static types, since we know
+      // that the operands are comparable if they pass the type check.
+      throw new Error(`${a} and ${b} are not comparable`)
+    },
     map: (fn, list) => list.map(e => fn(e))
   }
 }
@@ -211,7 +230,17 @@ test(`
 # add one to x
 (+ x 2)
 ###### the program is finished ######
-`)
+`);
 
 // commas are whitespace
-test(`'(1, 2,              ,,,,,,,,, 3)`)
+test(`'(1, 2,              ,,,,,,,,, 3)`);
+
+// comparisons
+test(`(= 1 1)`, true);
+test(`(= 1 0)`, false);
+test(`(= 0 false)`, false);
+test(`(< 1 0)`, false);
+test(`(> 1 0)`, true);
+test(`(<=> 1 0)`, 1);
+test(`(<=> 1 1)`, 0);
+test(`(<=> 0 1)`, -1);

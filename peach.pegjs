@@ -2,16 +2,15 @@ start
   = _ program:expression_list _ { return program }
 
 expression
-  = numeral
-  / boolean
-  / string
-  / name
-  / def
-  / list
-  / quoted
+  = def
   / fn
   / if
-  / lp e:expression rp { return expression }
+  / numeral
+  / boolean
+  / string
+  / list
+  / quoted
+  / name
 
 expression_list =
   head:expression tail:(__ e:expression { return e })* {
@@ -50,7 +49,7 @@ if = lp "?" __ clauses:expression_pair_list rp {
   }
 }
 
-name = chars:[a-zA-Z+=*\/\-_]+ {
+name = chars:[a-zA-Z+=*\/\-_<>]+ {
   return {
     type: "Name",
     name: chars.join("")
