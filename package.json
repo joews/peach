@@ -1,10 +1,13 @@
 {
   "name": "peach-lang",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A tiny functional language",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js"
+    "test": "node test"
+  },
+  "bin": {
+    "peach": "./bin/peach.js"
   },
   "repository": {
     "type": "git",

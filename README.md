@@ -2,6 +2,11 @@
 
 A cheeky functional language.
 
+```
+peach fibonacci.peach
+[ 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 ]
+```
+
 # Syntax sketches
 S-Expressions! Peach is inspired by Clojure and @bodil's [BODOL](https://github.com/bodil/BODOL), which I learned about from [this awesome talk](https://www.youtube.com/watch?v=DHubfS8E--o).
 
