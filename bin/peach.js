@@ -3,13 +3,14 @@
 const fs = require("fs")
 const path = require("path");
 
-const { parse, interpret } = require("./../index.js");
+const { parse, interpret } = require("../index.js");
+const startRepl = require("../src/repl.js");
 
 function read(filePath) {
   return fs.readFileSync(filePath, "utf8");
 }
 
-function run(path) {
+function runScript(path) {
   try {
     interpret(parse(read(path)));
     return 0;
@@ -24,15 +25,30 @@ function run(path) {
   }
 }
 
-const pathArg = process.argv[2];
-if (pathArg == null) {
-  console.error(`Usage: peach path/to/script.peach`);
-  process.exit(1);
+function runPath(pathArg, done) {
+  console.log(pathArg)
+  const scriptPath = path.resolve(process.argv[2]);
+  const status = runScript(scriptPath);
+
+  return done(status);
 }
 
-const scriptPath = path.resolve(process.argv[2]);
-const status = run(scriptPath);
+function repl(done) {
+  startRepl(() => done(0));
+}
 
-process.exit(status);
+function run(pathArg, onComplete) {
+  if (pathArg == null) {
+    repl(onComplete);
+  } else {
+    runPath(pathArg, onComplete);
+  }
+}
+
+const pathArg = process.argv[2];
+run(pathArg, (status) => process.exit(status));
+
+
+
 
 

@@ -58,13 +58,14 @@ Peach favours:
 * Dynamic typing
 * Strict evaluation
 * A JavaScript interpreter
+* REPL
 
 # Plans
 Coming soon:
-* Multiple function clauses with pattern matching
-* Proper tails calls
-* Lazy iteration
 * More stdlib
+* Maps and vectors
+* Lazy sequences
+* Proper tails calls
 
 And then:
 * Interactive debugger
