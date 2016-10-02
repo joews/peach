@@ -34,13 +34,30 @@ def = lp "def" __ name_exp:name __ value:expression rp {
   }
 }
 
-fn = lp arg:name __ "=>" __ body:expression rp {
+fn = lp clauses:clause_list rp {
   return {
     type: "Fn",
-    declaredArgs: [arg],
-    body
+    clauses
   }
 }
+
+clause_list = head:clause tail:(__ c:clause { return c })* {
+  return [head, ...tail];
+}
+
+clause = pattern:pattern __ "=>" __ body:expression {
+  return { pattern, body };
+}
+
+pattern
+  = single:pattern_term { return [single] }
+  / pattern_term_list
+
+pattern_term_list = lp head:pattern_term tail:(__ p:pattern_term { return p })* rp {
+  return [head, ...tail];
+}
+
+pattern_term = name / literal
 
 if = lp "?" __ clauses:expression_pair_list rp {
   return {
@@ -55,6 +72,8 @@ name = chars:[a-zA-Z+=*\/\-_<>]+ {
     name: chars.join("")
   }
 }
+
+literal = numeral / boolean / string
 
 numeral = digits:[0-9]+ {
   return {

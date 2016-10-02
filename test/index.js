@@ -105,3 +105,29 @@ test(`(<=> 0 1)`, -1);
 
 // an actual program!
 test(fixture("fibonacci.peach"), [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]);
+
+// pattern matching
+test(`
+(def is-one (
+  (1) => \`one\`
+  (other) => (str \`not one: \` other)))
+(is-one 1)
+`, "one");
+
+test(`
+(def is-one (
+  (1) => \`one\`
+  (other) => (str \`not one: \` other)))
+(is-one 2)
+`, "not one: 2");
+
+test(`
+(def incr (
+  n => (incr n 1)
+  (n x) => (+ n x)))
+(def a (incr 5))  ; 6
+(def b (incr 5 5))  ; 10
+(incr a b)
+`, 16);
+
+//

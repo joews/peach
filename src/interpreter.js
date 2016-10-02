@@ -1,4 +1,5 @@
 "use strict";
+const unify = require("./unify");
 
 module.exports = function interpret(ast) {
   const rootEnv = getRootEnv();
@@ -33,6 +34,9 @@ function getRootEnv() {
 
     // lists
     map: (fn, list) => list.map(e => fn(e)),
+
+    // strings
+    str: (...args) => args.map(arg => arg.toString()).join(""),
 
     // utils
     print: (...args) => { console.log(...args) }
@@ -101,16 +105,23 @@ const visitors = {
     }
   },
 
-  Fn({ declaredArgs, body }, parentEnv) {
-
+  Fn({ clauses }, parentEnv) {
     const fn = (...args) => {
-      const env = Object.create(parentEnv);
-      declaredArgs.forEach((arg, i) => {
-        env[arg.name] = args[i];
-      });
+      for (const { pattern, body } of clauses) {
+        const { didMatch, bindings } = unify(pattern, args);
+        if (didMatch !== false) {
+          const env = Object.create(parentEnv);
+          Object.assign(env, bindings);
 
-      const [returnValue] = visit(body, env);
-      return returnValue;
+          const [returnValue] = visit(body, env);
+          return returnValue;
+        }
+      }
+
+      // TODO in the future this will be unrechable; a complete set of patterns
+      //  will be a compile-time requirement.
+      return [null, parentEnv];
+
     }
 
     return [fn, parentEnv];

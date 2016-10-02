@@ -37,7 +37,7 @@ S-Expressions! Peach is inspired by Clojure and @bodil's [BODOL](https://github.
 (def double-all (map double))
 (double-all '(1 2 3 4)) ; (2 4 6 8)
 
-# pattern matching (TODO)
+# pattern matching
 (fn fib
   0 => 1
   1 => 1
