@@ -1,8 +1,7 @@
 "use strict";
 const unify = require("./unify");
 
-module.exports = function interpret(ast) {
-  const rootEnv = getRootEnv();
+module.exports = function interpret(ast, rootEnv = getRootEnv()) {
   const [result, env] = visitAll(ast, rootEnv);
 
   return [result, env];
