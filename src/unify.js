@@ -28,7 +28,6 @@ function unifyOne(pattern, value) {
   }
 
   if (isName(pattern)) {
-    debugger
     // the pattern matched; return a new binding
     return { [pattern.name]: value };
   }

@@ -47,7 +47,7 @@ try {
   console.log(e.message);
 }
 
-// currying
+// currying built-in functions
 test(`
 (def plus-one (+ 1))
 (def all-plus-one (map plus-one))
@@ -130,4 +130,27 @@ test(`
 (incr a b)
 `, 16);
 
-//
+// currying user functions
+test(`
+(def add ((x y) => (+ x y)))
+(def add-two (add 2))
+(add-two 5)
+`, 7);
+
+// currying user functions repeatedly
+test(`
+(def addx ((x y z) => (+ (+ x y) z)))
+(def add-one (addx 1))
+(def add-two (add-one 1))
+(add-two 4)
+`, 6);
+
+// currying variadic user functions - the shortest pattern is used to
+// decide which clause is used for currying.
+test(`
+(def f (
+  (a b) => \`two\`
+  (a b c) => \`three\`))
+(def g (f 1))
+'((g 1) (g 1 2) (f 1 2) (f 1 2 4))
+`, ["two", "three", "two", "three"]);

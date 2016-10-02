@@ -121,8 +121,15 @@ const visitors = {
       // TODO in the future this will be unrechable; a complete set of patterns
       //  will be a compile-time requirement.
       return [null, parentEnv];
-
     }
+
+    // define the length of the function to be the number of arguments
+    //  in the shortest defined pattern
+    // TODO a better function abstraction so that we can give functions names,
+    //  custom toString values, etc. Define all of the stdlib functions
+    //  using the same abstraction.
+    const patternLengths = clauses.map(clause => clause.pattern.length);
+    fn._peachLength = Math.min(...patternLengths);
 
     return [fn, parentEnv];
   },
@@ -143,7 +150,14 @@ const visitors = {
 };
 
 function apply(fn, args) {
-  return (args.length >= fn.length)
+  // TODO
+  // For now, stdlib functions are all plain JS functions with fixed arity.
+  // We can rely on `fn.length` for these. Peach functions are assigned
+  //  a _peachLength, which is based on the length of the shortest pattern.
+  // We should use a better function abstraction that covers both of these cases.
+  const length = fn._peachLength || fn.length;
+
+  return (args.length >= length)
     ? call(fn, args)
     : curry(fn, args);
 }
@@ -153,7 +167,10 @@ function call(fn, args) {
 }
 
 function curry(fn, appliedArgs) {
-  return fn.bind(null, ...appliedArgs);
+  const curried = fn.bind(null, ...appliedArgs);
+  // TODO function abstraction
+  curried._peachLength = (fn._peachLength || fn.length) - appliedArgs.length;
+  return curried;
 }
 
 function isTruthy(value) {
