@@ -63,6 +63,13 @@ test(`
   (double 1001)
 `)
 
+// parentheses are optional
+test(`(def f x => 1) (f 0)`, 1);
+test(`(def f (x => 1)) (f 0)`, 1);
+test(`(def f (x) => 1) (f 0)`, 1);
+test(`(def f ((x) => 1)) (f 0)`, 1);
+
+
 // if
 test(`
 (?
@@ -107,10 +114,11 @@ test(`(<=> 0 1)`, -1);
 test(fixture("fibonacci.peach"), [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]);
 
 // pattern matching
+// - variants with and without parentheses around clauses and patterns
 test(`
-(def is-one (
-  (1) => \`one\`
-  (other) => (str \`not one: \` other)))
+(def is-one
+  1 => \`one\`
+  other => (str \`not one: \` other))
 (is-one 1)
 `, "one");
 
@@ -122,9 +130,9 @@ test(`
 `, "not one: 2");
 
 test(`
-(def incr (
+(def incr
   n => (incr n 1)
-  (n x) => (+ n x)))
+  (n x) => (+ n x))
 (def a (incr 5))  ; 6
 (def b (incr 5 5))  ; 10
 (incr a b)

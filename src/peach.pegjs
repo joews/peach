@@ -34,12 +34,16 @@ def = lp "def" __ name_exp:name __ value:expression rp {
   }
 }
 
-fn = lp clauses:clause_list rp {
+fn = clauses:clause_list_optional_parens {
   return {
     type: "Fn",
     clauses
   }
 }
+
+clause_list_optional_parens
+  = clause_list
+  / lp c:clause_list rp { return c }
 
 clause_list = head:clause tail:(__ c:clause { return c })* {
   return [head, ...tail];
