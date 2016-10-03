@@ -10,15 +10,31 @@ module.exports = function startRepl (onExit) {
   let lastEnv;
 
   function evalPeach(src, context, filename, callback) {
-    const [result, env] = interpret(parse(src), lastEnv);
-    lastEnv = env;
+    try {
+      const [result, env] = interpret(parse(src), lastEnv);
+      lastEnv = env;
+      return callback(null, result);
+    } catch (e) {
+      if (isRecoverableError(e)) {
+        return callback(new repl.Recoverable(e));
+      } else {
+        return callback(getErrorMessage(e));
+      }
+    }
 
-    callback(null, result);
   }
 
   const server = repl.start({
-    prompt: "> ",
+    prompt: "❯ ",
     eval: evalPeach
   });
   server.on("exit", onExit);
+}
+
+function isRecoverableError(e) {
+  return e.message.endsWith("but end of input found.")
+}
+
+function getErrorMessage(e) {
+  return `Error: ${e.message}`;
 }
