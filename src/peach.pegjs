@@ -54,7 +54,8 @@ clause = pattern:pattern __ "=>" __ body:expression {
 }
 
 pattern
-  = single:pattern_term { return [single] }
+  = empty_list { return [] }
+  / single:pattern_term { return [single] }
   / pattern_term_list
 
 pattern_term_list = lp head:pattern_term tail:(__ p:pattern_term { return p })* rp {
@@ -126,6 +127,10 @@ list = lp values:expression_list rp {
     type: "List",
     values
   }
+}
+
+empty_list = lp rp {
+  return null
 }
 
 quoted = "'" expr:expression {

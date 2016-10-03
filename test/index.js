@@ -36,9 +36,7 @@ test(`
 `);
 
 // quoted s-expressions
-test(`
-(def list '(1 2 3))
-`);
+test(`(def list '(1 2 3))`, [1, 2, 3]);
 
 // reference error
 try {
@@ -68,6 +66,9 @@ test(`(def f x => 1) (f 0)`, 1);
 test(`(def f (x => 1)) (f 0)`, 1);
 test(`(def f (x) => 1) (f 0)`, 1);
 test(`(def f ((x) => 1)) (f 0)`, 1);
+
+// functions with no args
+test(`(def f () => 1) (f)`, 1);
 
 
 // if
