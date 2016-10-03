@@ -25,7 +25,8 @@ module.exports = function startRepl (onExit) {
 
   const server = repl.start({
     prompt: '❯ ',
-    eval: evalPeach
+    eval: evalPeach,
+    writer: getOutput
   })
   server.on('exit', onExit)
 }
@@ -35,5 +36,11 @@ function isRecoverableError (e) {
 }
 
 function getErrorMessage (e) {
+  // TODO If the message is a PeachError (not a thing yet), log the message.
+  // If it's a JS Error, log the stack trace.
   return `Error: ${e.message}`
+}
+
+function getOutput (value) {
+  return value ? value.toString() : value
 }

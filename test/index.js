@@ -32,9 +32,7 @@ function fixture (fileName) {
 }
 
 // setting and getting values
-test(`
-(def x 2) (def y 5) (* (+ x y) x)
-`)
+test(`(def x 2) (def y 5) (* (+ x y) x)`, 14)
 
 // quoted s-expressions
 test(`(def list '(1 2 3))`, [1, 2, 3])
@@ -45,6 +43,9 @@ try {
 } catch (e) {
   console.log(e.message)
 }
+
+// calling built-in functions
+test(`(+ 2 3)`, 5)
 
 // currying built-in functions
 test(`
@@ -62,15 +63,14 @@ test(`
   (double 1001)
 `)
 
-// parentheses are optional
-test(`(def f x => 1) (f 0)`, 1)
+// // parentheses are optional
+test(`(def f x => 1) (f 0)`)
 test(`(def f (x => 1)) (f 0)`, 1)
 test(`(def f (x) => 1) (f 0)`, 1)
 test(`(def f ((x) => 1)) (f 0)`, 1)
 
 // functions with no args
 test(`(def f () => 1) (f)`, 1)
-
 
 // if
 test(`
@@ -113,6 +113,15 @@ test(`(<=> 0 1)`, -1)
 
 // an actual program!
 test(fixture('fibonacci.peach'), [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89])
+
+test(`
+(def fac
+  1 => 1
+  n => (* n (fac (- n 1)))
+)
+
+(fac 4)
+`, 24)
 
 // pattern matching
 // - variants with and without parentheses around clauses and patterns
@@ -163,3 +172,4 @@ test(`
 (def g (f 1))
 '((g 1) (g 1 2) (f 1 2) (f 1 2 4))
 `, ['two', 'three', 'two', 'three'])
+

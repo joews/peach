@@ -1,5 +1,7 @@
 'use strict'
-const unify = require('./unify')
+const { makeFunction, applyFunction } = require('./types/function')
+const stdlib = require('./stdlib')
+const { extend, clone } = require('./util')
 
 module.exports = function interpret (ast, rootEnv = getRootEnv()) {
   const [result, env] = visitAll(ast, rootEnv)
@@ -8,38 +10,7 @@ module.exports = function interpret (ast, rootEnv = getRootEnv()) {
 }
 
 function getRootEnv () {
-  // TODO stdlibs!
-  return {
-    // operators
-    '+': (a, b) => a + b,
-    '-': (a, b) => a - b,
-    '*': (a, b) => a * b,
-    '/': (a, b) => a / b,
-    '%': (a, b) => a % b,
-    '>': (a, b) => a > b,
-    '>=': (a, b) => a >= b,
-    '=': (a, b) => a === b,
-    '<': (a, b) => a < b,
-    '<=': (a, b) => a <= b,
-    '<=>': (a, b) => {
-      if (a > b) return 1
-      if (a < b) return -1
-      if (a === b) return 0
-      // I think this can only with NaN <=> NaN in JS. It should be possible
-      // to ignore this case when peach has static types, since we know
-      // that the operands are comparable if they pass the type check.
-      throw new Error(`${a} and ${b} are not comparable`)
-    },
-
-    // lists
-    map: (fn, list) => list.map(e => fn(e)),
-
-    // strings
-    str: (...args) => args.map(arg => arg.toString()).join(''),
-
-    // utils
-    print: (...args) => { console.log(...args) }
-  }
+  return clone(stdlib)
 }
 
 // Visit each of `nodes` in order, returning the result
@@ -58,7 +29,7 @@ function visitUnknown (node) {
 function visit (node, env) {
   const visitor = visitors[node.type] || visitUnknown
 
-  // console.log(`trace: ${node.type}`)
+  // console.log(`trace: ${node.type} ${node.name || ''}`)
   return visitor(node, env)
 }
 
@@ -68,8 +39,15 @@ const visitors = {
       throw new Error(`${name} has already been defined`)
     }
 
-    const [result] = visit(value, env)
+    // Give the named value an inherent name property
+    // This avoids the need for a seperate `defn`, though it fails where
+    //  nodes are assigned to several names.
+    const namedValue = extend(value, { boundName: name })
+
+    // TODO immutable env
+    const [result] = visit(namedValue, env)
     env[name] = result
+
     return [result, env]
   },
 
@@ -100,37 +78,13 @@ const visitors = {
       return [results, env]
     } else {
       const [fn, ...args] = results
-      return [apply(fn, args), env]
+      return [applyFunction(fn, args), env]
     }
   },
 
-  Fn ({ clauses }, parentEnv) {
-    const fn = (...args) => {
-      for (const { pattern, body } of clauses) {
-        const { didMatch, bindings } = unify(pattern, args)
-        if (didMatch !== false) {
-          const env = Object.create(parentEnv)
-          Object.assign(env, bindings)
-
-          const [returnValue] = visit(body, env)
-          return returnValue
-        }
-      }
-
-      // TODO in the future this will be unrechable; a complete set of patterns
-      //  will be a compile-time requirement.
-      return [null, parentEnv]
-    }
-
-    // define the length of the function to be the number of arguments
-    //  in the shortest defined pattern
-    // TODO a better function abstraction so that we can give functions names,
-    //  custom toString values, etc. Define all of the stdlib functions
-    //  using the same abstraction.
-    const patternLengths = clauses.map(clause => clause.pattern.length)
-    fn._peachLength = Math.min(...patternLengths)
-
-    return [fn, parentEnv]
+  Fn (node, env) {
+    const fn = makeFunction(node, env, visit)
+    return [fn, env]
   },
 
   If ({ clauses }, env) {
@@ -146,30 +100,6 @@ const visitors = {
     // reutrn null until peach has static typing
     return [null, env]
   }
-}
-
-function apply (fn, args) {
-  // TODO
-  // For now, stdlib functions are all plain JS functions with fixed arity.
-  // We can rely on `fn.length` for these. Peach functions are assigned
-  //  a _peachLength, which is based on the length of the shortest pattern.
-  // We should use a better function abstraction that covers both of these cases.
-  const length = fn._peachLength || fn.length
-
-  return (args.length >= length)
-    ? call(fn, args)
-    : curry(fn, args)
-}
-
-function call (fn, args) {
-  return fn.apply(null, args)
-}
-
-function curry (fn, appliedArgs) {
-  const curried = fn.bind(null, ...appliedArgs)
-  // TODO function abstraction
-  curried._peachLength = (fn._peachLength || fn.length) - appliedArgs.length
-  return curried
 }
 
 function isTruthy (value) {
