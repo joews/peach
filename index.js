@@ -1,5 +1,5 @@
-const parse = require("./src/parser");
-const interpret = require("./src/interpreter");
+const parse = require('./src/parser')
+const interpret = require('./src/interpreter')
 
 module.exports = {
   parse,

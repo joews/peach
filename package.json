@@ -4,7 +4,8 @@
   "description": "A tiny functional language",
   "main": "index.js",
   "scripts": {
-    "test": "node test/index.js && ava test/*-tests.js"
+    "test": "node test/index.js && ava test/*-tests.js",
+    "lint": "standard"
   },
   "bin": {
     "peach": "./bin/peach.js"
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "ava": "^0.16.0",
-    "chalkline": "0.0.5"
+    "chalkline": "0.0.5",
+    "standard": "^8.3.0"
   }
 }

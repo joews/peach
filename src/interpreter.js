@@ -1,30 +1,30 @@
-"use strict";
-const unify = require("./unify");
+'use strict'
+const unify = require('./unify')
 
-module.exports = function interpret(ast, rootEnv = getRootEnv()) {
-  const [result, env] = visitAll(ast, rootEnv);
+module.exports = function interpret (ast, rootEnv = getRootEnv()) {
+  const [result, env] = visitAll(ast, rootEnv)
 
-  return [result, env];
+  return [result, env]
 }
 
-function getRootEnv() {
+function getRootEnv () {
   // TODO stdlibs!
   return {
     // operators
-    "+": (a, b) => a + b,
-    "-": (a, b) => a - b,
-    "*": (a, b) => a * b,
-    "/": (a, b) => a / b,
-    "%": (a, b) => a % b,
-    ">": (a, b) => a > b,
-    ">=": (a, b) => a >= b,
-    "=": (a, b) => a === b,
-    "<": (a, b) => a < b,
-    "<=": (a, b) => a <= b,
-    "<=>": (a, b) => {
-      if (a > b) return 1;
-      if (a < b) return -1;
-      if (a === b) return 0;
+    '+': (a, b) => a + b,
+    '-': (a, b) => a - b,
+    '*': (a, b) => a * b,
+    '/': (a, b) => a / b,
+    '%': (a, b) => a % b,
+    '>': (a, b) => a > b,
+    '>=': (a, b) => a >= b,
+    '=': (a, b) => a === b,
+    '<': (a, b) => a < b,
+    '<=': (a, b) => a <= b,
+    '<=>': (a, b) => {
+      if (a > b) return 1
+      if (a < b) return -1
+      if (a === b) return 0
       // I think this can only with NaN <=> NaN in JS. It should be possible
       // to ignore this case when peach has static types, since we know
       // that the operands are comparable if they pass the type check.
@@ -35,7 +35,7 @@ function getRootEnv() {
     map: (fn, list) => list.map(e => fn(e)),
 
     // strings
-    str: (...args) => args.map(arg => arg.toString()).join(""),
+    str: (...args) => args.map(arg => arg.toString()).join(''),
 
     // utils
     print: (...args) => { console.log(...args) }
@@ -44,82 +44,82 @@ function getRootEnv() {
 
 // Visit each of `nodes` in order, returning the result
 // and environment of the last node.
-function visitAll(nodes, rootEnv) {
+function visitAll (nodes, rootEnv) {
   return nodes.reduce(([, env], node) => (
     visit(node, env)
-  ), [null, rootEnv]);
+  ), [null, rootEnv])
 }
 
-function visitUnknown(node) {
-  throw new Error(`unknown node type: ${node.type}`);
-  console.log(JSON.stringify(node, null, 2));
+function visitUnknown (node) {
+  console.log(JSON.stringify(node, null, 2))
+  throw new Error(`unknown node type: ${node.type}`)
 }
 
-function visit(node, env) {
-  const visitor = visitors[node.type] || visitUnknown;
+function visit (node, env) {
+  const visitor = visitors[node.type] || visitUnknown
 
   // console.log(`trace: ${node.type}`)
-  return visitor(node, env);
+  return visitor(node, env)
 }
 
 const visitors = {
-  Def({ name, value }, env) {
+  Def ({ name, value }, env) {
     if (env.hasOwnProperty(name)) {
-      throw new Error(`${name} has already been defined`);
+      throw new Error(`${name} has already been defined`)
     }
 
-    const [result] = visit(value, env);
-    env[name] = result;
-    return [result, env];
+    const [result] = visit(value, env)
+    env[name] = result
+    return [result, env]
   },
 
-  Name({ name }, env) {
+  Name ({ name }, env) {
     if (!(name in env)) {
-      throw new Error(`${name} is not defined`);
+      throw new Error(`${name} is not defined`)
     }
 
-    return [env[name], env];
+    return [env[name], env]
   },
 
-  Numeral({ value }, env) {
-    return [value, env];
+  Numeral ({ value }, env) {
+    return [value, env]
   },
 
-  Bool({ value }, env) {
-    return [value, env];
+  Bool ({ value }, env) {
+    return [value, env]
   },
 
-  Str({ value }, env) {
-    return [value, env];
+  Str ({ value }, env) {
+    return [value, env]
   },
 
-  List({ values, isQuoted }, env) {
-    const results = values.map((value) => visit(value, env)[0]);
+  List ({ values, isQuoted }, env) {
+    const results = values.map((value) => visit(value, env)[0])
 
     if (isQuoted) {
-      return [results, env];
+      return [results, env]
     } else {
-      const [fn, ...args] = results;
+      const [fn, ...args] = results
       return [apply(fn, args), env]
     }
   },
 
-  Fn({ clauses }, parentEnv) {
+  Fn ({ clauses }, parentEnv) {
     const fn = (...args) => {
       for (const { pattern, body } of clauses) {
-        const { didMatch, bindings } = unify(pattern, args);
+        const { didMatch, bindings } = unify(pattern, args)
         if (didMatch !== false) {
-          const env = Object.create(parentEnv);
-          Object.assign(env, bindings);
+          const env = Object.create(parentEnv)
+          Object.assign(env, bindings)
 
-          const [returnValue] = visit(body, env);
-          return returnValue;
+          const [returnValue] = visit(body, env)
+          return returnValue
         }
       }
 
       // TODO in the future this will be unrechable; a complete set of patterns
       //  will be a compile-time requirement.
-      return [null, parentEnv];
+      return [null, parentEnv]
     }
 
     // define the length of the function to be the number of arguments
@@ -127,51 +127,51 @@ const visitors = {
     // TODO a better function abstraction so that we can give functions names,
     //  custom toString values, etc. Define all of the stdlib functions
     //  using the same abstraction.
-    const patternLengths = clauses.map(clause => clause.pattern.length);
-    fn._peachLength = Math.min(...patternLengths);
+    const patternLengths = clauses.map(clause => clause.pattern.length)
+    fn._peachLength = Math.min(...patternLengths)
 
-    return [fn, parentEnv];
+    return [fn, parentEnv]
   },
 
-  If({ clauses }, env) {
+  If ({ clauses }, env) {
     for (const [test, consequent] of clauses) {
       // TODO a formal "else" concept - for now use `true`.
-      const [testResult] = visit(test, env);
+      const [testResult] = visit(test, env)
       if (isTruthy(testResult)) {
-        return visit(consequent, env);
+        return visit(consequent, env)
       }
     }
 
     // TODO fail to compile if not all outcomes are accounted for;
     // reutrn null until peach has static typing
-    return [null, env];
+    return [null, env]
   }
-};
+}
 
-function apply(fn, args) {
+function apply (fn, args) {
   // TODO
   // For now, stdlib functions are all plain JS functions with fixed arity.
   // We can rely on `fn.length` for these. Peach functions are assigned
   //  a _peachLength, which is based on the length of the shortest pattern.
   // We should use a better function abstraction that covers both of these cases.
-  const length = fn._peachLength || fn.length;
+  const length = fn._peachLength || fn.length
 
   return (args.length >= length)
     ? call(fn, args)
-    : curry(fn, args);
+    : curry(fn, args)
 }
 
-function call(fn, args) {
-  return fn.apply(null, args);
+function call (fn, args) {
+  return fn.apply(null, args)
 }
 
-function curry(fn, appliedArgs) {
-  const curried = fn.bind(null, ...appliedArgs);
+function curry (fn, appliedArgs) {
+  const curried = fn.bind(null, ...appliedArgs)
   // TODO function abstraction
-  curried._peachLength = (fn._peachLength || fn.length) - appliedArgs.length;
-  return curried;
+  curried._peachLength = (fn._peachLength || fn.length) - appliedArgs.length
+  return curried
 }
 
-function isTruthy(value) {
-  return value !== false && value != null;
+function isTruthy (value) {
+  return value !== false && value != null
 }

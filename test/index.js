@@ -1,48 +1,49 @@
-"use strict"
-const fs = require("fs");
-const path = require("path");
-const assert = require("assert");
+'use strict'
+const fs = require('fs')
+const path = require('path')
+const assert = require('assert')
 
-const parse = require("../src/parser");
-const interpret = require("../src/interpreter");
+const parse = require('../src/parser')
+const interpret = require('../src/interpreter')
 
-function test(src, expected) {
+function test (src, expected) {
   // require("chalkline").green();
-  const ast = parse(src);
+  const ast = parse(src)
   // console.log(JSON.stringify(ast, null, 2));
 
   // require("chalkline").blue();
-  const [result, env] = interpret(ast);
+  // eslint-disable-next-line
+  const [result, env] = interpret(ast)
 
   // require("chalkline").red();
   // console.log(env);
-  console.log(result);
+  console.log(result)
 
-  if (expected != void 0) {
-    assert.deepStrictEqual(result, expected);
+  if (expected !== void 0) {
+    assert.deepStrictEqual(result, expected)
   }
 
-  return result;
+  return result
 }
 
-function fixture(fileName) {
-  const filePath = path.join(__dirname, "fixtures", fileName);
-  return fs.readFileSync(filePath, "utf8");
+function fixture (fileName) {
+  const filePath = path.join(__dirname, 'fixtures', fileName)
+  return fs.readFileSync(filePath, 'utf8')
 }
 
 // setting and getting values
 test(`
 (def x 2) (def y 5) (* (+ x y) x)
-`);
+`)
 
 // quoted s-expressions
-test(`(def list '(1 2 3))`, [1, 2, 3]);
+test(`(def list '(1 2 3))`, [1, 2, 3])
 
 // reference error
 try {
-  test(`(y)`);
+  test(`(y)`)
 } catch (e) {
-  console.log(e.message);
+  console.log(e.message)
 }
 
 // currying built-in functions
@@ -62,13 +63,13 @@ test(`
 `)
 
 // parentheses are optional
-test(`(def f x => 1) (f 0)`, 1);
-test(`(def f (x => 1)) (f 0)`, 1);
-test(`(def f (x) => 1) (f 0)`, 1);
-test(`(def f ((x) => 1)) (f 0)`, 1);
+test(`(def f x => 1) (f 0)`, 1)
+test(`(def f (x => 1)) (f 0)`, 1)
+test(`(def f (x) => 1) (f 0)`, 1)
+test(`(def f ((x) => 1)) (f 0)`, 1)
 
 // functions with no args
-test(`(def f () => 1) (f)`, 1);
+test(`(def f () => 1) (f)`, 1)
 
 
 // if
@@ -77,15 +78,15 @@ test(`
   false 3
   true 4
 )
-`);
+`)
 
 // truthiness
-test(`(? false 1)`); // falsy
-test(`(? 0 1)`); // truthy
+test(`(? false 1)`) // falsy
+test(`(? 0 1)`) // truthy
 
 // strings - easier to test without JS String literal escapes
-const strings = test(fixture("str.peach"));
-console.log(strings.join("\n"));
+const strings = test(fixture('str.peach'))
+console.log(strings.join('\n'))
 
 // comments
 test(`
@@ -95,24 +96,23 @@ test(`
 # add one to x
 (+ x 2)
 ###### the program is finished ######
-`);
+`)
 
 // commas are whitespace
-test(`'(1, 2,              ,,,,,,,,, 3)`);
+test(`'(1, 2,              ,,,,,,,,, 3)`)
 
 // comparisons
-test(`(= 1 1)`, true);
-test(`(= 1 0)`, false);
-test(`(= 0 false)`, false);
-test(`(< 1 0)`, false);
-test(`(> 1 0)`, true);
-test(`(<=> 1 0)`, 1);
-test(`(<=> 1 1)`, 0);
-test(`(<=> 0 1)`, -1);
-
+test(`(= 1 1)`, true)
+test(`(= 1 0)`, false)
+test(`(= 0 false)`, false)
+test(`(< 1 0)`, false)
+test(`(> 1 0)`, true)
+test(`(<=> 1 0)`, 1)
+test(`(<=> 1 1)`, 0)
+test(`(<=> 0 1)`, -1)
 
 // an actual program!
-test(fixture("fibonacci.peach"), [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]);
+test(fixture('fibonacci.peach'), [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89])
 
 // pattern matching
 // - variants with and without parentheses around clauses and patterns
@@ -121,14 +121,14 @@ test(`
   1 => \`one\`
   other => (str \`not one: \` other))
 (is-one 1)
-`, "one");
+`, 'one')
 
 test(`
 (def is-one (
   (1) => \`one\`
   (other) => (str \`not one: \` other)))
 (is-one 2)
-`, "not one: 2");
+`, 'not one: 2')
 
 test(`
 (def incr
@@ -137,14 +137,14 @@ test(`
 (def a (incr 5))  ; 6
 (def b (incr 5 5))  ; 10
 (incr a b)
-`, 16);
+`, 16)
 
 // currying user functions
 test(`
 (def add ((x y) => (+ x y)))
 (def add-two (add 2))
 (add-two 5)
-`, 7);
+`, 7)
 
 // currying user functions repeatedly
 test(`
@@ -152,7 +152,7 @@ test(`
 (def add-one (addx 1))
 (def add-two (add-one 1))
 (add-two 4)
-`, 6);
+`, 6)
 
 // currying variadic user functions - the shortest pattern is used to
 // decide which clause is used for currying.
@@ -162,4 +162,4 @@ test(`
   (a b c) => \`three\`))
 (def g (f 1))
 '((g 1) (g 1 2) (f 1 2) (f 1 2 4))
-`, ["two", "three", "two", "three"]);
+`, ['two', 'three', 'two', 'three'])
