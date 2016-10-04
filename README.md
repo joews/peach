@@ -5,8 +5,13 @@
 A cheeky functional language.
 
 ```
-peach fibonacci.peach
-[ 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 ]
+(def fib
+  0 => 1
+  1 => 1
+  x => (+ (fib (- x 1)) (fib (- x 2))))
+
+(map fib '(0 1 2 3 4 5 6 7 8 9 10))
+;; [ 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 ]
 ```
 
 # Syntax sketches
@@ -42,6 +47,11 @@ S-Expressions! Peach is inspired by Clojure and @bodil's [BODOL](https://github.
   0 => 1
   1 => 1
   x => (+ (fib x - 2) (fib x - 1))
+)
+
+(fn starts-with-one
+  (1|_) => true
+  _  => false
 )
 ```
 
