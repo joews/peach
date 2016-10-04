@@ -1,7 +1,7 @@
 const repl = require('repl')
 
 const { version } = require('../package.json')
-const { parse, interpret } = require('../index.js')
+const { parse, interpret, PeachError } = require('..')
 
 module.exports = function startRepl (onExit) {
   console.log(`🍑  peach v${version}`)
@@ -36,9 +36,14 @@ function isRecoverableError (e) {
 }
 
 function getErrorMessage (e) {
-  // TODO If the message is a PeachError (not a thing yet), log the message.
-  // If it's a JS Error, log the stack trace.
-  return `Error: ${e.message}`
+  // A runtime error (which will one day be impossible!) in a Peach program
+  if (e instanceof PeachError) {
+    return `❗  ${e.message}`
+  } else {
+    // Any other type of error is a bug in the runtime. I want to see the stack trace.
+    console.error(`Uh oh! peach had a problem 💥`)
+    return e
+  }
 }
 
 function getOutput (value) {

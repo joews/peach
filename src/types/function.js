@@ -1,5 +1,6 @@
 const unify = require('../unify')
 const { create } = require('../util')
+const { PeachError } = require('../errors')
 
 const ANONYMOUS = 'anonymous'
 
@@ -53,7 +54,7 @@ module.exports = {
 
   applyFunction (pFunction, args) {
     if (!pFunction.isVariadic && args.length > pFunction.maxArity) {
-      throw new Error(`Function ${pFunction.name} was called with too many arguments. It expected at most ${pFunction.maxArity} arguments, but it was called with ${args.length}: ${JSON.stringify(args)}`)
+      throw new PeachError(`Function ${pFunction.name} was called with too many arguments. It expected at most ${pFunction.maxArity} arguments, but it was called with ${args.length}: ${JSON.stringify(args)}`)
     }
 
     return (args.length >= pFunction.minArity)

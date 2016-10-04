@@ -1,4 +1,5 @@
 const { makeNativeFunction, applyFunction } = require('./types/function')
+const { PeachError } = require('./errors')
 
 module.exports = {
   // operators
@@ -20,7 +21,7 @@ module.exports = {
     // I think this can only with NaN <=> NaN in JS. It should be possible
     // to ignore this case when peach has static types, since we know
     // that the operands are comparable if they pass the type check.
-    throw new Error(`${a} and ${b} are not comparable`)
+    throw new PeachError(`${a} and ${b} are not comparable`)
   }),
 
   // lists

@@ -2,6 +2,7 @@
 const { makeFunction, applyFunction } = require('./types/function')
 const stdlib = require('./stdlib')
 const { extend, clone } = require('./util')
+const { PeachError } = require('./errors');
 
 module.exports = function interpret (ast, rootEnv = getRootEnv()) {
   const [result, env] = visitAll(ast, rootEnv)
@@ -23,7 +24,7 @@ function visitAll (nodes, rootEnv) {
 
 function visitUnknown (node) {
   console.log(JSON.stringify(node, null, 2))
-  throw new Error(`unknown node type: ${node.type}`)
+  throw new PeachError(`unknown node type: ${node.type}`)
 }
 
 function visit (node, env) {
@@ -36,7 +37,7 @@ function visit (node, env) {
 const visitors = {
   Def ({ name, value }, env) {
     if (env.hasOwnProperty(name)) {
-      throw new Error(`${name} has already been defined`)
+      throw new PeachError(`${name} has already been defined`)
     }
 
     // Give the named value an inherent name property
@@ -53,7 +54,7 @@ const visitors = {
 
   Name ({ name }, env) {
     if (!(name in env)) {
-      throw new Error(`${name} is not defined`)
+      throw new PeachError(`${name} is not defined`)
     }
 
     return [env[name], env]
