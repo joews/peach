@@ -62,7 +62,18 @@ pattern_term_list = lp head:pattern_term tail:(__ p:pattern_term { return p })* 
   return [head, ...tail];
 }
 
-pattern_term = name / literal
+pattern_term = name / literal / destructured_list
+
+destructure_head = name / literal
+destructure_tail = name / destructured_list
+
+destructured_list = lp head:destructure_head _ "|" tail:destructure_tail _ rp {
+  return {
+    type: "DestructuredList",
+    head,
+    tail
+  }
+}
 
 if = lp "?" __ clauses:expression_pair_list rp {
   return {

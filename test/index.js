@@ -173,3 +173,28 @@ test(`
 '((g 1) (g 1 2) (f 1 2) (f 1 2 4))
 `, ['two', 'three', 'two', 'three'])
 
+// destructuring lists
+// TODO repeat argument names should be illegal, except _
+test(`
+  (def first (h|t) => h)
+  (def second (_|(h|t)) => h)
+  (def third (_|(_|(h|t))) => h)
+  (def l '(9 8 7))
+  '((first l), (second l), (third l))
+`, [9, 8, 7])
+
+// destructuring with a non-matching head
+test(`
+  (def starts-with-one (1|_) => true _ => false)
+  (def a (starts-with-one '(1 2)))
+  (def b (starts-with-one '(2 2)))
+  '(a b)
+`, [true, false])
+
+// destructuring with a non-matching tail
+test(`
+  (def one-second (_|(1|_)) => true _ => false)
+  (def a (one-second '(1 1)))
+  (def b (one-second '(2 2)))
+  '(a b)
+`, [true, false])

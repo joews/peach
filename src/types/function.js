@@ -30,7 +30,7 @@ module.exports = {
 
         // TODO in the future this will be unrechable; a complete set of patterns
         //  will be a compile-time requirement.
-        return [null, parentEnv]
+        throw new PeachError(`λ: ${name} has no clause that matches the given arguments (${args})`)
       },
 
       toString () {

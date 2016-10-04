@@ -1,3 +1,5 @@
+const PeachError = require('./errors')
+
 module.exports = function unify (patterns, values) {
   if (patterns.length !== values.length) {
     return didNotMatch
@@ -28,7 +30,28 @@ function unifyOne (pattern, value) {
     return { [pattern.name]: value }
   }
 
+  if (isDestructuredList(pattern)) {
+    return destructure(pattern, value)
+  }
+
   // no match
+  return null
+}
+
+// TODO this will need to change when List is a wrapped type
+function destructure ({ head, tail }, list) {
+  if (list.length === 0) {
+    throw new PeachError(`Empty lists cannot be destructured because they don't have a head`)
+  }
+
+  const boundHead = unifyOne(head, list[0])
+  if (boundHead !== null) {
+    const boundTail = unifyOne(tail, list.slice(1))
+    if (boundTail) {
+      return Object.assign(boundHead, boundTail)
+    }
+  }
+
   return null
 }
 
@@ -43,12 +66,17 @@ function didMatch (bindings) {
   }
 }
 
+// TODO these belong with type definitions
 function isName ({ type }) {
   return type === 'Name'
 }
 
 function isValue ({ type }) {
   return ['Bool', 'Str', 'Numeral'].includes(type)
+}
+
+function isDestructuredList ({ type }) {
+  return type === 'DestructuredList'
 }
 
 // TODO stdlib
