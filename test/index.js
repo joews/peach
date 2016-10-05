@@ -198,3 +198,12 @@ test(`
   (def b (one-second '(2 2)))
   '(a b)
 `, [true, false])
+
+// mixed regular and destructured arguments
+test(`
+(def first-is
+  (n, (h|_)) => (= n h)
+)
+(def l '(7 8 9))
+'((first-is 7 l) (first-is 8 l))
+`, [true, false])
