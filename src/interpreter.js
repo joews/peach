@@ -2,7 +2,7 @@
 const { makeFunction, applyFunction } = require('./types/function')
 const stdlib = require('./stdlib')
 const { extend, clone } = require('./util')
-const { PeachError } = require('./errors');
+const { PeachError } = require('./errors')
 
 module.exports = function interpret (ast, rootEnv = getRootEnv()) {
   const [result, env] = visitAll(ast, rootEnv)

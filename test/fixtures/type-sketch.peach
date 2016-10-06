@@ -1,0 +1,15 @@
+;; This is a sketch for how type definitions might look. It is not valid peach.
+
+; New `as` keyword. So far we don't have any keywords so this is a big deal
+; We could use a clojure-style keyword
+(def fib :as Number -> Number
+  0 -> 1
+  1 -> 1
+  x -> (+ (fib (- x 1)) (fib (- x 2))))
+
+; Elm-style "header". I don't like re-using `def` (and it needs :as to be unambigous)
+(def fib :as Number -> Number)
+(def fib
+  0 -> 1
+  1 -> 1
+  x -> (+ (fib (- x 1)) (fib (- x 2))))

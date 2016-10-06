@@ -207,3 +207,7 @@ test(`
 (def l '(7 8 9))
 '((first-is 7 l) (first-is 8 l))
 `, [true, false])
+
+
+// proper tail calls
+test(fixture('tail-recursion.peach'), Infinity)

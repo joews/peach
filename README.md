@@ -14,8 +14,10 @@ A cheeky functional language.
 ;; [ 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 ]
 ```
 
-# Syntax sketches
+# Syntax
 S-Expressions! Peach is inspired by Clojure and @bodil's [BODOL](https://github.com/bodil/BODOL), which I learned about from [this awesome talk](https://www.youtube.com/watch?v=DHubfS8E--o).
+
+# Features
 
 ```clojure
 # assignment
@@ -55,6 +57,20 @@ S-Expressions! Peach is inspired by Clojure and @bodil's [BODOL](https://github.
 )
 ```
 
+# proper tail calls
+```
+; The first tail recursive peach program
+; n: the accumulating factorial
+; x: a decrementing iteration count
+;;;; factorial : Number -> Number -> Number
+(def factorial
+  (n, 1) => n
+  (n, x) => (factorial (* n x) (- x 1)))
+
+; sure to overflow with a non-tail call
+(factorial 1 32768) ; Infinity, because JavaScript. Better than a stack overflow!
+```
+
 # Semantics
 Peach favours:
 * Pure functions
@@ -69,13 +85,13 @@ Peach favours:
 * Strict evaluation
 * A JavaScript interpreter
 * REPL
+* Proper tails calls
 
 # Plans
 Coming soon:
 * More stdlib
 * Maps and vectors
 * Lazy sequences
-* Proper tails calls
 
 And then:
 * Interactive debugger
