@@ -17,8 +17,6 @@ A cheeky functional language.
 # Syntax
 S-Expressions! Peach is inspired by Clojure and @bodil's [BODOL](https://github.com/bodil/BODOL), which I learned about from [this awesome talk](https://www.youtube.com/watch?v=DHubfS8E--o).
 
-# Features
-
 ```clojure
 # assignment
 (def x 2) ; 2
@@ -55,10 +53,8 @@ S-Expressions! Peach is inspired by Clojure and @bodil's [BODOL](https://github.
   (1|_) => true
   _  => false
 )
-```
 
-# proper tail calls
-```
+# tail call optimisation
 ; The first tail recursive peach program
 ; n: the accumulating factorial
 ; x: a decrementing iteration count
@@ -67,7 +63,7 @@ S-Expressions! Peach is inspired by Clojure and @bodil's [BODOL](https://github.
   (n, 1) => n
   (n, x) => (factorial (* n x) (- x 1)))
 
-; sure to overflow with a non-tail call
+; sure to overflow with non-tail recursion
 (factorial 1 32768) ; Infinity, because JavaScript. Better than a stack overflow!
 ```
 
@@ -98,14 +94,13 @@ And then:
 * JavaScript interop
 * Compile to readable JavaScript
 * IO
-* Self-hosting
 
 One day:
-* Static typing with something like [Hindley-Milner type inference](https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system)
-* _Maybe_ lazy evaluation
+* A [Hindley-Milner type type system](https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system)
 * Immutable data structures with structural sharing
+* Self-hosting
 
-# Developing
+# Develop
 
 Use Node 6+.
 
