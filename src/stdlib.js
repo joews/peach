@@ -33,6 +33,8 @@ module.exports = {
       list.reduce((e, a) =>
         applyFunction(pFunction, [e, a]), init)),
 
+  cons: makeNativeFunction('cons', (head, tail) => [head, ...tail]),
+
   // strings
   str: makeNativeFunction('str',
     (...args) => args.map(arg => arg.toString()).join(''),
