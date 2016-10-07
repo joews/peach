@@ -82,7 +82,7 @@ if = lp "?" __ clauses:expression_pair_list rp {
   }
 }
 
-name = chars:[a-zA-Z+=*\/\-_<>]+ {
+name = chars:[a-zA-Z+=*%\/\-_<>]+ {
   return {
     type: "Name",
     name: chars.join("")

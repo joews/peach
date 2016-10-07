@@ -25,9 +25,13 @@ module.exports = {
   }),
 
   // lists
-  map: makeNativeFunction('map', (pFunction, list) =>
-    list.map(e => applyFunction(pFunction, [e]))
-  ),
+  map: proxyListFunction('map'),
+  filter: proxyListFunction('filter'),
+  find: proxyListFunction('find'),
+  fold: makeNativeFunction('fold',
+    (pFunction, init, list) =>
+      list.reduce((e, a) =>
+        applyFunction(pFunction, [e, a]), init)),
 
   // strings
   str: makeNativeFunction('str',
@@ -37,6 +41,14 @@ module.exports = {
 
   // utils
   print: makeNativeFunction('print', (...args) => { console.log(...args) }, 1, true)
+}
+
+// Helper fpr creating list functions that call their JavaScript equivalents,
+//  invoking the callback with the first argument only
+function proxyListFunction (peachName, jsName = peachName) {
+  return makeNativeFunction(peachName, (pFunction, list) =>
+    list[jsName](e => applyFunction(pFunction, [e]))
+  )
 }
 
 // Helper for creating arithmetic functions

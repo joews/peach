@@ -208,6 +208,22 @@ test(`
 '((first-is 7 l) (first-is 8 l))
 `, [true, false])
 
-
 // proper tail calls
 test(fixture('tail-recursion.peach'), Infinity)
+
+// list functions
+test(`
+(def my-sum (fold + 0))
+(my-sum '(1 2 3 4))
+`, 10)
+
+test(`
+(def l '(1 2 3 4 5))
+(def is-even x => (= 0 (% x 2)))
+(filter is-even l)
+`, [2, 4])
+
+test(`
+(def l '(1 2 3 4 5))
+(find (x => (> x 2)) l)
+`, 3)
