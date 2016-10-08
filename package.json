@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "node test/index.js && ava test/*-tests.js",
-    "lint": "standard"
+    "lint": "standard",
+    "dist": "mkdir -p dist && browserify -s Peach -t brfs -o dist/peach.js index.js"
   },
   "bin": {
     "peach": "./bin/peach.js"
@@ -30,6 +31,8 @@
   },
   "devDependencies": {
     "ava": "^0.16.0",
+    "brfs": "^1.4.3",
+    "browserify": "^13.1.0",
     "chalkline": "0.0.5",
     "standard": "^8.3.0"
   }
