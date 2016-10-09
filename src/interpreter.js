@@ -10,6 +10,8 @@ module.exports = function interpret (ast, rootEnv = getRootEnv()) {
   return [result, env]
 }
 
+let stack = [];
+
 function getRootEnv () {
   return clone(stdlib)
 }
@@ -22,6 +24,36 @@ function visitAll (nodes, rootEnv) {
   ), [null, rootEnv])
 }
 
+module.exports.debug = function (ast, rootEnv = getRootEnv()) {
+  let i = 0;
+  visit(ast[i], rootEnv);
+  debugger
+
+  function next() {
+    debugger
+    const n = stack.pop();
+    if (n) {
+      // we have a waiting instruction, so execute it and return the result
+      const [result, env] = n()
+      return {
+        result, env, next
+      }
+    } else if (++i < ast.length) {
+      // put the next stop-level line of the program onto the call stack
+      // execute it immediate so we don't need two `next` calls to get the value
+      visit(ast[i], rootEnv);
+      return next();
+    } else {
+      // the program is finished
+      // todo this should keep the last state, just not return null.
+      return { done: true }
+    }
+
+  }
+
+  return next;
+}
+
 function visitUnknown (node) {
   console.log(JSON.stringify(node, null, 2))
   throw new PeachError(`unknown node type: ${node.type}`)
@@ -31,13 +63,16 @@ function visit (node, env) {
   const visitor = visitors[node.type] || visitUnknown
 
   // console.log(`trace: ${node.type} ${node.name || ''}`)
-  return visitor(node, env)
+  // return visitor(node, env)
+  stack.push(() => visitor(node, env));
 }
 
 const visitors = {
   Def ({ name, value }, env) {
+    require("chalkline").magenta();
+    console.log(name)
     if (env.hasOwnProperty(name)) {
-      throw new PeachError(`${name} has already been defined`)
+      throw new Error(`${name} has already been defined`)
     }
 
     // Give the named value an inherent name property
@@ -50,6 +85,7 @@ const visitors = {
     env[name] = result
 
     return [result, env]
+
   },
 
   Name ({ name }, env) {
