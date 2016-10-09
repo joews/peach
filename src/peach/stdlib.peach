@@ -1,0 +1,4 @@
+;; stdlib functions
+;; Assume the presence of only the JS stdlib functions
+(def mapz
+  (fn, (head|tail) => (cons (fn head) (mapz tail))))

@@ -62,7 +62,10 @@ pattern_term_list = lp head:pattern_term tail:(__ p:pattern_term { return p })* 
   return [head, ...tail];
 }
 
-pattern_term = name / literal / destructured_list
+// TODO I guess it makes sense for the syntax to allow any expression here.
+// unify.js can decide at compile time if the passed expression makes sense
+// (most types do, e.g. a function doesn't).
+pattern_term = name / literal / destructured_list / empty_list
 
 destructure_head = name / literal
 destructure_tail = name / destructured_list
@@ -133,15 +136,20 @@ escape_sequence
   // binary
   // the weird whitespace things that nobody uses like \b and \v ?
 
-list = lp values:expression_list rp {
+list = empty_list / non_empty_list
+
+empty_list = lp rp {
+  return {
+    type: "List",
+    values: []
+  }
+}
+
+non_empty_list = lp values:expression_list rp {
   return {
     type: "List",
     values
   }
-}
-
-empty_list = lp rp {
-  return null
 }
 
 quoted = "'" expr:expression {

@@ -9,7 +9,7 @@ const interpret = require('../src/interpreter')
 function test (src, expected) {
   // require("chalkline").green();
   const ast = parse(src)
-  // console.log(JSON.stringify(ast, null, 2));
+  // console.log(JSON.stringify(ast, null, 2))
 
   // require("chalkline").blue();
   // eslint-disable-next-line
@@ -229,3 +229,32 @@ test(`
 `, 3)
 
 test(`(cons 1 '(2 3))`, [1, 2, 3])
+
+// Test peach implementions of stdlib functions
+// TODO tail recursive!
+test(`
+(def peach-map
+  (_, ()) => '()
+  (fn, (head|tail)) => (cons (fn head) (peach-map fn tail)))
+
+(peach-map (+ 1) '(1 2 3 4))
+`, [2, 3, 4, 5])
+
+test(`
+(def peach-filter
+  (_, ()) => '()
+  (fn, (head|tail)) => (?
+    (fn head) (cons head (peach-filter fn tail))
+    true (peach-filter fn tail)))
+
+(peach-filter (x => (>= x 2)) '(1 2 3 4))
+`, [2, 3, 4])
+
+test(`
+(def peach-fold
+  (_, init, ()) => init
+  (fn, init, (head|tail)) =>
+    (peach-fold fn (fn init head) tail))
+
+(peach-fold + 0 '(1 2 3 4))
+`, 10)

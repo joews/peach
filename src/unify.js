@@ -1,4 +1,5 @@
-const PeachError = require('./errors')
+const { PeachError } = require('./errors')
+const { isList, isEqual } = require('./types/list')
 
 module.exports = function unify (patterns, values) {
   if (patterns.length !== values.length) {
@@ -28,6 +29,11 @@ function unifyOne (pattern, value) {
   if (isName(pattern)) {
     // the pattern matched; return a new binding
     return { [pattern.name]: value }
+  }
+
+  // TODO generic value equality
+  if (isList(pattern) && isEqual(pattern.values, value)) {
+    return {}
   }
 
   if (isDestructuredList(pattern)) {
