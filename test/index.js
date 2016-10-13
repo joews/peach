@@ -233,19 +233,25 @@ test(`(cons 1 '(2 3))`, [1, 2, 3])
 // Test peach implementions of stdlib functions
 // TODO tail recursive!
 test(`
+(def _peach-map
+  (_, (), done) => done
+  (fn, (head|tail), done) => (_peach-map fn tail (cons (fn head) done)))
+
 (def peach-map
-  (_, ()) => '()
-  (fn, (head|tail)) => (cons (fn head) (peach-map fn tail)))
+  (fn, list) => (reverse (_peach-map fn list '())))
 
 (peach-map (+ 1) '(1 2 3 4))
 `, [2, 3, 4, 5])
 
 test(`
+(def _peach-filter
+  (_, (), done) => done
+  (fn, (head|tail), done) => (?
+    (fn head) (_peach-filter fn tail (cons head done))
+    true (_peach-filter fn tail done)))
+
 (def peach-filter
-  (_, ()) => '()
-  (fn, (head|tail)) => (?
-    (fn head) (cons head (peach-filter fn tail))
-    true (peach-filter fn tail)))
+  (fn, list) => (reverse (_peach-filter fn list '())))
 
 (peach-filter (x => (>= x 2)) '(1 2 3 4))
 `, [2, 3, 4])
@@ -258,3 +264,4 @@ test(`
 
 (peach-fold + 0 '(1 2 3 4))
 `, 10)
+

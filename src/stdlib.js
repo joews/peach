@@ -28,6 +28,7 @@ module.exports = {
   map: proxyListFunction('map'),
   filter: proxyListFunction('filter'),
   find: proxyListFunction('find'),
+  reverse: makeNativeFunction('reverse', (list) => list.reverse()),
   fold: makeNativeFunction('fold',
     (pFunction, init, list) =>
       list.reduce((e, a) =>
