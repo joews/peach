@@ -4,7 +4,7 @@
   "description": "A tiny functional language",
   "main": "index.js",
   "scripts": {
-    "test": "node test/index.js && ava test/*-tests.js",
+    "test": "jest --testPathPattern '.*tests.js'",
     "lint": "standard",
     "dist": "mkdir -p dist && browserify -s Peach -t brfs -o dist/peach.js index.js"
   },
@@ -30,10 +30,10 @@
     "pegjs": "^0.10.0"
   },
   "devDependencies": {
-    "ava": "^0.16.0",
     "brfs": "^1.4.3",
     "browserify": "^13.1.0",
     "chalkline": "0.0.5",
+    "jest": "^16.0.1",
     "standard": "^8.3.0"
   }
 }

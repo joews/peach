@@ -1,0 +1,347 @@
+exports[`test fibonacci.peach 1`] = `
+Array [
+  Object {
+    "name": "fib",
+    "type": "Def",
+    "value": Object {
+      "clauses": Array [
+        Object {
+          "body": Object {
+            "type": "Numeral",
+            "value": 1,
+          },
+          "pattern": Array [
+            Object {
+              "type": "Numeral",
+              "value": 0,
+            },
+          ],
+        },
+        Object {
+          "body": Object {
+            "type": "Numeral",
+            "value": 1,
+          },
+          "pattern": Array [
+            Object {
+              "type": "Numeral",
+              "value": 1,
+            },
+          ],
+        },
+        Object {
+          "body": Object {
+            "type": "List",
+            "values": Array [
+              Object {
+                "name": "+",
+                "type": "Name",
+              },
+              Object {
+                "type": "List",
+                "values": Array [
+                  Object {
+                    "name": "fib",
+                    "type": "Name",
+                  },
+                  Object {
+                    "type": "List",
+                    "values": Array [
+                      Object {
+                        "name": "-",
+                        "type": "Name",
+                      },
+                      Object {
+                        "name": "x",
+                        "type": "Name",
+                      },
+                      Object {
+                        "type": "Numeral",
+                        "value": 1,
+                      },
+                    ],
+                  },
+                ],
+              },
+              Object {
+                "type": "List",
+                "values": Array [
+                  Object {
+                    "name": "fib",
+                    "type": "Name",
+                  },
+                  Object {
+                    "type": "List",
+                    "values": Array [
+                      Object {
+                        "name": "-",
+                        "type": "Name",
+                      },
+                      Object {
+                        "name": "x",
+                        "type": "Name",
+                      },
+                      Object {
+                        "type": "Numeral",
+                        "value": 2,
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          "pattern": Array [
+            Object {
+              "name": "x",
+              "type": "Name",
+            },
+          ],
+        },
+      ],
+      "type": "Fn",
+    },
+  },
+  Object {
+    "type": "List",
+    "values": Array [
+      Object {
+        "name": "map",
+        "type": "Name",
+      },
+      Object {
+        "name": "fib",
+        "type": "Name",
+      },
+      Object {
+        "isQuoted": true,
+        "type": "List",
+        "values": Array [
+          Object {
+            "type": "Numeral",
+            "value": 0,
+          },
+          Object {
+            "type": "Numeral",
+            "value": 1,
+          },
+          Object {
+            "type": "Numeral",
+            "value": 2,
+          },
+          Object {
+            "type": "Numeral",
+            "value": 3,
+          },
+          Object {
+            "type": "Numeral",
+            "value": 4,
+          },
+          Object {
+            "type": "Numeral",
+            "value": 5,
+          },
+          Object {
+            "type": "Numeral",
+            "value": 6,
+          },
+          Object {
+            "type": "Numeral",
+            "value": 7,
+          },
+          Object {
+            "type": "Numeral",
+            "value": 8,
+          },
+          Object {
+            "type": "Numeral",
+            "value": 9,
+          },
+          Object {
+            "type": "Numeral",
+            "value": 10,
+          },
+        ],
+      },
+    ],
+  },
+]
+`;
+
+exports[`test str.peach 1`] = `
+Array [
+  Object {
+    "isQuoted": true,
+    "type": "List",
+    "values": Array [
+      Object {
+        "type": "Str",
+        "value": "str.peach before escape\\\`and after!",
+      },
+      Object {
+        "type": "Str",
+        "value": "hey 🌟",
+      },
+      Object {
+        "type": "Str",
+        "value": "multi
+      line
+  string",
+      },
+      Object {
+        "type": "Str",
+        "value": "such\\\\\\\\\\\`escape",
+      },
+      Object {
+        "type": "Str",
+        "value": "with	tab",
+      },
+      Object {
+        "type": "Str",
+        "value": "new
+line",
+      },
+      Object {
+        "type": "Str",
+        "value": "back\\slash",
+      },
+      Object {
+        "type": "Str",
+        "value": "back\\\\to\\back",
+      },
+    ],
+  },
+]
+`;
+
+exports[`test tail-recursion.peach 1`] = `
+Array [
+  Object {
+    "name": "factorial",
+    "type": "Def",
+    "value": Object {
+      "clauses": Array [
+        Object {
+          "body": Object {
+            "name": "n",
+            "type": "Name",
+          },
+          "pattern": Array [
+            Object {
+              "name": "n",
+              "type": "Name",
+            },
+            Object {
+              "type": "Numeral",
+              "value": 1,
+            },
+          ],
+        },
+        Object {
+          "body": Object {
+            "type": "List",
+            "values": Array [
+              Object {
+                "name": "factorial",
+                "type": "Name",
+              },
+              Object {
+                "type": "List",
+                "values": Array [
+                  Object {
+                    "name": "*",
+                    "type": "Name",
+                  },
+                  Object {
+                    "name": "n",
+                    "type": "Name",
+                  },
+                  Object {
+                    "name": "x",
+                    "type": "Name",
+                  },
+                ],
+              },
+              Object {
+                "type": "List",
+                "values": Array [
+                  Object {
+                    "name": "-",
+                    "type": "Name",
+                  },
+                  Object {
+                    "name": "x",
+                    "type": "Name",
+                  },
+                  Object {
+                    "type": "Numeral",
+                    "value": 1,
+                  },
+                ],
+              },
+            ],
+          },
+          "pattern": Array [
+            Object {
+              "name": "n",
+              "type": "Name",
+            },
+            Object {
+              "name": "x",
+              "type": "Name",
+            },
+          ],
+        },
+      ],
+      "type": "Fn",
+    },
+  },
+  Object {
+    "name": "f",
+    "type": "Def",
+    "value": Object {
+      "clauses": Array [
+        Object {
+          "body": Object {
+            "type": "List",
+            "values": Array [
+              Object {
+                "name": "factorial",
+                "type": "Name",
+              },
+              Object {
+                "type": "Numeral",
+                "value": 1,
+              },
+              Object {
+                "name": "n",
+                "type": "Name",
+              },
+            ],
+          },
+          "pattern": Array [
+            Object {
+              "name": "n",
+              "type": "Name",
+            },
+          ],
+        },
+      ],
+      "type": "Fn",
+    },
+  },
+  Object {
+    "type": "List",
+    "values": Array [
+      Object {
+        "name": "f",
+        "type": "Name",
+      },
+      Object {
+        "type": "Numeral",
+        "value": 32768,
+      },
+    ],
+  },
+]
+`;

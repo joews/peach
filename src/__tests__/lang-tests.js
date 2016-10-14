@@ -1,120 +1,84 @@
-'use strict'
-const fs = require('fs')
-const path = require('path')
-const assert = require('assert')
+/* eslint-env jest */
+const { testResult, fixture, run } = require('./helpers')
 
-const parse = require('../src/parser')
-const interpret = require('../src/interpreter')
-
-function test (src, expected) {
-  // require("chalkline").green();
-  const ast = parse(src)
-  // console.log(JSON.stringify(ast, null, 2))
-
-  // require("chalkline").blue();
-  // eslint-disable-next-line
-  const [result, env] = interpret(ast)
-
-  // require("chalkline").red();
-  // console.log(env);
-  console.log(result)
-
-  if (expected !== void 0) {
-    assert.deepStrictEqual(result, expected)
-  }
-
-  return result
-}
-
-function fixture (fileName) {
-  const filePath = path.join(__dirname, 'fixtures', fileName)
-  return fs.readFileSync(filePath, 'utf8')
-}
+//
+// e2e tests for the parser and interpreter
+// TODO: assert on a few more tests; organise better
+//
 
 // setting and getting values
-test(`(def x 2) (def y 5) (* (+ x y) x)`, 14)
+testResult(`(def x 2) (def y 5) (* (+ x y) x)`, 14)
 
 // quoted s-expressions
-test(`(def list '(1 2 3))`, [1, 2, 3])
+testResult(`(def list '(1 2 3))`, [1, 2, 3])
 
 // reference error
-try {
-  test(`(y)`)
-} catch (e) {
-  console.log(e.message)
-}
+test('referencing an undefined variable throws an error', () => {
+  expect(() => run(`(y)`)).toThrow()
+})
 
 // calling built-in functions
-test(`(+ 2 3)`, 5)
+testResult(`(+ 2 3)`, 5)
 
 // currying built-in functions
-test(`
+testResult(`
 (def plus-one (+ 1))
 (def all-plus-one (map plus-one))
 (all-plus-one '(9 8 7))
-`)
+`, [10, 9, 8])
 
 // function definition
-test(`
+testResult(`
   (def id (id => id))
   (id 2)
 
   (def double (x => (* x 2)))
   (double 1001)
-`)
+`, 2002)
 
-// // parentheses are optional
-test(`(def f x => 1) (f 0)`)
-test(`(def f (x => 1)) (f 0)`, 1)
-test(`(def f (x) => 1) (f 0)`, 1)
-test(`(def f ((x) => 1)) (f 0)`, 1)
+// parentheses are optional
+testResult(`(def f x => 1) (f 0)`, 1)
+testResult(`(def f (x => 1)) (f 0)`, 1)
+testResult(`(def f (x) => 1) (f 0)`, 1)
+testResult(`(def f ((x) => 1)) (f 0)`, 1)
 
 // functions with no args
-test(`(def f () => 1) (f)`, 1)
+testResult(`(def f () => 1) (f)`, 1)
 
 // if
-test(`
+testResult(`
 (?
   false 3
   true 4
 )
-`)
+`, 4)
 
 // truthiness
-test(`(? false 1)`) // falsy
-test(`(? 0 1)`) // truthy
+testResult(`(? false 1)`, null) // falsy
+testResult(`(? 0 1)`, 1) // truthy
 
 // strings - easier to test without JS String literal escapes
-const strings = test(fixture('str.peach'))
-console.log(strings.join('\n'))
+test('string escapes', () => {
+  run(fixture('str.peach'))
+})
 
 // comments
-test(`
+testResult(`
 ; I heard that commenting code is a good thing
 ;; define x to be 9
 (def x 9)
 # add one to x
 (+ x 2)
 ###### the program is finished ######
-`)
+`, 11)
 
 // commas are whitespace
-test(`'(1, 2,              ,,,,,,,,, 3)`)
+testResult(`'(1, 2,              ,,,,,,,,, 3)`, [1, 2, 3])
 
-// comparisons
-test(`(= 1 1)`, true)
-test(`(= 1 0)`, false)
-test(`(= 0 false)`, false)
-test(`(< 1 0)`, false)
-test(`(> 1 0)`, true)
-test(`(<=> 1 0)`, 1)
-test(`(<=> 1 1)`, 0)
-test(`(<=> 0 1)`, -1)
+// some actual programs
+testResult(fixture('fibonacci.peach'), [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89])
 
-// an actual program!
-test(fixture('fibonacci.peach'), [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89])
-
-test(`
+testResult(`
 (def fac
   1 => 1
   n => (* n (fac (- n 1)))
@@ -125,21 +89,21 @@ test(`
 
 // pattern matching
 // - variants with and without parentheses around clauses and patterns
-test(`
+testResult(`
 (def is-one
   1 => \`one\`
   other => (str \`not one: \` other))
 (is-one 1)
 `, 'one')
 
-test(`
+testResult(`
 (def is-one (
   (1) => \`one\`
   (other) => (str \`not one: \` other)))
 (is-one 2)
 `, 'not one: 2')
 
-test(`
+testResult(`
 (def incr
   n => (incr n 1)
   (n x) => (+ n x))
@@ -149,14 +113,14 @@ test(`
 `, 16)
 
 // currying user functions
-test(`
+testResult(`
 (def add ((x y) => (+ x y)))
 (def add-two (add 2))
 (add-two 5)
 `, 7)
 
 // currying user functions repeatedly
-test(`
+testResult(`
 (def addx ((x y z) => (+ (+ x y) z)))
 (def add-one (addx 1))
 (def add-two (add-one 1))
@@ -165,7 +129,7 @@ test(`
 
 // currying variadic user functions - the shortest pattern is used to
 // decide which clause is used for currying.
-test(`
+testResult(`
 (def f (
   (a b) => \`two\`
   (a b c) => \`three\`))
@@ -175,7 +139,7 @@ test(`
 
 // destructuring lists
 // TODO repeat argument names should be illegal, except _
-test(`
+testResult(`
   (def first (h|t) => h)
   (def second (_|(h|t)) => h)
   (def third (_|(_|(h|t))) => h)
@@ -184,7 +148,7 @@ test(`
 `, [9, 8, 7])
 
 // destructuring with a non-matching head
-test(`
+testResult(`
   (def starts-with-one (1|_) => true _ => false)
   (def a (starts-with-one '(1 2)))
   (def b (starts-with-one '(2 2)))
@@ -192,7 +156,7 @@ test(`
 `, [true, false])
 
 // destructuring with a non-matching tail
-test(`
+testResult(`
   (def one-second (_|(1|_)) => true _ => false)
   (def a (one-second '(1 1)))
   (def b (one-second '(2 2)))
@@ -200,7 +164,7 @@ test(`
 `, [true, false])
 
 // mixed regular and destructured arguments
-test(`
+testResult(`
 (def first-is
   (n, (h|_)) => (= n h)
 )
@@ -209,30 +173,30 @@ test(`
 `, [true, false])
 
 // proper tail calls
-test(fixture('tail-recursion.peach'), Infinity)
+testResult(fixture('tail-recursion.peach'), Infinity)
 
 // list functions
-test(`
+testResult(`
 (def my-sum (fold + 0))
 (my-sum '(1 2 3 4))
 `, 10)
 
-test(`
+testResult(`
 (def l '(1 2 3 4 5))
 (def is-even x => (= 0 (% x 2)))
 (filter is-even l)
 `, [2, 4])
 
-test(`
+testResult(`
 (def l '(1 2 3 4 5))
 (find (x => (> x 2)) l)
 `, 3)
 
-test(`(cons 1 '(2 3))`, [1, 2, 3])
+testResult(`(cons 1 '(2 3))`, [1, 2, 3])
 
 // Test peach implementions of stdlib functions
 // TODO tail recursive!
-test(`
+testResult(`
 (def _peach-map
   (_, (), done) => done
   (fn, (head|tail), done) => (_peach-map fn tail (cons (fn head) done)))
@@ -243,7 +207,7 @@ test(`
 (peach-map (+ 1) '(1 2 3 4))
 `, [2, 3, 4, 5])
 
-test(`
+testResult(`
 (def _peach-filter
   (_, (), done) => done
   (fn, (head|tail), done) => (?
@@ -256,7 +220,7 @@ test(`
 (peach-filter (x => (>= x 2)) '(1 2 3 4))
 `, [2, 3, 4])
 
-test(`
+testResult(`
 (def peach-fold
   (_, init, ()) => init
   (fn, init, (head|tail)) =>
@@ -264,4 +228,3 @@ test(`
 
 (peach-fold + 0 '(1 2 3 4))
 `, 10)
-
