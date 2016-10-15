@@ -139,13 +139,7 @@ testResult(`
 
 // destructuring lists
 // TODO repeat argument names should be illegal, except _
-testResult(`
-  (def first (h|t) => h)
-  (def second (_|(h|t)) => h)
-  (def third (_|(_|(h|t))) => h)
-  (def l '(9 8 7))
-  '((first l), (second l), (third l))
-`, [9, 8, 7])
+testResult(fixture('list-destructure.peach'), [9, 8, 7])
 
 // destructuring with a non-matching head
 testResult(`

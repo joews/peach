@@ -1,0 +1,5 @@
+(def first (h|t) => h)
+(def second (_|(h|t)) => h)
+(def third (_|(_|(h|t))) => h)
+(def l '(9 8 7))
+'((first l), (second l), (third l))
