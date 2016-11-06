@@ -222,3 +222,22 @@ testResult(`
 
 (peach-fold + 0 '(1 2 3 4))
 `, 10)
+
+// nested scopes
+testResult(`
+(def x 1)
+(def y 2)
+(def f (x, y) => (+  x y))
+(+ x y (f 3 4) x y)
+`, 13)
+
+// closure
+testResult(`
+(def x 3)
+(def y 4)
+(def f (a, b) =>
+  () => (+ a b x y)
+)
+((f 5 6))
+
+`, 18)
