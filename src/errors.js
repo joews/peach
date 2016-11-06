@@ -1,9 +1,18 @@
-function PeachError (message) {
-  this.name = 'PeachError'
-  this.message = message
-}
+// with help from http://stackoverflow.com/a/32749533/2806996
+class PeachError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = this.constructor.name
+    this.message = message
 
-PeachError.prototype = new Error()
+    // captureStackTrace available in v8
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor)
+    } else {
+      this.stack = (new Error(message).stack)
+    }
+  }
+}
 
 module.exports = {
   PeachError

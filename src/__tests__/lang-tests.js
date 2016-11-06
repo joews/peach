@@ -1,5 +1,6 @@
 /* eslint-env jest */
 const { testResult, fixture, run } = require('./helpers')
+const { PeachError } = require('../errors')
 
 //
 // e2e tests for the parser and interpreter
@@ -14,7 +15,13 @@ testResult(`(def list '(1 2 3))`, [1, 2, 3])
 
 // reference error
 test('referencing an undefined variable throws an error', () => {
-  expect(() => run(`(y)`)).toThrow()
+  expect(() => run(`(y)`)).toThrow(PeachError)
+})
+
+// syntax error
+// TODO: get this to throw a Peach-specific error
+test('unrecognised syntax throws a SyntaxError', () => {
+  expect(() => run(`$#"`)).toThrow()
 })
 
 // calling built-in functions
