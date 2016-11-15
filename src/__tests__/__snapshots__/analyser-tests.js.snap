@@ -1,0 +1,164 @@
+exports[`test 
+  (def fib
+    0 => 1
+    1 => 1
+    x => ((add (fib ((sub x) 1))) (fib ((sub x) 2))))
+ 1`] = `
+Array [
+  "Number -> Number",
+]
+`;
+
+exports[`test 
+  (def fibc
+    0 => 1
+    1 => 1
+    x => ((add (fibc true)) (fibc ((sub x) 3))))
+ 1`] = `"type mismatch"`;
+
+exports[`test '(1 2 3) 1`] = `
+Array [
+  "List<undefined>",
+]
+`;
+
+exports[`test '(1 2 false) 1`] = `"type mismatch"`;
+
+exports[`test ((addZero 1) 2) 1`] = `
+Array [
+  "Boolean",
+]
+`;
+
+exports[`test ((pair 1) 2) 1`] = `
+Array [
+  "[Number*Number]",
+]
+`;
+
+exports[`test (? 1 1 false 2) 1`] = `"type mismatch"`;
+
+exports[`test (? true 1 false \`two\`) 1`] = `"type mismatch"`;
+
+exports[`test (? true 1 false 2) 1`] = `
+Array [
+  "Number",
+]
+`;
+
+exports[`test (a => 1) 1`] = `
+Array [
+  "A -> Number",
+]
+`;
+
+exports[`test (addZero 1) 1`] = `
+Array [
+  "Number -> Boolean",
+]
+`;
+
+exports[`test (def id x => x) (id 3) (id \`hello\`) 1`] = `
+Array [
+  "C -> C",
+  "Number",
+  "String",
+]
+`;
+
+exports[`test (def x \`arf\`) x 1`] = `
+Array [
+  "String",
+  "String",
+]
+`;
+
+exports[`test (def x 1) (def y true) x y 1`] = `
+Array [
+  "Number",
+  "Boolean",
+  "Number",
+  "Boolean",
+]
+`;
+
+exports[`test (inc 1) 1`] = `
+Array [
+  "Number",
+]
+`;
+
+exports[`test (pair 1) 1`] = `
+Array [
+  "B -> [Number*B]",
+]
+`;
+
+exports[`test (zero 0) 1`] = `
+Array [
+  "Boolean",
+]
+`;
+
+exports[`test \`the\` 1`] = `
+Array [
+  "String",
+]
+`;
+
+exports[`test 0 => 0, 1 => true 1`] = `"type mismatch"`;
+
+exports[`test 0 => 0, true => 1 1`] = `"type mismatch"`;
+
+exports[`test 1 1`] = `
+Array [
+  "Number",
+]
+`;
+
+exports[`test inc 1`] = `
+Array [
+  "Number -> Number",
+]
+`;
+
+exports[`test str.peach 1`] = `
+Array [
+  Array [
+    ListType {
+      "name": "List",
+      "typeArgs": Array [
+        TypeOperator {
+          "name": "String",
+          "typeArgs": Array [],
+        },
+      ],
+    },
+    Object {},
+  ],
+]
+`;
+
+exports[`test true => 1 1`] = `
+Array [
+  "Boolean -> Number",
+]
+`;
+
+exports[`test true 1`] = `
+Array [
+  "Boolean",
+]
+`;
+
+exports[`test true 2`] = `
+Array [
+  "Boolean",
+]
+`;
+
+exports[`test zero 1`] = `
+Array [
+  "Number -> Boolean",
+]
+`;
