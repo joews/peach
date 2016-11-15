@@ -1,3 +1,54 @@
+exports[`test ((true|tail) => 1) 1`] = `
+Array [
+  Object {
+    "clauses": Array [
+      Object {
+        "body": Object {
+          "type": "Numeral",
+          "value": 1,
+        },
+        "pattern": Array [
+          Object {
+            "head": Object {
+              "type": "Bool",
+              "value": true,
+            },
+            "tail": Object {
+              "name": "tail",
+              "type": "Name",
+            },
+            "type": "DestructuredList",
+          },
+        ],
+      },
+    ],
+    "type": "Fn",
+  },
+]
+`;
+
+exports[`test (true => 1) 1`] = `
+Array [
+  Object {
+    "clauses": Array [
+      Object {
+        "body": Object {
+          "type": "Numeral",
+          "value": 1,
+        },
+        "pattern": Array [
+          Object {
+            "type": "Bool",
+            "value": true,
+          },
+        ],
+      },
+    ],
+    "type": "Fn",
+  },
+]
+`;
+
 exports[`test fibonacci.peach 1`] = `
 Array [
   Object {

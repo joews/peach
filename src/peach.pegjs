@@ -65,9 +65,9 @@ pattern_term_list = lp head:pattern_term tail:(__ p:pattern_term { return p })* 
 // TODO I guess it makes sense for the syntax to allow any expression here.
 // unify.js can decide at compile time if the passed expression makes sense
 // (most types do, e.g. a function doesn't).
-pattern_term = name / literal / destructured_list / empty_list
+pattern_term = literal / name / destructured_list / empty_list
 
-destructure_head = name / literal
+destructure_head =  literal / name
 destructure_tail = name / destructured_list
 
 destructured_list = lp head:destructure_head _ "|" tail:destructure_tail _ rp {

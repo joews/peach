@@ -6,12 +6,21 @@ const { fixture } = require('./helpers')
 // snapshot tests for the parser
 //
 
-function testParse (fixtureName) {
+function testFixture (fixtureName) {
   test(fixtureName, () => {
     expect(parse(fixture(fixtureName))).toMatchSnapshot()
   })
 }
 
-testParse('fibonacci.peach')
-testParse('str.peach')
-testParse('tail-recursion.peach')
+function testParse (peachCode) {
+  test(peachCode, () => {
+    expect(parse(peachCode)).toMatchSnapshot()
+  })
+}
+
+testFixture('fibonacci.peach')
+testFixture('str.peach')
+testFixture('tail-recursion.peach')
+
+testParse('(true => 1)')
+testParse('((true|tail) => 1)')
