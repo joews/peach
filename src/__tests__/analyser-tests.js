@@ -56,11 +56,11 @@ testFixture('str.peach')
 // literals
 testAnalyse(`1`)
 testAnalyse(`true`)
-testAnalyse("`the`")
+testAnalyse('`the`')
 
 // def
 testAnalyse(`(def x 1) (def y true) x y`)
-testAnalyse("(def x `arf`) x")
+testAnalyse('(def x `arf`) x')
 
 // lambda
 testAnalyse(`(a => 1)`)
@@ -84,7 +84,9 @@ testFails(`(? true 1 false \`two\`)`)
 testFails(`(? 1 1 false 2)`)
 
 // test with some pre-defined types and symbols
-// use the same types as Rob Smallshire's python implementation for a sanity test
+// run adapted version of Rob Smallshire's python implementation for a sanity test:
+// http://smallshire.org.uk/sufficientlysmall/2010/04/11/a-hindley-milner-type-inference-implementation-in-python/
+// (adapted because Peach doesn't have `let` yet; use `def` and test in the enclosing environment)
 
 // simulate a user-defined type
 class PairType extends TypeOperator {
@@ -155,5 +157,34 @@ testFails(`0 => 0, true => 1`, testEnv())
 // type mismatch in return
 testFails(`0 => 0, 1 => true`, testEnv())
 
-testAnalyse(`true => 1`)
-testAnalyse(`true`)
+// type mismatch in arguments to `x`, because function arguments are non-generic
+testFails(`x => ((pair (x 3)) (x true))`, testEnv())
+
+// polymorphic function call
+testAnalyse(`
+  (def id x => x)
+  ((pair (id 3)) (id true))
+`, testEnv())
+
+// recursive function arguments can't be unified with no further type information
+testFails(`f => (f f)`)
+
+// ...but it's ok when there is more information available
+testAnalyse(`
+  (def g f => 5)
+  (g g)
+`)
+
+// // TODO I can't run this test from Rob Smallshire's implementation
+// yet because function bodies are a single expression and Peach doesn't have
+// `let` yet.
+// generic and non-generic variables
+// testAnalyse(`
+//   (g =>
+//     (def f x => g)
+//     ((pair (f 3)) (f true))
+//   )
+// `, testEnv())
+
+// function composition
+testAnalyse(`f => g => arg => (g (f arg))`)
