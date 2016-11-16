@@ -1,19 +1,37 @@
 const repl = require('repl')
 
 const { version } = require('../package.json')
-const { parse, interpret, PeachError } = require('..')
+const { parse, interpret, typeCheck, PeachError } = require('..')
 
-module.exports = function startRepl (onExit) {
+module.exports = function startRepl (options, onExit) {
   console.log(`🍑  peach v${version}`)
 
   // remember the environment from each command to pass to the next
+  // TODO unify the type check and interpreter environments
   let lastEnv
+  let lastTypeEnv = {}
 
   function evalPeach (src, context, filename, callback) {
     try {
-      const [result, env] = interpret(parse(src), lastEnv)
+      const ast = parse(src)
+
+      // temp optional typecheck until everything is finished; then it becomes mandatory
+      let type
+      if (options['type-check']) {
+        const checked = typeCheck(ast, lastTypeEnv)
+        const lastResult = checked[checked.length - 1]
+        type = lastResult[0]
+        lastTypeEnv = lastResult[1]
+      }
+
+      const [result, env] = interpret(ast, lastEnv)
       lastEnv = env
-      return callback(null, result)
+
+      const typedResult = type
+        ? `${result}: ${type}`
+        : result
+
+      return callback(null, typedResult)
     } catch (e) {
       if (isRecoverableError(e)) {
         return callback(new repl.Recoverable(e))

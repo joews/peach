@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/jwhitfieldseed/peach#readme",
   "dependencies": {
+    "minimist": "^1.2.0",
     "pegjs": "^0.10.0"
   },
   "devDependencies": {

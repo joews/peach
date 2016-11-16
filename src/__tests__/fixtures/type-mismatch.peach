@@ -1,0 +1,5 @@
+(def f
+  # type mismatch: clauses return different types
+  0 => 1
+  false => true
+)
