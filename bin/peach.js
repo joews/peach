@@ -2,9 +2,22 @@
 'use strict'
 const fs = require('fs')
 const path = require('path')
+const parseArgs = require('minimist')
 
-const { parse, interpret } = require('../index.js')
+const { parse, interpret, typeCheck } = require('../index.js')
 const startRepl = require('../src/repl.js')
+
+function readArgs (inputArgs) {
+  const argv = parseArgs(inputArgs, {
+    boolean: ['type-check'],
+    default: {
+      'type-check': false
+    }
+  })
+
+  const inputPath = argv._[0] || null
+  return Object.assign({ inputPath }, argv)
+}
 
 function read (filePath) {
   return fs.readFileSync(filePath, 'utf8')
@@ -12,7 +25,15 @@ function read (filePath) {
 
 function runScript (path) {
   try {
-    interpret(parse(read(path)))
+    const ast = parse(read(path))
+
+    // TODO integrate type checker when it's finished
+    // TODO type checker initial env
+    if (args['type-check']) {
+      typeCheck(ast, {})
+    }
+
+    interpret(ast)
     return 0
   } catch (e) {
     if (/ENOENT/.test(e.message)) {
@@ -25,26 +46,25 @@ function runScript (path) {
   }
 }
 
-function runPath (pathArg, done) {
-  console.log(pathArg)
-  const scriptPath = path.resolve(process.argv[2])
-  const status = runScript(scriptPath)
+function runPath (args, done) {
+  const scriptPath = path.resolve(args.inputPath)
+  const status = runScript(scriptPath, args)
 
   return done(status)
 }
 
-function repl (done) {
-  startRepl(() => done(0))
+function repl (args, done) {
+  startRepl(args, () => done(0))
 }
 
-function run (pathArg, onComplete) {
-  if (pathArg == null) {
-    repl(onComplete)
+function run (args, onComplete) {
+  if (args.inputPath == null) {
+    repl(args, onComplete)
   } else {
-    runPath(pathArg, onComplete)
+    runPath(args, onComplete)
   }
 }
 
-const pathArg = process.argv[2]
-run(pathArg, (status) => process.exit(status))
+const args = readArgs(process.argv.slice(2))
+run(args, (status) => process.exit(status))
 

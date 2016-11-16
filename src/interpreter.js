@@ -14,6 +14,9 @@ function getRootEnv () {
   return clone(stdlib)
 }
 
+// TODO a better way to expose the root environment
+module.exports.getRootEnv = getRootEnv
+
 // Visit each of `nodes` in order, returning the result
 // and environment of the last node.
 function visitAll (nodes, rootEnv) {

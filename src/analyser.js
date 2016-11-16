@@ -1,5 +1,5 @@
 const { create } = require('./util')
-// const { PeachError } = require('./errors')
+const { PeachError } = require('./errors')
 
 module.exports = function analyse (rawAst, rootEnv, nonGeneric = new Set()) {
   return visitAll(rawAst, rootEnv, nonGeneric)
@@ -20,7 +20,7 @@ function visit (node, env, nonGeneric) {
 const visitors = {
   Def (node, env, nonGeneric) {
     if (env.hasOwnProperty(node.name)) {
-      throw new Error(`${node.name} has already been defined`)
+      throw new PeachError(`${node.name} has already been defined`)
     }
 
     // allow for recursive binding by binding ahead of evaluating the child
@@ -45,7 +45,7 @@ const visitors = {
   // identifier
   Name (node, env, nonGeneric) {
     if (!(node.name in env)) {
-      throw new Error(`PEACH ${node.name} is not defined`)
+      throw new PeachError(`${node.name} is not defined`)
     }
 
     const type = fresh(env[node.name], nonGeneric)
@@ -217,7 +217,7 @@ function unify (type1, type2) {
   if (a instanceof TypeVariable) {
     if (a !== b) {
       if (occursInType(a, b)) {
-        throw new Error('recursive unification')
+        throw new PeachError('Type error: recursive unification')
       } else {
         a.instance = b
       }
@@ -226,7 +226,7 @@ function unify (type1, type2) {
     unify(b, a)
   } else if (a instanceof TypeOperator && b instanceof TypeOperator) {
     if (a.name !== b.name || a.typeArgs.length !== b.typeArgs.length) {
-      throw new Error('type mismatch')
+      throw new PeachError('Type error: type mismatch')
     }
 
     a.typeArgs.forEach((argA, i) => {
