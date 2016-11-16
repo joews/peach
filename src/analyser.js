@@ -75,35 +75,42 @@ const visitors = {
     }
   },
 
-  // TODO not tested
   DestructuredList (node, env, nonGeneric) {
-    const { head, tail } = node
+    // FIXME
+    throw new PeachError(`TypeError: Peach can't type destructured arguments yet. Coming soon!`)
 
-    // TODO immutable env
-    if (head.type === 'Name') {
-      env[head.name] = new TypeVariable()
-      nonGeneric.add(env[head.name])
-    }
+    // const { head, tail } = node
 
-    if (tail.type === 'Name') {
-      env[tail.name] = new TypeVariable()
-      nonGeneric.add(env[tail.name])
-    }
+    // // TODO immutable env
+    // if (head.type === 'Name') {
+    //   env[head.name] = new TypeVariable()
+    //   nonGeneric.add(env[head.name])
+    // }
 
-    const [headType] = visit(head, env, nonGeneric)
-    const [tailType] = visit(tail, env, nonGeneric)
+    // if (tail.type === 'Name') {
+    //   env[tail.name] = new TypeVariable()
+    //   nonGeneric.add(env[tail.name])
+    // }
 
-    // head and tail must have the same type
-    // TODO THIS IS WRONG! tailType should be a list<headType>
-    unify(headType, tailType)
+    // const [headType] = visit(head, env, nonGeneric)
+    // const [tailType] = visit(tail, env, nonGeneric)
 
-    return [headType, env]
+    // // head and tail must have the same type
+    // // TODO THIS IS WRONG! tailType should be a list<headType>
+    // unify(headType, tailType)
+
+    // return [headType, env]
   },
 
   Fn (node, parentEnv, outerNonGeneric) {
     const clauses = node.clauses.map((clause) => {
       const nonGeneric = new Set([...outerNonGeneric])
       const env = create(parentEnv)
+
+      // FIXME the type checker doesn't understand >1-ary functions yet
+      if (clause.pattern.length > 1) {
+        throw new PeachError(`TypeError: Peach can't type functions with arity != 1 yet. Coming soon!`)
+      }
 
       // get the array of arg types
       const patternTypes = clause.pattern.map(arg => {
@@ -121,7 +128,7 @@ const visitors = {
 
       const returnType = prune(visit(clause.body, env, nonGeneric)[0])
 
-      // FIXME one arg functions here
+      // FIXME use the single allowed pattern type for now
       return new FunctionType(patternTypes[0], returnType)
     })
 
@@ -131,7 +138,6 @@ const visitors = {
     return [clauses[0], parentEnv]
   },
 
-  // TODO untested
   If (node, env, nonGeneric) {
     const { clauses } = node
     const testTypes = clauses.map(clause => visit(clause[0], env, nonGeneric)[0])
