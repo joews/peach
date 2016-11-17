@@ -320,7 +320,17 @@ class FunctionType extends TypeOperator {
   toString () {
     const argType = this.getArgType()
     const returnType = this.getReturnType()
-    return `${argType || '()'} -> ${returnType}`
+
+    let argString
+    if (argType == null) {
+      argString = '()'
+    } else if (argType instanceof FunctionType || argType.instance instanceof FunctionType) {
+      argString = `(${argType})`
+    } else {
+      argString = argType
+    }
+
+    return `${argString} -> ${returnType}`
   }
 }
 
@@ -338,7 +348,7 @@ class ListType extends TypeOperator {
   }
 
   toString () {
-    return `List<${this.argType}>`
+    return `List<${this.getType()}>`
   }
 }
 
