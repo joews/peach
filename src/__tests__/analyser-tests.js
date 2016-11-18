@@ -190,3 +190,34 @@ testAnalyse(`((1|(2|t)) => t)`)
 testAnalyse(`((x|(y|t)) => '('(x y) t))`)
 testFails(`((1|(true|t)) => t)`)
 testFails(`((h|(true|t)) => '('(h 1) t))`)
+
+// curried function calls
+testAnalyse(`
+  (def list (a, b, c) => '(a b c))
+  (list 1)
+  (list 1 2)
+  (list 1 2 3)
+  ((list 1) 2 3)
+  (list true false true)
+`)
+
+testFails(`
+  (def list (a, b, c) => '(a b c))
+  (list 1 true)
+`)
+
+testAnalyse(`
+  (def f
+    (1 2) => '(9 9)
+    (a b) => '(a b))
+
+  (f 1)
+  (f 1 2)
+  ((f 1) 2)
+  (f 3)
+  (f 3 4)
+  ((f 3) 4)
+`)
+
+// FIXME #6 - extra parens needed to immediately invoke a no-arg function
+testAnalyse('((() => `look ma no args`))')

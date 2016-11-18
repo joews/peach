@@ -65,13 +65,16 @@ const visitors = {
   },
 
   List (node, env, nonGeneric) {
+    const types = node.values.map((value) => visit(value, env, nonGeneric)[0])
+
     if (node.isQuoted) {
-      const types = node.values.map((value) => visit(value, env, nonGeneric)[0])
+      // lists are homogenous: all items must have the same type
       unifyAll(types)
       return [new ListType(types[0]), env]
     } else {
-      const [fn, arg] = node.values
-      return call(fn, arg, env, nonGeneric)
+      // a non-quoted list is a function call
+      const [functionType, ...argTypes] = types
+      return callFunction(functionType, argTypes, env, nonGeneric)
     }
   },
 
@@ -105,14 +108,10 @@ const visitors = {
   },
 
   Fn (node, parentEnv, outerNonGeneric) {
+    // TODO clauses must be exhaustive - functions must accept any input of the right types
     const clauses = node.clauses.map((clause) => {
       const nonGeneric = new Set([...outerNonGeneric])
       const env = create(parentEnv)
-
-      // FIXME the type checker doesn't understand >1-ary functions yet
-      if (clause.pattern.length > 1) {
-        throw new PeachError(`TypeError: Peach can't type functions with arity != 1 yet. Coming soon!`)
-      }
 
       // get the array of arg types
       const patternTypes = clause.pattern.map(arg => {
@@ -129,13 +128,10 @@ const visitors = {
       })
 
       const returnType = prune(visit(clause.body, env, nonGeneric)[0])
-
-      // FIXME use the single allowed pattern type for now
-      return new FunctionType(patternTypes[0], returnType)
+      return makeFunctionType(patternTypes, returnType)
     })
 
     // all clauses must have tbe same type
-    // FIXME not finding a bug here
     unifyAll(clauses)
     return [clauses[0], parentEnv]
   },
@@ -156,14 +152,22 @@ const visitors = {
   }
 }
 
-function call (fn, arg, env, nonGeneric) {
-  const [fnType] = visit(fn, env, nonGeneric)
-  const [argType] = visit(arg, env, nonGeneric)
+// Return a curried function type given a variadic list of argument types and a return type
+function makeFunctionType (argTypes, returnType) {
+  const [firstArgType, ...tailArgTypes] = argTypes
 
+  if (tailArgTypes.length === 0) {
+    return new FunctionType(firstArgType, returnType)
+  } else {
+    return new FunctionType(firstArgType, makeFunctionType(tailArgTypes, returnType))
+  }
+}
+
+function callFunction (functionType, argTypes, env, nonGeneric) {
   const returnType = new TypeVariable()
-  const callFnType = new FunctionType(argType, returnType)
+  const callFunctionType = makeFunctionType(argTypes, returnType)
 
-  unify(callFnType, fnType)
+  unify(callFunctionType, functionType)
   return [returnType, env]
 }
 

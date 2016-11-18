@@ -1,4 +1,27 @@
 exports[`test 
+  (def f
+    (1 2) => '(9 9)
+    (a b) => '(a b))
+
+  (f 1)
+  (f 1 2)
+  ((f 1) 2)
+  (f 3)
+  (f 3 4)
+  ((f 3) 4)
+ 1`] = `
+Array [
+  "Number -> Number -> List<Number>",
+  "Number -> List<Number>",
+  "List<Number>",
+  "List<Number>",
+  "Number -> List<Number>",
+  "List<Number>",
+  "List<Number>",
+]
+`;
+
+exports[`test 
   (def fib
     0 => 1
     1 => 1
@@ -36,6 +59,29 @@ Array [
 ]
 `;
 
+exports[`test 
+  (def list (a, b, c) => '(a b c))
+  (list 1 true)
+ 1`] = `"Type error: type mismatch"`;
+
+exports[`test 
+  (def list (a, b, c) => '(a b c))
+  (list 1)
+  (list 1 2)
+  (list 1 2 3)
+  ((list 1) 2 3)
+  (list true false true)
+ 1`] = `
+Array [
+  "J -> J -> J -> List<J>",
+  "Number -> Number -> List<Number>",
+  "Number -> List<Number>",
+  "List<Number>",
+  "List<Number>",
+  "List<Boolean>",
+]
+`;
+
 exports[`test '(1 2 3) 1`] = `
 Array [
   "List<Number>",
@@ -43,6 +89,12 @@ Array [
 `;
 
 exports[`test '(1 2 false) 1`] = `"Type error: type mismatch"`;
+
+exports[`test ((() => \`look ma no args\`)) 1`] = `
+Array [
+  "String",
+]
+`;
 
 exports[`test ((1|(2|t)) => t) 1`] = `
 Array [
