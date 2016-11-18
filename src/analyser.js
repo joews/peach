@@ -76,30 +76,32 @@ const visitors = {
   },
 
   DestructuredList (node, env, nonGeneric) {
-    // FIXME
-    throw new PeachError(`TypeError: Peach can't type destructured arguments yet. Coming soon!`)
+    const { head, tail } = node
 
-    // const { head, tail } = node
+    const boundHeadType = new TypeVariable()
+    const boundTailType = new ListType(new TypeVariable())
 
-    // // TODO immutable env
-    // if (head.type === 'Name') {
-    //   env[head.name] = new TypeVariable()
-    //   nonGeneric.add(env[head.name])
-    // }
+    // TODO immutable env
+    if (head.type === 'Name') {
+      env[head.name] = boundHeadType
+      nonGeneric.add(env[head.name])
+    }
 
-    // if (tail.type === 'Name') {
-    //   env[tail.name] = new TypeVariable()
-    //   nonGeneric.add(env[tail.name])
-    // }
+    if (tail.type === 'Name') {
+      env[tail.name] = boundTailType
+      nonGeneric.add(env[tail.name])
+    }
 
-    // const [headType] = visit(head, env, nonGeneric)
-    // const [tailType] = visit(tail, env, nonGeneric)
+    const [headType] = visit(head, env, nonGeneric)
+    const [tailType] = visit(tail, env, nonGeneric)
 
-    // // head and tail must have the same type
-    // // TODO THIS IS WRONG! tailType should be a list<headType>
-    // unify(headType, tailType)
+    // the tail must be a list of the head type
+    // the usage types of head and tail must match the declared types
+    unify(boundHeadType, boundTailType.getType())
+    unify(headType, boundHeadType)
+    unify(tailType, boundTailType)
 
-    // return [headType, env]
+    return [tailType, env]
   },
 
   Fn (node, parentEnv, outerNonGeneric) {

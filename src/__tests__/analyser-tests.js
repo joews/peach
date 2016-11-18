@@ -52,7 +52,6 @@ testFixture('str.peach')
 // testFixture('tail-recursion.peach')
 // testFixture('list-destructure.peach')
 
-
 // literals
 testAnalyse(`1`)
 testAnalyse(`true`)
@@ -68,10 +67,6 @@ testAnalyse(`(a => 1)`)
 // list
 testAnalyse(`'(1 2 3)`)
 testFails(`'(1 2 false)`)
-
-// destructured aguments
-// TODO
-// testAnalyse(`(1|list) => list`)
 
 // if
 // * TODO branches must cover all possibilities
@@ -188,3 +183,10 @@ testAnalyse(`
 
 // function composition
 testAnalyse(`f => g => arg => (g (f arg))`)
+
+// destructured aguments
+testAnalyse(`(1|list) => list`)
+testAnalyse(`((1|(2|t)) => t)`)
+testAnalyse(`((x|(y|t)) => '('(x y) t))`)
+testFails(`((1|(true|t)) => t)`)
+testFails(`((h|(true|t)) => '('(h 1) t))`)

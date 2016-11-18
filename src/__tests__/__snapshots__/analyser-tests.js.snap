@@ -44,15 +44,31 @@ Array [
 
 exports[`test '(1 2 false) 1`] = `"Type error: type mismatch"`;
 
+exports[`test ((1|(2|t)) => t) 1`] = `
+Array [
+  "List<Number> -> List<Number>",
+]
+`;
+
+exports[`test ((1|(true|t)) => t) 1`] = `"Type error: type mismatch"`;
+
 exports[`test ((addZero 1) 2) 1`] = `
 Array [
   "Boolean",
 ]
 `;
 
+exports[`test ((h|(true|t)) => '('(h 1) t)) 1`] = `"Type error: type mismatch"`;
+
 exports[`test ((pair 1) 2) 1`] = `
 Array [
   "[Number*Number]",
+]
+`;
+
+exports[`test ((x|(y|t)) => '('(x y) t)) 1`] = `
+Array [
+  "List<I> -> List<List<I>>",
 ]
 `;
 
@@ -63,6 +79,12 @@ exports[`test (? true 1 false \`two\`) 1`] = `"Type error: type mismatch"`;
 exports[`test (? true 1 false 2) 1`] = `
 Array [
   "Number",
+]
+`;
+
+exports[`test (1|list) => list 1`] = `
+Array [
+  "List<Number> -> List<Number>",
 ]
 `;
 
