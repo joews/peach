@@ -1,6 +1,7 @@
 const unify = require('./unify')
 const { create } = require('./util')
 const { PeachError } = require('./errors')
+const { makeFunctionType } = require('./types')
 
 const ANONYMOUS = 'anonymous'
 
@@ -13,7 +14,7 @@ module.exports = {
     const { clauses } = functionNode
     const name = getName(functionNode)
 
-    const [minArity, maxArity] = getArity(functionNode)
+    const arity = getArity(functionNode)
 
     const call = (...args) => {
       for (const { pattern, body } of clauses) {
@@ -50,34 +51,36 @@ module.exports = {
 
     const pFunction = {
       name,
-      minArity,
-      maxArity,
+      arity,
       call,
-      toString,
-      isVariadic: false // no variadic UDFs in peach yet
+      toString
     }
 
     return pFunction
   },
 
+  // TODO WH
+  // > add the type args to the node in a way that gets them into the typechecker's initial env
   // Make a built-in function from a JavaScript function
-  // JavaScript functions have a single arity, so maxArity === minArity.
-  makeNativeFunction (name, jsFunction, minArity = jsFunction.length, isVariadic = false) {
+  makeNativeFunction (name, jsFunction, argTypes, returnType) {
+    const typeFix = makeFunctionType(argTypes, returnType)
+
     return {
       name,
-      minArity,
-      maxArity: minArity,
-      isVariadic,
-      call: jsFunction
+      arity: argTypes.length,
+      call: jsFunction,
+      typeFix,
+      toString: () => `built-in ${name}`
     }
   },
 
   applyFunction (pFunction, args) {
-    if (!pFunction.isVariadic && args.length > pFunction.maxArity) {
-      throw new PeachError(`Function ${pFunction.name} was called with too many arguments. It expected at most ${pFunction.maxArity} arguments, but it was called with ${args.length}: ${JSON.stringify(args)}`)
+    // FIXME the type checker shoould catch this
+    if (args.length > pFunction.arity) {
+      throw new PeachError(`Function ${pFunction.name} was called with too many arguments. It expected ${pFunction.maxArity} arguments, but it was called with ${args.length}: ${JSON.stringify(args)}`)
     }
 
-    return (args.length >= pFunction.minArity)
+    return (args.length >= pFunction.arity)
       ? call(pFunction, args)
       : curry(pFunction, args)
   }
@@ -87,9 +90,9 @@ function getName (node) {
   return node.boundName || ANONYMOUS
 }
 
+// FIXME the type checker should annotate the function node with types and/or arity
 function getArity (node) {
-  const patternLengths = node.clauses.map(clause => clause.pattern.length)
-  return [Math.min(...patternLengths), Math.max(...patternLengths)]
+  return node.clauses[0].pattern.length
 }
 
 // (slow) tail call optimisation with a trampoline function
@@ -108,8 +111,7 @@ function trampoline (fn, args) {
 
 function curry (pFunction, appliedArgs) {
   return Object.assign({}, pFunction, {
-    minArity: pFunction.minArity - appliedArgs.length,
-    maxArity: pFunction.maxArity - appliedArgs.length,
+    arity: pFunction.arity - appliedArgs.length,
     call: pFunction.call.bind(null, ...appliedArgs)
   })
 }

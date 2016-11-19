@@ -10,9 +10,22 @@ const {
   makeFunctionType
 } = require('./types')
 
-module.exports = function analyse (rawAst, rootEnv, nonGeneric = new Set()) {
-  return visitAll(rawAst, rootEnv, nonGeneric)
+module.exports = function analyse (rawAst, typeEnv, nonGeneric = new Set()) {
+  return visitAll(rawAst, typeEnv, nonGeneric)
 }
+
+// Given an environment that maps names to values, return an environment that maps names to types
+// FIXME unify the two types of environment, remove this hack.
+function getTypeEnv (valueEnv) {
+  return Object.keys(valueEnv).reduce((env, name) => {
+    if (valueEnv[name].typeFix) {
+      env[name] = valueEnv[name].typeFix
+    }
+    return env
+  }, {})
+}
+
+module.exports.getTypeEnv = getTypeEnv
 
 // Visit each of `nodes` in order, returning the result
 // and environment of the last node.
@@ -83,6 +96,7 @@ const visitors = {
     } else {
       // a non-quoted list is a function call
       const [functionType, ...argTypes] = types
+
       return callFunction(functionType, argTypes, env, nonGeneric)
     }
   },

@@ -1,70 +1,140 @@
 const { makeNativeFunction, applyFunction } = require('./function')
-const { PeachError } = require('./errors')
+const {
+  TypeVariable,
+  ListType,
+  NumberType,
+  StringType,
+  BooleanType,
+  makeFunctionType
+} = require('./types')
 
 module.exports = {
   // operators
-  '+': op('+', (a, b) => a + b),
-  '-': op('-', (a, b) => a - b),
-  '*': op('*', (a, b) => a * b),
-  '/': op('/', (a, b) => a / b),
-  '%': op('%', (a, b) => a % b),
-  '>': cmp('>', (a, b) => a > b),
-  '>=': cmp('>=', (a, b) => a >= b),
-  '=': cmp('=', (a, b) => a === b),
-  '<': cmp('<', (a, b) => a < b),
-  '<=': cmp('<=', (a, b) => a <= b),
+  '+': numberOp('+', (a, b) => a + b),
+  '-': numberOp('-', (a, b) => a - b),
+  '*': numberOp('*', (a, b) => a * b),
+  '/': numberOp('/', (a, b) => a / b),
+  '%': numberOp('%', (a, b) => a % b),
+  '>': numberOp('>', (a, b) => a > b),
+  '>=': numberOp('>=', (a, b) => a >= b),
+  '=': numberOp('=', (a, b) => a === b),
+  '<': numberOp('<', (a, b) => a < b),
+  '<=': numberOp('<=', (a, b) => a <= b),
 
-  '<=>': makeNativeFunction('<=>', (a, b) => {
+  // TODO more boolean operators
+  '!': makeNativeFunction('!', a => !a, [BooleanType], BooleanType),
+
+  '<=>': numberOp('<=>', (a, b) => {
     if (a > b) return 1
     if (a < b) return -1
-    if (a === b) return 0
-    // I think this can only with NaN <=> NaN in JS. It should be possible
-    // to ignore this case when peach has static types, since we know
-    // that the operands are comparable if they pass the type check.
-    throw new PeachError(`${a} and ${b} are not comparable`)
+    return 0
   }),
 
   // lists
-  map: proxyListFunction('map'),
-  filter: proxyListFunction('filter'),
-  find: proxyListFunction('find'),
-  reverse: makeNativeFunction('reverse', (list) => list.reverse()),
-  fold: makeNativeFunction('fold',
-    (pFunction, init, list) =>
-      list.reduce((e, a) =>
-        applyFunction(pFunction, [e, a]), init)),
+  map: map(),
+  filter: filter(),
+  find: find(),
+  reverse: reverse(),
+  cons: cons(),
+  fold: fold(),
 
-  cons: makeNativeFunction('cons', (head, tail) => [head, ...tail]),
-
-  // strings
-  str: makeNativeFunction('str',
-    (...args) => args.map(arg => arg.toString()).join(''),
-    1, true
-  ),
+  // type conversion
+  str: makeNativeFunction('str', (x) => '' + x, [anyType], StringType),
 
   // utils
-  print: makeNativeFunction('print', (...args) => { console.log(...args) }, 1, true)
+  print: makeNativeFunction('print', (x) => {
+    const str = '' + x
+    console.log(str)
+    return str
+  }, [anyType], StringType)
 }
 
-// Helper fpr creating list functions that call their JavaScript equivalents,
-//  invoking the callback with the first argument only
-function proxyListFunction (peachName, jsName = peachName) {
-  return makeNativeFunction(peachName, (pFunction, list) =>
-    list[jsName](e => applyFunction(pFunction, [e]))
-  )
+// Helper for creating functions with the type:
+// Number -> Number -> Number
+function numberOp (name, fn) {
+  return makeNativeFunction(name, fn, [NumberType, NumberType], NumberType)
 }
 
-// Helper for creating arithmetic functions
-function op (name, fn) {
-  const variadicOp = (...args) => args.reduce(fn)
-  return makeNativeFunction(name, variadicOp, 2, true)
+// Factory for a new type variable
+function anyType () {
+  return new TypeVariable()
 }
 
-// Helper for creating comparison functions
-function cmp (name, fn) {
-  const variadicCmp = (...args) => args.every((arg, i) =>
-    i === 0 || (fn(args[i - 1], args[i]))
-  )
+// Factory for a list that contains items of the given type
+function listType (itemType = anyType()) {
+  return new ListType(itemType)
+}
 
-  return makeNativeFunction(name, variadicCmp, 2, true)
+// Utility
+function proxyArrayMethod (name) {
+  return (pFunction, list) => list[name](e => applyFunction(pFunction, [e]))
+}
+
+//
+// Factories for built-in array functions
+//
+
+// (A -> A) -> List<A> -> List<A>
+function map () {
+  const inputListType = listType()
+  const itemType = inputListType.getType()
+  const returnType = inputListType
+  const iterateeType = makeFunctionType([itemType], itemType)
+  const fn = proxyArrayMethod('map')
+
+  return makeNativeFunction('map', fn, [iterateeType, inputListType], returnType)
+}
+
+// (A -> Boolean) -> List<A> -> List<A>
+function filter () {
+  const inputListType = listType()
+  const itemType = inputListType.getType()
+  const returnType = inputListType
+  const iterateeType = makeFunctionType([itemType], BooleanType)
+  const fn = proxyArrayMethod('filter')
+
+  return makeNativeFunction('filter', fn, [iterateeType, inputListType], returnType)
+}
+
+// TODO Maybe
+// (A -> Boolean) -> List<A> -> A
+function find () {
+  const inputListType = listType()
+  const itemType = inputListType.getType()
+  const returnType = itemType
+  const iterateeType = makeFunctionType([itemType], BooleanType)
+  const fn = proxyArrayMethod('find')
+
+  return makeNativeFunction('find', fn, [iterateeType, inputListType], returnType)
+}
+
+// List<A> -> List<A>
+function reverse () {
+  const inputListType = listType()
+  const returnType = inputListType
+  const fn = (list) => list.reverse()
+
+  return makeNativeFunction('reverse', fn, [inputListType], returnType)
+}
+
+// (A -> B -> B) -> B -> List<A> -> B
+function fold () {
+  const itemType = anyType()
+  const returnType = anyType()
+  const iterateeType = makeFunctionType([itemType, returnType], returnType)
+
+  const fn = (pFunction, init, list) =>
+    list.reduce((e, a) =>
+      applyFunction(pFunction, [e, a]), init)
+
+  return makeNativeFunction('fold', fn, [iterateeType, returnType, listType(itemType)], returnType)
+}
+
+// A -> List<A> -> List<A>
+function cons () {
+  const headType = anyType()
+  const tailType = listType(headType)
+  const fn = (item, list) => [item, ...list]
+
+  return makeNativeFunction('cons', fn, [headType, listType], tailType)
 }

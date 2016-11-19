@@ -85,7 +85,8 @@ if = lp "?" __ clauses:expression_pair_list rp {
   }
 }
 
-name = chars:[a-zA-Z+=*%\/\-_<>]+ {
+// TODO allow digits, except for the first character of a name
+name = chars:[a-zA-Z+=*%\/\-_<>!]+ {
   return {
     type: "Name",
     name: chars.join("")

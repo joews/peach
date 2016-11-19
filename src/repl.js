@@ -6,10 +6,13 @@ const { parse, interpret, typeCheck, PeachError } = require('..')
 module.exports = function startRepl (options, onExit) {
   console.log(`🍑  peach v${version}`)
 
+  const rootEnv = interpret.getRootEnv()
+  const rootTypeEnv = typeCheck.getTypeEnv(rootEnv)
+
   // remember the environment from each command to pass to the next
   // TODO unify the type check and interpreter environments
-  let lastEnv
-  let lastTypeEnv = {}
+  let lastEnv = rootEnv
+  let lastTypeEnv = rootTypeEnv
 
   function evalPeach (src, context, filename, callback) {
     try {
@@ -66,4 +69,5 @@ function getErrorMessage (e) {
 
 function getOutput (value) {
   return value ? value.toString() : value
+  // return JSON.stringify(value)
 }

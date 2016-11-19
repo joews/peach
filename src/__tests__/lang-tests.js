@@ -98,26 +98,10 @@ testResult(`
 // - variants with and without parentheses around clauses and patterns
 testResult(`
 (def is-one
-  1 => \`one\`
-  other => (str \`not one: \` other))
-(is-one 1)
-`, 'one')
-
-testResult(`
-(def is-one (
-  (1) => \`one\`
-  (other) => (str \`not one: \` other)))
-(is-one 2)
-`, 'not one: 2')
-
-testResult(`
-(def incr
-  n => (incr n 1)
-  (n x) => (+ n x))
-(def a (incr 5))  ; 6
-(def b (incr 5 5))  ; 10
-(incr a b)
-`, 16)
+  1 => true
+  (other) => false)
+'((is-one 1), (is-one 2))
+`, [true, false])
 
 // currying user functions
 testResult(`
@@ -133,16 +117,6 @@ testResult(`
 (def add-two (add-one 1))
 (add-two 4)
 `, 6)
-
-// currying variadic user functions - the shortest pattern is used to
-// decide which clause is used for currying.
-testResult(`
-(def f (
-  (a b) => \`two\`
-  (a b c) => \`three\`))
-(def g (f 1))
-'((g 1) (g 1 2) (f 1 2) (f 1 2 4))
-`, ['two', 'three', 'two', 'three'])
 
 // destructuring lists
 // TODO repeat argument names should be illegal, except _
@@ -235,15 +209,15 @@ testResult(`
 (def x 1)
 (def y 2)
 (def f (x, y) => (+  x y))
-(+ x y (f 3 4) x y)
-`, 13)
+(+ x (f 3 4))
+`, 8)
 
 // closure
 testResult(`
 (def x 3)
 (def y 4)
 (def f (a, b) =>
-  () => (+ a b x y)
+  () => (+ (+ a b) (+ x y))
 )
 ((f 5 6))
 
