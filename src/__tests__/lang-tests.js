@@ -60,9 +60,9 @@ testResult(`
 )
 `, 4)
 
-// truthiness
+// tests must be boolean
+// FIXME a conditional must have a branch for every possible input
 testResult(`(? false 1)`, null) // falsy
-testResult(`(? 0 1)`, 1) // truthy
 
 // strings - easier to test without JS String literal escapes
 test('string escapes', () => {

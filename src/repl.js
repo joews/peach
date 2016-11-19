@@ -18,22 +18,14 @@ module.exports = function startRepl (options, onExit) {
     try {
       const ast = parse(src)
 
-      // temp optional typecheck until everything is finished; then it becomes mandatory
-      let type
-      if (options['type-check']) {
-        const checked = typeCheck(ast, lastTypeEnv)
-        const lastResult = checked[checked.length - 1]
-        type = lastResult[0]
-        lastTypeEnv = lastResult[1]
-      }
+      const checked = typeCheck(ast, lastTypeEnv)
+      const [type, typeEnv] = checked[checked.length - 1]
+      lastTypeEnv = typeEnv
 
       const [result, env] = interpret(ast, lastEnv)
       lastEnv = env
 
-      const typedResult = type
-        ? `${result}: ${type}`
-        : result
-
+      const typedResult = `${result}: ${type}`
       return callback(null, typedResult)
     } catch (e) {
       if (isRecoverableError(e)) {

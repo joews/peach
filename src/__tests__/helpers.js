@@ -3,6 +3,7 @@ const fs = require('fs')
 const path = require('path')
 
 const parse = require('../parser')
+const typeCheck = require('../type-checker')
 const interpret = require('../interpreter')
 
 function fixture (fileName) {
@@ -11,7 +12,13 @@ function fixture (fileName) {
 }
 
 function run (program) {
-  return interpret(parse(program))
+  const rootEnv = interpret.getRootEnv()
+  const rootTypeEnv = typeCheck.getTypeEnv(rootEnv)
+
+  const ast = parse(program)
+  typeCheck(ast, rootTypeEnv)
+
+  return interpret(ast, rootEnv)
 }
 
 function testResult (program, expectedOutput) {
@@ -25,4 +32,3 @@ module.exports = {
   run,
   testResult
 }
-

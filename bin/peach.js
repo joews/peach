@@ -8,13 +8,7 @@ const { parse, interpret, typeCheck } = require('../index.js')
 const startRepl = require('../src/repl.js')
 
 function readArgs (inputArgs) {
-  const argv = parseArgs(inputArgs, {
-    boolean: ['type-check'],
-    default: {
-      'type-check': false
-    }
-  })
-
+  const argv = parseArgs(inputArgs)
   const inputPath = argv._[0] || null
   return Object.assign({ inputPath }, argv)
 }
@@ -27,15 +21,11 @@ function runScript (path) {
   try {
     const ast = parse(read(path))
 
+    // TODO unify the type and value environments
     const rootEnv = interpret.getRootEnv()
     const typeEnv = typeCheck.getTypeEnv(rootEnv)
 
-    // TODO integrate type checker when it's finished
-    // TODO unify the type and value environments
-    if (args['type-check']) {
-      typeCheck(ast, typeEnv)
-    }
-
+    typeCheck(ast, typeEnv)
     interpret(ast, rootEnv)
     return 0
   } catch (e) {

@@ -10,25 +10,27 @@ const {
 
 module.exports = {
   // operators
-  '+': numberOp('+', (a, b) => a + b),
-  '-': numberOp('-', (a, b) => a - b),
-  '*': numberOp('*', (a, b) => a * b),
-  '/': numberOp('/', (a, b) => a / b),
-  '%': numberOp('%', (a, b) => a % b),
-  '>': numberOp('>', (a, b) => a > b),
-  '>=': numberOp('>=', (a, b) => a >= b),
-  '=': numberOp('=', (a, b) => a === b),
-  '<': numberOp('<', (a, b) => a < b),
-  '<=': numberOp('<=', (a, b) => a <= b),
+  '+': binaryOp('+', (a, b) => a + b, NumberType, NumberType),
+  '-': binaryOp('-', (a, b) => a - b, NumberType, NumberType),
+  '*': binaryOp('*', (a, b) => a * b, NumberType, NumberType),
+  '/': binaryOp('/', (a, b) => a / b, NumberType, NumberType),
+  '%': binaryOp('%', (a, b) => a % b, NumberType, NumberType),
+
+  // TODO "comparable" type
+  '>': binaryOp('>', (a, b) => a > b, NumberType, BooleanType),
+  '>=': binaryOp('>=', (a, b) => a >= b, NumberType, BooleanType),
+  '<': binaryOp('<', (a, b) => a < b, NumberType, BooleanType),
+  '<=': binaryOp('<=', (a, b) => a <= b, NumberType, BooleanType),
+  '=': binaryOp('=', (a, b) => a === b, anyType(), BooleanType),
 
   // TODO more boolean operators
   '!': makeNativeFunction('!', a => !a, [BooleanType], BooleanType),
 
-  '<=>': numberOp('<=>', (a, b) => {
+  '<=>': binaryOp('<=>', (a, b) => {
     if (a > b) return 1
     if (a < b) return -1
     return 0
-  }),
+  }, NumberType, BooleanType),
 
   // lists
   map: map(),
@@ -49,10 +51,8 @@ module.exports = {
   }, [anyType], StringType)
 }
 
-// Helper for creating functions with the type:
-// Number -> Number -> Number
-function numberOp (name, fn) {
-  return makeNativeFunction(name, fn, [NumberType, NumberType], NumberType)
+function binaryOp (name, fn, argType, returnType) {
+  return makeNativeFunction(name, fn, [argType, argType], returnType)
 }
 
 // Factory for a new type variable

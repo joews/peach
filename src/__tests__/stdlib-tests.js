@@ -6,7 +6,6 @@ const { testResult } = require('./helpers')
 
 testResult(`(= 1 1)`, true)
 testResult(`(= 1 0)`, false)
-testResult(`(= 0 false)`, false)
 testResult(`(< 1 0)`, false)
 testResult(`(> 1 0)`, true)
 testResult(`(<=> 1 0)`, 1)
