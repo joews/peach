@@ -2,7 +2,7 @@
 
 [![Build](https://travis-ci.org/jwhitfieldseed/peach.svg?branch=master)](https://travis-ci.org/jwhitfieldseed/peach)
 
-A cheeky functional language.
+A statically typed functional language.
 
 ```
 (def fib
@@ -68,7 +68,7 @@ S-Expressions! Peach is inspired by Clojure and @bodil's [BODOL](https://github.
 ```
 
 # Semantics
-Peach favours:
+* Static typing (with [Damas-Hindley-Milner type inference](https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system))
 * Pure functions
 * Immutability
 * Minimal syntax
@@ -85,6 +85,7 @@ Peach favours:
 
 # Plans
 Coming soon:
+* Type hint syntax
 * More stdlib
 * Maps and vectors
 * Lazy sequences
@@ -96,7 +97,6 @@ And then:
 * IO
 
 One day:
-* A [Hindley-Milner type type system](https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system)
 * Immutable data structures with structural sharing
 * Self-hosting
 
