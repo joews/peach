@@ -27,13 +27,16 @@ function runScript (path) {
   try {
     const ast = parse(read(path))
 
+    const rootEnv = interpret.getRootEnv()
+    const typeEnv = typeCheck.getTypeEnv(rootEnv)
+
     // TODO integrate type checker when it's finished
-    // TODO type checker initial env
+    // TODO unify the type and value environments
     if (args['type-check']) {
-      typeCheck(ast, {})
+      typeCheck(ast, typeEnv)
     }
 
-    interpret(ast)
+    interpret(ast, rootEnv)
     return 0
   } catch (e) {
     if (/ENOENT/.test(e.message)) {
