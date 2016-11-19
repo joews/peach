@@ -1,6 +1,6 @@
 /* eslint-env jest */
 const parse = require('../parser')
-const analyse = require('../analyser')
+const typeCheck = require('../type-checker')
 const { fixture } = require('./helpers')
 
 // TODO expose the types in a cleaner way
@@ -8,20 +8,18 @@ const {
   TypeVariable,
   TypeOperator,
   FunctionType,
-  ListType,
   NumberType,
-  StringType,
   BooleanType
-} = analyse
+} = require('../types')
 
 //
 // snapshot tests for the parser
 //
 
-function testAnalyse (code, env = {}) {
+function testTypeCheck (code, env = {}) {
   test(code, () => {
     const parsed = parse(code)
-    const analysed = analyse(parsed, env)
+    const analysed = typeCheck(parsed, env)
 
     const types = analysed.map(e => e[0].toString())
 
@@ -32,7 +30,7 @@ function testAnalyse (code, env = {}) {
 function testFails (code, env = {}) {
   test(code, () => {
     const parsed = parse(code)
-    expect(() => analyse(parsed, env)).toThrowErrorMatchingSnapshot()
+    expect(() => typeCheck(parsed, env)).toThrowErrorMatchingSnapshot()
   })
 }
 
@@ -40,7 +38,7 @@ function testFixture (fixtureName) {
   // assert that the no-op analyser makes no changes
   test(fixtureName, () => {
     const parsed = parse(fixture(fixtureName))
-    const analysed = analyse(parsed, {})
+    const analysed = typeCheck(parsed, {})
     expect(analysed).toMatchSnapshot()
   })
 };
@@ -53,24 +51,24 @@ testFixture('str.peach')
 // testFixture('list-destructure.peach')
 
 // literals
-testAnalyse(`1`)
-testAnalyse(`true`)
-testAnalyse('`the`')
+testTypeCheck(`1`)
+testTypeCheck(`true`)
+testTypeCheck('`the`')
 
 // def
-testAnalyse(`(def x 1) (def y true) x y`)
-testAnalyse('(def x `arf`) x')
+testTypeCheck(`(def x 1) (def y true) x y`)
+testTypeCheck('(def x `arf`) x')
 
 // lambda
-testAnalyse(`(a => 1)`)
+testTypeCheck(`(a => 1)`)
 
 // list
-testAnalyse(`'(1 2 3)`)
+testTypeCheck(`'(1 2 3)`)
 testFails(`'(1 2 false)`)
 
 // if
 // * TODO branches must cover all possibilities
-testAnalyse(`(? true 1 false 2)`)
+testTypeCheck(`(? true 1 false 2)`)
 
 // branches evaluate to different types
 testFails(`(? true 1 false \`two\`)`)
@@ -120,18 +118,18 @@ const testEnv = () => ({
   pair: new FunctionType(A, new FunctionType(B, AB))
 })
 
-testAnalyse(`inc`, testEnv())
-testAnalyse(`(inc 1)`, testEnv())
-testAnalyse(`zero`, testEnv())
-testAnalyse(`(zero 0)`, testEnv())
-testAnalyse(`(addZero 1)`, testEnv())
-testAnalyse(`((addZero 1) 2)`, testEnv())
+testTypeCheck(`inc`, testEnv())
+testTypeCheck(`(inc 1)`, testEnv())
+testTypeCheck(`zero`, testEnv())
+testTypeCheck(`(zero 0)`, testEnv())
+testTypeCheck(`(addZero 1)`, testEnv())
+testTypeCheck(`((addZero 1) 2)`, testEnv())
 
-testAnalyse(`(pair 1)`, testEnv())
-testAnalyse(`((pair 1) 2)`, testEnv())
-testAnalyse(`(def id x => x) (id 3) (id \`hello\`)`, testEnv())
+testTypeCheck(`(pair 1)`, testEnv())
+testTypeCheck(`((pair 1) 2)`, testEnv())
+testTypeCheck(`(def id x => x) (id 3) (id \`hello\`)`, testEnv())
 
-testAnalyse(`
+testTypeCheck(`
   (def fib
     0 => 1
     1 => 1
@@ -156,7 +154,7 @@ testFails(`0 => 0, 1 => true`, testEnv())
 testFails(`x => ((pair (x 3)) (x true))`, testEnv())
 
 // polymorphic function call
-testAnalyse(`
+testTypeCheck(`
   (def id x => x)
   ((pair (id 3)) (id true))
 `, testEnv())
@@ -165,7 +163,7 @@ testAnalyse(`
 testFails(`f => (f f)`)
 
 // ...but it's ok when there is more information available
-testAnalyse(`
+testTypeCheck(`
   (def g f => 5)
   (g g)
 `)
@@ -174,7 +172,7 @@ testAnalyse(`
 // yet because function bodies are a single expression and Peach doesn't have
 // `let` yet.
 // generic and non-generic variables
-// testAnalyse(`
+// testTypeCheck(`
 //   (g =>
 //     (def f x => g)
 //     ((pair (f 3)) (f true))
@@ -182,17 +180,17 @@ testAnalyse(`
 // `, testEnv())
 
 // function composition
-testAnalyse(`f => g => arg => (g (f arg))`)
+testTypeCheck(`f => g => arg => (g (f arg))`)
 
 // destructured aguments
-testAnalyse(`(1|list) => list`)
-testAnalyse(`((1|(2|t)) => t)`)
-testAnalyse(`((x|(y|t)) => '('(x y) t))`)
+testTypeCheck(`(1|list) => list`)
+testTypeCheck(`((1|(2|t)) => t)`)
+testTypeCheck(`((x|(y|t)) => '('(x y) t))`)
 testFails(`((1|(true|t)) => t)`)
 testFails(`((h|(true|t)) => '('(h 1) t))`)
 
 // curried function calls
-testAnalyse(`
+testTypeCheck(`
   (def list (a, b, c) => '(a b c))
   (list 1)
   (list 1 2)
@@ -206,7 +204,7 @@ testFails(`
   (list 1 true)
 `)
 
-testAnalyse(`
+testTypeCheck(`
   (def f
     (1 2) => '(9 9)
     (a b) => '(a b))
@@ -220,4 +218,4 @@ testAnalyse(`
 `)
 
 // FIXME #6 - extra parens needed to immediately invoke a no-arg function
-testAnalyse('((() => `look ma no args`))')
+testTypeCheck('((() => `look ma no args`))')

@@ -1,5 +1,5 @@
 'use strict'
-const { makeFunction, applyFunction } = require('./types/function')
+const { makeFunction, applyFunction } = require('./function')
 const stdlib = require('./stdlib')
 const { extend, clone } = require('./util')
 const { PeachError } = require('./errors')

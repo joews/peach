@@ -1,5 +1,5 @@
 const { PeachError } = require('./errors')
-const { isList, isEqual } = require('./types/list')
+const { isList, isEqual } = require('./list')
 
 module.exports = function unify (patterns, values) {
   if (patterns.length !== values.length) {

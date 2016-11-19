@@ -1,4 +1,4 @@
-const { makeNativeFunction, applyFunction } = require('./types/function')
+const { makeNativeFunction, applyFunction } = require('./function')
 const { PeachError } = require('./errors')
 
 module.exports = {

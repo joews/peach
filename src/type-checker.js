@@ -1,5 +1,14 @@
 const { create } = require('./util')
 const { PeachError } = require('./errors')
+const {
+  TypeVariable,
+  TypeOperator,
+  ListType,
+  NumberType,
+  StringType,
+  BooleanType,
+  makeFunctionType
+} = require('./types')
 
 module.exports = function analyse (rawAst, rootEnv, nonGeneric = new Set()) {
   return visitAll(rawAst, rootEnv, nonGeneric)
@@ -152,17 +161,6 @@ const visitors = {
   }
 }
 
-// Return a curried function type given a variadic list of argument types and a return type
-function makeFunctionType (argTypes, returnType) {
-  const [firstArgType, ...tailArgTypes] = argTypes
-
-  if (tailArgTypes.length === 0) {
-    return new FunctionType(firstArgType, returnType)
-  } else {
-    return new FunctionType(firstArgType, makeFunctionType(tailArgTypes, returnType))
-  }
-}
-
 function callFunction (functionType, argTypes, env, nonGeneric) {
   const returnType = new TypeVariable()
   const callFunctionType = makeFunctionType(argTypes, returnType)
@@ -278,115 +276,3 @@ function occursInType (typeVar, type) {
 
   return false
 }
-
-// I don't really like classes but they are a good fit here (factory + intanceof bundled)
-
-class TypeOperator {
-  constructor (name, typeArgs = []) {
-    this.name = name
-    this.typeArgs = typeArgs
-  }
-
-  // polymorphic factory
-  static of (name, typeArgs) {
-    return new TypeOperator(name, typeArgs)
-  }
-
-  toString () {
-    return this.name
-  }
-}
-
-const NumberType = new TypeOperator('Number')
-const StringType = new TypeOperator('String')
-const BooleanType = new TypeOperator('Boolean')
-
-class FunctionType extends TypeOperator {
-  constructor (argType, returnType) {
-    super('->', [argType, returnType])
-  }
-
-  static of (name, types) {
-    const [argType, returnType] = types
-    return new FunctionType(argType, returnType)
-  }
-
-  // getArgTypes () {
-  //   return this.typeArgs.slice(0, -1)
-  // }
-
-  getArgType () {
-    return this.typeArgs[0]
-  }
-
-  getReturnType () {
-    return this.typeArgs[1]
-  }
-
-  toString () {
-    const argType = this.getArgType()
-    const returnType = this.getReturnType()
-
-    let argString
-    if (argType == null) {
-      argString = '()'
-    } else if (argType instanceof FunctionType || argType.instance instanceof FunctionType) {
-      argString = `(${argType})`
-    } else {
-      argString = argType
-    }
-
-    return `${argString} -> ${returnType}`
-  }
-}
-
-class ListType extends TypeOperator {
-  constructor (argType) {
-    super('List', [argType])
-  }
-
-  static of (name, types) {
-    return new ListType(types[0])
-  }
-
-  getType () {
-    return this.typeArgs[0]
-  }
-
-  toString () {
-    return `List<${this.getType()}>`
-  }
-}
-
-class TypeVariable {
-  constructor () {
-    this.id = TypeVariable.nextId ++
-    this.name = null
-  }
-
-  toString () {
-    if (this.instance) {
-      return this.instance.toString()
-    } else {
-      if (!this.name) {
-        this.name = String.fromCharCode(TypeVariable.nextName ++)
-      }
-
-      return this.name
-    }
-  }
-}
-
-TypeVariable.nextId = 0
-TypeVariable.nextName = 65
-
-// TODO
-Object.assign(module.exports, {
-  TypeVariable,
-  TypeOperator,
-  FunctionType,
-  ListType,
-  NumberType,
-  StringType,
-  BooleanType
-})

@@ -1,6 +1,6 @@
-const unify = require('../unify')
-const { create } = require('../util')
-const { PeachError } = require('../errors')
+const unify = require('./unify')
+const { create } = require('./util')
+const { PeachError } = require('./errors')
 
 const ANONYMOUS = 'anonymous'
 
