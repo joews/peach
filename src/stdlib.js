@@ -44,11 +44,7 @@ module.exports = {
   str: makeNativeFunction('str', (x) => '' + x, [anyType], StringType),
 
   // utils
-  print: makeNativeFunction('print', (x) => {
-    const str = '' + x
-    console.log(str)
-    return str
-  }, [anyType], StringType)
+  print: makeNativeFunction('print', (x) => '' + x, [anyType], StringType)
 }
 
 function binaryOp (name, fn, argType, returnType) {

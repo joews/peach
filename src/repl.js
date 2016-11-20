@@ -19,13 +19,13 @@ module.exports = function startRepl (options, onExit) {
       const ast = parse(src)
 
       const checked = typeCheck(ast, lastTypeEnv)
-      const [type, typeEnv] = checked[checked.length - 1]
+      const [typed, typeEnv] = checked[checked.length - 1]
       lastTypeEnv = typeEnv
 
       const [result, env] = interpret(ast, lastEnv)
       lastEnv = env
 
-      const typedResult = `${result}: ${type}`
+      const typedResult = `${result}: ${typed.exprType}`
       return callback(null, typedResult)
     } catch (e) {
       if (isRecoverableError(e)) {

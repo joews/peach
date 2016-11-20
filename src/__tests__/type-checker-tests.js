@@ -2,8 +2,8 @@
 const parse = require('../parser')
 const typeCheck = require('../type-checker')
 const { fixture } = require('./helpers')
+const { clone } = require('../util')
 
-// TODO expose the types in a cleaner way
 const {
   TypeVariable,
   TypeOperator,
@@ -12,43 +12,45 @@ const {
   BooleanType
 } = require('../types')
 
+// TODO unify envs
+const rootEnv = require('../interpreter').getRootEnv()
+const defaultEnv = () => clone(typeCheck.getTypeEnv(rootEnv))
+
 //
 // snapshot tests for the parser
 //
 
-function testTypeCheck (code, env = {}) {
+function testTypeCheck (code, env = defaultEnv()) {
   test(code, () => {
     const parsed = parse(code)
     const analysed = typeCheck(parsed, env)
 
-    const types = analysed.map(e => e[0].toString())
-
+    const types = analysed.map(e => e[0].exprType.toString())
     expect(types).toMatchSnapshot()
   })
 };
 
-function testFails (code, env = {}) {
+function testFails (code, env = defaultEnv()) {
   test(code, () => {
     const parsed = parse(code)
     expect(() => typeCheck(parsed, env)).toThrowErrorMatchingSnapshot()
   })
 }
 
-function testFixture (fixtureName) {
+function testFixture (fixtureName, env = defaultEnv()) {
   // assert that the no-op analyser makes no changes
   test(fixtureName, () => {
     const parsed = parse(fixture(fixtureName))
-    const analysed = typeCheck(parsed, {})
-    expect(analysed).toMatchSnapshot()
+    const analysed = typeCheck(parsed, env)
+    expect(analysed.map(e => e[0].exprType.toString())).toMatchSnapshot()
   })
 };
 
-// TODO type built-in functions so we can test fixtures
-// testFixture('fibonacci.peach')
-// testFixture('function.peach')
+testFixture('fibonacci.peach')
+testFixture('function.peach')
 testFixture('str.peach')
-// testFixture('tail-recursion.peach')
-// testFixture('list-destructure.peach')
+testFixture('tail-recursion.peach')
+testFixture('list-destructure.peach')
 
 // literals
 testTypeCheck(`1`)
@@ -81,6 +83,14 @@ testFails(`(? 1 1 false 2)`)
 // http://smallshire.org.uk/sufficientlysmall/2010/04/11/a-hindley-milner-type-inference-implementation-in-python/
 // (adapted because Peach doesn't have `let` yet; use `def` and test in the enclosing environment)
 
+// the peach type checker works over nodes with an `exprType` property.
+// helper for creating nodes for synthetic type tests
+function typed (type) {
+  return {
+    exprType: type
+  }
+}
+
 // simulate a user-defined type
 class PairType extends TypeOperator {
   constructor (a, b) {
@@ -96,30 +106,31 @@ class PairType extends TypeOperator {
   }
 }
 
-const A = new TypeVariable()
-const B = new TypeVariable()
-const AB = new PairType(A, B)
+const A = typed(new TypeVariable())
+const B = typed(new TypeVariable())
+const AB = typed(new PairType(A, B))
 
 const testEnv = () => ({
   // No unit type yet, so all functions take exactly one argument
   // Number -> Number
-  inc: new FunctionType(NumberType, NumberType),
+  inc: typed(new FunctionType(NumberType, NumberType)),
 
-  // Number -> Boolean
-  zero: new FunctionType(NumberType, BooleanType),
+  // // Number -> Boolean
+  zero: typed(new FunctionType(NumberType, BooleanType)),
 
-  add: new FunctionType(NumberType, new FunctionType(NumberType, NumberType)),
-  sub: new FunctionType(NumberType, new FunctionType(NumberType, NumberType)),
+  add: typed(new FunctionType(typed(NumberType), typed(new FunctionType(typed(NumberType), typed(NumberType))))),
+  sub: typed(new FunctionType(typed(NumberType), typed(new FunctionType(typed(NumberType), typed(NumberType))))),
 
   // Number -> Number -> Boolean
-  addZero: new FunctionType(NumberType, new FunctionType(NumberType, BooleanType)),
+  addZero: typed(new FunctionType(typed(NumberType), typed(new FunctionType(typed(NumberType), typed(BooleanType))))),
 
   // A -> B -> A*B
-  pair: new FunctionType(A, new FunctionType(B, AB))
+  pair: typed(new FunctionType(A, typed(new FunctionType(B, AB))))
 })
 
-testTypeCheck(`inc`, testEnv())
+// testTypeCheck(`inc`, testEnv())
 testTypeCheck(`(inc 1)`, testEnv())
+
 testTypeCheck(`zero`, testEnv())
 testTypeCheck(`(zero 0)`, testEnv())
 testTypeCheck(`(addZero 1)`, testEnv())

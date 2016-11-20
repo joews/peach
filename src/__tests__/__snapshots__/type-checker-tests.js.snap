@@ -44,7 +44,7 @@ exports[`test
   (g g)
  1`] = `
 Array [
-  "E -> Number",
+  "M -> Number",
   "Number",
 ]
 `;
@@ -54,8 +54,8 @@ exports[`test
   ((pair (id 3)) (id true))
  1`] = `
 Array [
-  "D -> D",
-  "[Number*Boolean]",
+  "K -> K",
+  "L",
 ]
 `;
 
@@ -73,7 +73,7 @@ exports[`test
   (list true false true)
  1`] = `
 Array [
-  "J -> J -> J -> List<J>",
+  "R -> R -> R -> List<R>",
   "Number -> Number -> List<Number>",
   "Number -> List<Number>",
   "List<Number>",
@@ -106,7 +106,7 @@ exports[`test ((1|(true|t)) => t) 1`] = `"Type error: type mismatch"`;
 
 exports[`test ((addZero 1) 2) 1`] = `
 Array [
-  "Boolean",
+  "G",
 ]
 `;
 
@@ -114,13 +114,13 @@ exports[`test ((h|(true|t)) => '('(h 1) t)) 1`] = `"Type error: type mismatch"`;
 
 exports[`test ((pair 1) 2) 1`] = `
 Array [
-  "[Number*Number]",
+  "I",
 ]
 `;
 
 exports[`test ((x|(y|t)) => '('(x y) t)) 1`] = `
 Array [
-  "List<I> -> List<List<I>>",
+  "List<Q> -> List<List<Q>>",
 ]
 `;
 
@@ -142,19 +142,19 @@ Array [
 
 exports[`test (a => 1) 1`] = `
 Array [
-  "A -> Number",
+  "E -> Number",
 ]
 `;
 
 exports[`test (addZero 1) 1`] = `
 Array [
-  "Number -> Boolean",
+  "F",
 ]
 `;
 
 exports[`test (def id x => x) (id 3) (id \`hello\`) 1`] = `
 Array [
-  "C -> C",
+  "J -> J",
   "Number",
   "String",
 ]
@@ -184,7 +184,7 @@ Array [
 
 exports[`test (pair 1) 1`] = `
 Array [
-  "B -> [Number*B]",
+  "H",
 ]
 `;
 
@@ -214,30 +214,44 @@ exports[`test f => (f f) 1`] = `"Type error: recursive unification"`;
 
 exports[`test f => g => arg => (g (f arg)) 1`] = `
 Array [
-  "(F -> G) -> (G -> H) -> F -> H",
+  "(N -> O) -> (O -> P) -> N -> P",
 ]
 `;
 
-exports[`test inc 1`] = `
+exports[`test fibonacci.peach 1`] = `
 Array [
   "Number -> Number",
+  "List<Number>",
+]
+`;
+
+exports[`test function.peach 1`] = `
+Array [
+  "A -> A",
+]
+`;
+
+exports[`test list-destructure.peach 1`] = `
+Array [
+  "List<B> -> B",
+  "List<C> -> C",
+  "List<D> -> D",
+  "List<Number>",
+  "List<Number>",
 ]
 `;
 
 exports[`test str.peach 1`] = `
 Array [
-  Array [
-    ListType {
-      "name": "List",
-      "typeArgs": Array [
-        TypeOperator {
-          "name": "String",
-          "typeArgs": Array [],
-        },
-      ],
-    },
-    Object {},
-  ],
+  "List<String>",
+]
+`;
+
+exports[`test tail-recursion.peach 1`] = `
+Array [
+  "Number -> Number -> Number",
+  "Number -> Number",
+  "Number",
 ]
 `;
 
