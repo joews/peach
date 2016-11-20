@@ -1,4 +1,4 @@
-const { create } = require('./util')
+const { create, extend } = require('./util')
 const { PeachError } = require('./errors')
 const {
   TypeVariable,
@@ -19,7 +19,7 @@ module.exports = function analyse (rawAst, typeEnv, nonGeneric = new Set()) {
 function getTypeEnv (valueEnv) {
   return Object.keys(valueEnv).reduce((env, name) => {
     if (valueEnv[name].typeFix) {
-      env[name] = valueEnv[name].typeFix
+      env[name] = typed(valueEnv[name], valueEnv[name].typeFix)
     }
     return env
   }, {})
@@ -29,6 +29,7 @@ module.exports.getTypeEnv = getTypeEnv
 
 // Visit each of `nodes` in order, returning the result
 // and environment of the last node.
+// returns [typedNode, env]
 function visitAll (nodes, env, nonGeneric) {
   return nodes.map(node => visit(node, env, nonGeneric))
 }
@@ -49,19 +50,18 @@ const visitors = {
     // analogous to Lisp's letrec, but in the enclosing scope.
     // TODO immutable env
     const t = new TypeVariable()
-    env[node.name] = t
+    env[node.name] = typed(node, t)
 
     // if we are defining a function, mark the new identifier as
-    //  non-generic inside the evaluation of the body. This is important
-    //  for typechecking recursion.
+    //  non-generic inside the evaluation of the body.
     const innerNonGeneric = (node.value.type === 'Fn')
       ? new Set([...nonGeneric, t])
       : nonGeneric
 
-    const [type] = visit(node.value, env, innerNonGeneric)
-    unify(type, t)
+    const [typedNode] = visit(node.value, env, innerNonGeneric)
+    unify(typeOf(typedNode), t)
 
-    return [type, env]
+    return [typedNode, env]
   },
 
   // identifier
@@ -70,34 +70,44 @@ const visitors = {
       throw new PeachError(`${node.name} is not defined`)
     }
 
-    const type = fresh(env[node.name], nonGeneric)
-    return [type, env]
+    const envType = typeOf(env[node.name])
+    const freshType = fresh(envType, nonGeneric)
+
+    return [typed(node, freshType), env]
   },
 
   Numeral (node, env) {
-    return [NumberType, env]
+    return [typed(node, NumberType), env]
   },
 
   Bool (node, env) {
-    return [BooleanType, env]
+    return [typed(node, BooleanType), env]
   },
 
   Str (node, env) {
-    return [StringType, env]
+    return [typed(node, StringType), env]
   },
 
   List (node, env, nonGeneric) {
-    const types = node.values.map((value) => visit(value, env, nonGeneric)[0])
+    const typedValues = node.values.map((value) => visit(value, env, nonGeneric)[0])
 
-    if (node.isQuoted) {
+    // FIXME the syntax for an empty list in arguments is (), unquoted. This is confusing.
+    // TODO find out the interpreter doesn't have this issue. Because it deals with destructuring
+    //  weirdly, I guess. TODO make the code path cleaner - is an empty list like this really
+    // a DestructuredList? I think so.
+    if (node.isQuoted || typedValues.length === 0) {
       // lists are homogenous: all items must have the same type
+      const types = typedValues.map(value => value.exprType)
       unifyAll(types)
-      return [new ListType(types[0]), env]
+
+      const listType = new ListType(types[0])
+      return [typed(node, listType), env]
     } else {
       // a non-quoted list is a function call
-      const [functionType, ...argTypes] = types
+      const [fn, ...args] = typedValues
+      const returnType = callFunction(fn, args)
 
-      return callFunction(functionType, argTypes, env, nonGeneric)
+      return [typed(node, returnType), env]
     }
   },
 
@@ -109,17 +119,20 @@ const visitors = {
 
     // TODO immutable env
     if (head.type === 'Name') {
-      env[head.name] = boundHeadType
-      nonGeneric.add(env[head.name])
+      env[head.name] = typed(head, boundHeadType)
+      nonGeneric.add(boundHeadType)
     }
 
     if (tail.type === 'Name') {
-      env[tail.name] = boundTailType
-      nonGeneric.add(env[tail.name])
+      env[tail.name] = typed(tail, boundTailType)
+      nonGeneric.add(boundTailType)
     }
 
-    const [headType] = visit(head, env, nonGeneric)
-    const [tailType] = visit(tail, env, nonGeneric)
+    const [typedHead] = visit(head, env, nonGeneric)
+    const [typedTail] = visit(tail, env, nonGeneric)
+
+    const headType = typeOf(typedHead)
+    const tailType = typeOf(typedTail)
 
     // the tail must be a list of the head type
     // the usage types of head and tail must match the declared types
@@ -127,42 +140,53 @@ const visitors = {
     unify(headType, boundHeadType)
     unify(tailType, boundTailType)
 
-    return [tailType, env]
+    return [typed(node, tailType), env]
   },
 
   Fn (node, parentEnv, outerNonGeneric) {
     // TODO clauses must be exhaustive - functions must accept any input of the right types
-    const clauses = node.clauses.map((clause) => {
+    const clauses = node.clauses.map((clauseNode) => {
       const nonGeneric = new Set([...outerNonGeneric])
       const env = create(parentEnv)
 
       // get the array of arg types
-      const patternTypes = clause.pattern.map(arg => {
+      const patternTypes = clauseNode.pattern.map(argNode => {
         // If this is a `Name` arg, define it in the function's arguments environment.
         // if it's a destructured list we need to recursively define any named children,
         // so visiting the node will define its names.
-        if (arg.type === 'Name') {
+        if (argNode.type === 'Name') {
           const argType = new TypeVariable()
-          env[arg.name] = argType
+          env[argNode.name] = typed(argNode, argType)
           nonGeneric.add(argType)
         }
 
-        return visit(arg, env, nonGeneric)[0]
+        const [typedArgNode] = visit(argNode, env, nonGeneric)
+        return typeOf(typedArgNode)
       })
 
-      const returnType = prune(visit(clause.body, env, nonGeneric)[0])
-      return makeFunctionType(patternTypes, returnType)
+      const [bodyNode] = visit(clauseNode.body, env, nonGeneric)
+      const returnType = prune(typeOf(bodyNode))
+
+      const clauseType = makeFunctionType(patternTypes, returnType)
+      return typed(clauseNode, clauseType)
     })
 
     // all clauses must have tbe same type
-    unifyAll(clauses)
-    return [clauses[0], parentEnv]
+    unifyAll(typesOf(clauses))
+    return [typed(node, typeOf(clauses[0])), parentEnv]
   },
 
   If (node, env, nonGeneric) {
     const { clauses } = node
-    const testTypes = clauses.map(clause => visit(clause[0], env, nonGeneric)[0])
-    const branchTypes = clauses.map(clause => visit(clause[1], env, nonGeneric)[0])
+    const testTypes = clauses.map(([test]) => {
+      const [typed] = visit(test, env, nonGeneric)
+      return typeOf(typed)
+    })
+
+    const branchTypes = clauses.map(([, branch]) => {
+      const [typed] = visit(branch, env, nonGeneric)
+      return typeOf(typed)
+    })
 
     // every test must be a boolean
     unifyAll([BooleanType, ...testTypes])
@@ -171,16 +195,30 @@ const visitors = {
     unifyAll(branchTypes)
 
     // if we succeeded, the we can use the type of any branch as the type of the if expression
-    return [branchTypes[0], env]
+    return [typed(node, branchTypes[0]), env]
   }
 }
 
-function callFunction (functionType, argTypes, env, nonGeneric) {
-  const returnType = new TypeVariable()
-  const callFunctionType = makeFunctionType(argTypes, returnType)
+function typed (node, type) {
+  return extend(node, { exprType: type })
+}
 
-  unify(callFunctionType, functionType)
-  return [returnType, env]
+function typeOf (node) {
+  return node.exprType
+}
+
+// return an array of types for the given array of typed nodes
+function typesOf (typedNodes) {
+  return typedNodes.map(node => node.exprType)
+}
+
+// return the type of a function call
+function callFunction (fn, args) {
+  const returnType = new TypeVariable()
+  const callFunctionType = makeFunctionType(typesOf(args), returnType)
+
+  unify(callFunctionType, typeOf(fn))
+  return returnType
 }
 
 //
@@ -226,11 +264,11 @@ function unifyAll (typeList) {
   })
 }
 
-// makes type1 and type2 the same, or throws
+// makes type1 and exprType the same, or throws
 // if one side is a variable, set a's instance to be b (variable or operator)
-function unify (type1, type2) {
+function unify (type1, exprType) {
   const a = prune(type1)
-  const b = prune(type2)
+  const b = prune(exprType)
 
   if (a instanceof TypeVariable) {
     if (a !== b) {
