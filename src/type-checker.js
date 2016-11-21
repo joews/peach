@@ -91,24 +91,22 @@ const visitors = {
   List (node, env, nonGeneric) {
     const typedValues = node.values.map((value) => visit(value, env, nonGeneric)[0])
 
-    // FIXME the syntax for an empty list in arguments is (), unquoted. This is confusing.
-    // TODO find out the interpreter doesn't have this issue. Because it deals with destructuring
-    //  weirdly, I guess. TODO make the code path cleaner - is an empty list like this really
-    // a DestructuredList? I think so.
-    if (node.isQuoted || typedValues.length === 0) {
-      // lists are homogenous: all items must have the same type
-      const types = typedValues.map(value => value.exprType)
-      unifyAll(types)
+    // a non-quoted list is a function call
+    const [fn, ...args] = typedValues
+    const returnType = callFunction(fn, args)
 
-      const listType = new ListType(types[0])
-      return [typed(node, listType), env]
-    } else {
-      // a non-quoted list is a function call
-      const [fn, ...args] = typedValues
-      const returnType = callFunction(fn, args)
+    return [typed(node, returnType), env]
+  },
 
-      return [typed(node, returnType), env]
-    }
+  Vector (node, env, nonGeneric) {
+    const typedValues = node.values.map((value) => visit(value, env, nonGeneric)[0])
+    const types = typedValues.map(value => value.exprType)
+
+    // lists are homogenous: all items must have the same type
+    unifyAll(types)
+
+    const listType = new ListType(types[0])
+    return [typed(node, listType), env]
   },
 
   DestructuredList (node, env, nonGeneric) {

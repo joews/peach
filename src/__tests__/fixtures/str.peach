@@ -1,4 +1,4 @@
-'(
+[
   `str.peach before escape\`and after!`
   `hey 🌟`
   `multi
@@ -9,5 +9,4 @@
   `new\nline`
   `back\slash`
   `back\\to\back`
-
-)
+]

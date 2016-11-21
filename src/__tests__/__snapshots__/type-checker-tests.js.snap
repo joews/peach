@@ -1,27 +1,4 @@
 exports[`test 
-  (def f
-    (1 2) => '(9 9)
-    (a b) => '(a b))
-
-  (f 1)
-  (f 1 2)
-  ((f 1) 2)
-  (f 3)
-  (f 3 4)
-  ((f 3) 4)
- 1`] = `
-Array [
-  "Number -> Number -> List<Number>",
-  "Number -> List<Number>",
-  "List<Number>",
-  "List<Number>",
-  "Number -> List<Number>",
-  "List<Number>",
-  "List<Number>",
-]
-`;
-
-exports[`test 
   (def fib
     0 => 1
     1 => 1
@@ -44,7 +21,7 @@ exports[`test
   (g g)
  1`] = `
 Array [
-  "M -> Number",
+  "J -> Number",
   "Number",
 ]
 `;
@@ -54,18 +31,18 @@ exports[`test
   ((pair (id 3)) (id true))
  1`] = `
 Array [
-  "K -> K",
-  "L",
+  "H -> H",
+  "I",
 ]
 `;
 
 exports[`test 
-  (def list (a, b, c) => '(a b c))
+  (def list (a, b, c) => [a b c])
   (list 1 true)
  1`] = `"Type error: type mismatch"`;
 
 exports[`test 
-  (def list (a, b, c) => '(a b c))
+  (def list (a, b, c) => [a b c])
   (list 1)
   (list 1 2)
   (list 1 2 3)
@@ -73,7 +50,7 @@ exports[`test
   (list true false true)
  1`] = `
 Array [
-  "R -> R -> R -> List<R>",
+  "N -> N -> N -> List<N>",
   "Number -> Number -> List<Number>",
   "Number -> List<Number>",
   "List<Number>",
@@ -81,14 +58,6 @@ Array [
   "List<Boolean>",
 ]
 `;
-
-exports[`test '(1 2 3) 1`] = `
-Array [
-  "List<Number>",
-]
-`;
-
-exports[`test '(1 2 false) 1`] = `"Type error: type mismatch"`;
 
 exports[`test ((() => \`look ma no args\`)) 1`] = `
 Array [
@@ -106,21 +75,13 @@ exports[`test ((1|(true|t)) => t) 1`] = `"Type error: type mismatch"`;
 
 exports[`test ((addZero 1) 2) 1`] = `
 Array [
-  "G",
+  "D",
 ]
 `;
-
-exports[`test ((h|(true|t)) => '('(h 1) t)) 1`] = `"Type error: type mismatch"`;
 
 exports[`test ((pair 1) 2) 1`] = `
 Array [
-  "I",
-]
-`;
-
-exports[`test ((x|(y|t)) => '('(x y) t)) 1`] = `
-Array [
-  "List<Q> -> List<List<Q>>",
+  "F",
 ]
 `;
 
@@ -134,6 +95,8 @@ Array [
 ]
 `;
 
+exports[`test (1|(true|t)) => t 1`] = `"Type error: type mismatch"`;
+
 exports[`test (1|list) => list 1`] = `
 Array [
   "List<Number> -> List<Number>",
@@ -142,19 +105,19 @@ Array [
 
 exports[`test (a => 1) 1`] = `
 Array [
-  "E -> Number",
+  "B -> Number",
 ]
 `;
 
 exports[`test (addZero 1) 1`] = `
 Array [
-  "F",
+  "C",
 ]
 `;
 
 exports[`test (def id x => x) (id 3) (id \`hello\`) 1`] = `
 Array [
-  "J -> J",
+  "G -> G",
   "Number",
   "String",
 ]
@@ -184,7 +147,7 @@ Array [
 
 exports[`test (pair 1) 1`] = `
 Array [
-  "H",
+  "E",
 ]
 `;
 
@@ -193,6 +156,14 @@ Array [
   "Boolean",
 ]
 `;
+
+exports[`test [1 2 3] 1`] = `
+Array [
+  "List<Number>",
+]
+`;
+
+exports[`test [1 2 false] 1`] = `"Type error: type mismatch"`;
 
 exports[`test \`the\` 1`] = `
 Array [
@@ -214,7 +185,7 @@ exports[`test f => (f f) 1`] = `"Type error: recursive unification"`;
 
 exports[`test f => g => arg => (g (f arg)) 1`] = `
 Array [
-  "(N -> O) -> (O -> P) -> N -> P",
+  "(K -> L) -> (L -> M) -> K -> M",
 ]
 `;
 

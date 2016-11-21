@@ -65,8 +65,8 @@ testTypeCheck('(def x `arf`) x')
 testTypeCheck(`(a => 1)`)
 
 // list
-testTypeCheck(`'(1 2 3)`)
-testFails(`'(1 2 false)`)
+testTypeCheck(`[1 2 3]`)
+testFails(`[1 2 false]`)
 
 // if
 // * TODO branches must cover all possibilities
@@ -196,13 +196,13 @@ testTypeCheck(`f => g => arg => (g (f arg))`)
 // destructured aguments
 testTypeCheck(`(1|list) => list`)
 testTypeCheck(`((1|(2|t)) => t)`)
-testTypeCheck(`((x|(y|t)) => '('(x y) t))`)
+testTypeCheck(`((x|(y|t)) => [[x y] t])`)
 testFails(`((1|(true|t)) => t)`)
-testFails(`((h|(true|t)) => '('(h 1) t))`)
+testFails(`((h|(true|t)) => [[h 1] t])`)
 
 // curried function calls
 testTypeCheck(`
-  (def list (a, b, c) => '(a b c))
+  (def list (a, b, c) => [a b c])
   (list 1)
   (list 1 2)
   (list 1 2 3)
@@ -211,14 +211,14 @@ testTypeCheck(`
 `)
 
 testFails(`
-  (def list (a, b, c) => '(a b c))
+  (def list (a, b, c) => [a b c])
   (list 1 true)
 `)
 
 testTypeCheck(`
   (def f
-    (1 2) => '(9 9)
-    (a b) => '(a b))
+    (1 2) => [9 9])
+    (a b) => [a b]))
 
   (f 1)
   (f 1 2)

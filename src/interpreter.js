@@ -77,13 +77,13 @@ const visitors = {
 
   List ({ values, isQuoted }, env) {
     const results = values.map((value) => visit(value, env)[0])
+    const [fn, ...args] = results
+    return [applyFunction(fn, args), env]
+  },
 
-    if (isQuoted) {
-      return [results, env]
-    } else {
-      const [fn, ...args] = results
-      return [applyFunction(fn, args), env]
-    }
+  Vector ({ values }, env) {
+    const results = values.map((value) => visit(value, env)[0])
+    return [results, env]
   },
 
   Fn (node, env) {

@@ -9,5 +9,5 @@ const parser = peg.generate(parserSource)
 module.exports = function parse (source) {
   const ast = parser.parse(source)
   // console.log(JSON.stringify(ast))
-  return ast;
+  return ast
 }
