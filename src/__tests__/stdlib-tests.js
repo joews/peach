@@ -14,9 +14,9 @@ testResult(`(<=> 0 1)`, -1)
 
 testResult(`(! true)`, false)
 testResult(`(! false)`, true)
-testResult(`(and true false)`, false)
-testResult(`(and true true)`, true)
-testResult(`(or true false)`, true)
-testResult(`(or false false)`, false)
+testResult(`(&& true false)`, false)
+testResult(`(&& true true)`, true)
+testResult(`(|| true false)`, true)
+testResult(`(|| false false)`, false)
 
 testResult(`(cons 1 '(2 3))`, [1, 2, 3])

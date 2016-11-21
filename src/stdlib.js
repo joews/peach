@@ -24,8 +24,8 @@ module.exports = {
   '=': binaryOp('=', (a, b) => a === b, anyType(), BooleanType),
 
   '!': makeNativeFunction('!', a => !a, [BooleanType], BooleanType),
-  'and': binaryOp('and', (a, b) => a && b, BooleanType, BooleanType),
-  'or': binaryOp('or', (a, b) => a || b, BooleanType, BooleanType),
+  '&&': binaryOp('&&', (a, b) => a && b, BooleanType, BooleanType),
+  '||': binaryOp('||', (a, b) => a || b, BooleanType, BooleanType),
 
   '<=>': binaryOp('<=>', (a, b) => {
     if (a > b) return 1
