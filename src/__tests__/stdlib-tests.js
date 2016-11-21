@@ -19,4 +19,4 @@ testResult(`(&& true true)`, true)
 testResult(`(|| true false)`, true)
 testResult(`(|| false false)`, false)
 
-testResult(`(cons 1 '(2 3))`, [1, 2, 3])
+testResult(`(cons 1 [2 3])`, [1, 2, 3])

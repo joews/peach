@@ -10,8 +10,8 @@ const { PeachError } = require('../errors')
 // setting and getting values
 testResult(`(def x 2) (def y 5) (* (+ x y) x)`, 14)
 
-// quoted s-expressions
-testResult(`(def list '(1 2 3))`, [1, 2, 3])
+// vectors
+testResult(`(def vector [1 2 3])`, [1, 2, 3])
 
 // reference error
 test('referencing an undefined variable throws an error', () => {
@@ -31,7 +31,7 @@ testResult(`(+ 2 3)`, 5)
 testResult(`
 (def plus-one (+ 1))
 (def all-plus-one (map plus-one))
-(all-plus-one '(9 8 7))
+(all-plus-one [9 8 7])
 `, [10, 9, 8])
 
 // function definition
@@ -80,7 +80,7 @@ testResult(`
 `, 11)
 
 // commas are whitespace
-testResult(`'(1, 2,              ,,,,,,,,, 3)`, [1, 2, 3])
+testResult(`[1, 2,              ,,,,,,,,, 3]`, [1, 2, 3])
 
 // some actual programs
 testResult(fixture('fibonacci.peach'), [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89])
@@ -100,7 +100,7 @@ testResult(`
 (def is-one
   1 => true
   (other) => false)
-'((is-one 1), (is-one 2))
+[(is-one 1), (is-one 2)]
 `, [true, false])
 
 // currying user functions
@@ -125,17 +125,17 @@ testResult(fixture('list-destructure.peach'), [9, 8, 7])
 // destructuring with a non-matching head
 testResult(`
   (def starts-with-one (1|_) => true _ => false)
-  (def a (starts-with-one '(1 2)))
-  (def b (starts-with-one '(2 2)))
-  '(a b)
+  (def a (starts-with-one [1 2]))
+  (def b (starts-with-one [2 2]))
+  [a b]
 `, [true, false])
 
 // destructuring with a non-matching tail
 testResult(`
   (def one-second (_|(1|_)) => true _ => false)
-  (def a (one-second '(1 1)))
-  (def b (one-second '(2 2)))
-  '(a b)
+  (def a (one-second [1 1]))
+  (def b (one-second [2 2]))
+  [a b]
 `, [true, false])
 
 // mixed regular and destructured arguments
@@ -143,8 +143,8 @@ testResult(`
 (def first-is
   (n, (h|_)) => (= n h)
 )
-(def l '(7 8 9))
-'((first-is 7 l) (first-is 8 l))
+(def l [7 8 9])
+[(first-is 7 l) (first-is 8 l)]
 `, [true, false])
 
 // proper tail calls
@@ -153,33 +153,33 @@ testResult(fixture('tail-recursion.peach'), Infinity)
 // list functions
 testResult(`
 (def my-sum (fold + 0))
-(my-sum '(1 2 3 4))
+(my-sum [1 2 3 4])
 `, 10)
 
 testResult(`
-(def l '(1 2 3 4 5))
+(def l [1 2 3 4 5])
 (def is-even x => (= 0 (% x 2)))
 (filter is-even l)
 `, [2, 4])
 
 testResult(`
-(def l '(1 2 3 4 5))
+(def l [1 2 3 4 5])
 (find (x => (> x 2)) l)
 `, 3)
 
-testResult(`(cons 1 '(2 3))`, [1, 2, 3])
+testResult(`(cons 1 [2 3])`, [1, 2, 3])
 
 // Test peach implementions of stdlib functions
 // TODO tail recursive!
 testResult(`
 (def _peach-map
   (_, (), done) => done
-  (fn, (head|tail), done) => (_peach-map fn tail (cons (fn head) done)))
+  (fn, (head|tail), done) => (_peach-map fn tail (cons [fn head] done)))
 
 (def peach-map
-  (fn, list) => (reverse (_peach-map fn list '())))
+  (fn, list) => (reverse (_peach-map fn list [])))
 
-(peach-map (+ 1) '(1 2 3 4))
+(peach-map (+ 1) [1 2 3 4])
 `, [2, 3, 4, 5])
 
 testResult(`
@@ -190,9 +190,9 @@ testResult(`
     true (_peach-filter fn tail done)))
 
 (def peach-filter
-  (fn, list) => (reverse (_peach-filter fn list '())))
+  (fn, list) => (reverse (_peach-filter fn list [])))
 
-(peach-filter (x => (>= x 2)) '(1 2 3 4))
+(peach-filter (x => (>= x 2)) [1 2 3 4])
 `, [2, 3, 4])
 
 testResult(`
@@ -201,7 +201,7 @@ testResult(`
   (fn, init, (head|tail)) =>
     (peach-fold fn (fn init head) tail))
 
-(peach-fold + 0 '(1 2 3 4))
+(peach-fold + 0 [1 2 3 4])
 `, 10)
 
 // nested scopes

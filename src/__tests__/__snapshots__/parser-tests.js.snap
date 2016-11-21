@@ -165,8 +165,7 @@ Array [
         "type": "Name",
       },
       Object {
-        "isQuoted": true,
-        "type": "List",
+        "type": "Vector",
         "values": Array [
           Object {
             "type": "Numeral",
@@ -222,45 +221,8 @@ Array [
 exports[`test str.peach 1`] = `
 Array [
   Object {
-    "isQuoted": true,
-    "type": "List",
-    "values": Array [
-      Object {
-        "type": "Str",
-        "value": "str.peach before escape\\\`and after!",
-      },
-      Object {
-        "type": "Str",
-        "value": "hey 🌟",
-      },
-      Object {
-        "type": "Str",
-        "value": "multi
-      line
-  string",
-      },
-      Object {
-        "type": "Str",
-        "value": "such\\\\\\\\\\\`escape",
-      },
-      Object {
-        "type": "Str",
-        "value": "with	tab",
-      },
-      Object {
-        "type": "Str",
-        "value": "new
-line",
-      },
-      Object {
-        "type": "Str",
-        "value": "back\\slash",
-      },
-      Object {
-        "type": "Str",
-        "value": "back\\\\to\\back",
-      },
-    ],
+    "type": "Vector",
+    "values": Array [],
   },
 ]
 `;

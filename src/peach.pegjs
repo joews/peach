@@ -9,7 +9,7 @@ expression
   / boolean
   / string
   / list
-  / quoted
+  / vector
   / name
 
 expression_list =
@@ -158,12 +158,27 @@ non_empty_list = lp values:expression_list rp {
   }
 }
 
-quoted = "'" expr:expression {
-  return Object.assign(expr, { isQuoted: true })
+empty_vector = ls rs {
+  return {
+    type: "Vector",
+    values: []
+  }
 }
+
+non_empty_vector = ls values:expression_list rs {
+  return {
+    type: "Vector",
+    values
+  }
+}
+
+vector = empty_vector / non_empty_vector
 
 lp = "(" _ { return "(" }
 rp = _ ")" { return ")" }
+
+ls = "[" _ { return "[" }
+rs = "]" _ { return "]" }
 
 // mandatory whitespace
 __ = ignored+
