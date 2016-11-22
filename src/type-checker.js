@@ -3,7 +3,7 @@ const { PeachError } = require('./errors')
 const {
   TypeVariable,
   TypeOperator,
-  ListType,
+  VectorType,
   NumberType,
   StringType,
   BooleanType,
@@ -88,32 +88,40 @@ const visitors = {
     return [typed(node, StringType), env]
   },
 
-  List (node, env, nonGeneric) {
-    const typedValues = node.values.map((value) => visit(value, env, nonGeneric)[0])
+  Call (node, env, nonGeneric) {
+    const [fn] = visit(node.fn, env, nonGeneric)
+    const args = node.args.map((arg) => visit(arg, env, nonGeneric)[0])
 
-    // a non-quoted list is a function call
-    const [fn, ...args] = typedValues
-    const returnType = callFunction(fn, args)
+    const returnType = new TypeVariable()
+    const callFunctionType = makeFunctionType(typesOf(args), returnType)
 
+    unify(callFunctionType, typeOf(fn))
     return [typed(node, returnType), env]
   },
 
   Vector (node, env, nonGeneric) {
-    const typedValues = node.values.map((value) => visit(value, env, nonGeneric)[0])
-    const types = typedValues.map(value => value.exprType)
+    let itemType
 
-    // lists are homogenous: all items must have the same type
-    unifyAll(types)
+    if (node.values.length > 0) {
+      const typedValues = node.values.map((value) => visit(value, env, nonGeneric)[0])
+      const types = typedValues.map(value => value.exprType)
 
-    const listType = new ListType(types[0])
-    return [typed(node, listType), env]
+      // vectors are homogenous: all items must have the same type
+      unifyAll(types)
+      itemType = types[0]
+    } else {
+      itemType = new TypeVariable()
+    }
+
+    const vectorType = new VectorType(itemType)
+    return [typed(node, vectorType), env]
   },
 
-  DestructuredList (node, env, nonGeneric) {
+  DestructuredVector (node, env, nonGeneric) {
     const { head, tail } = node
 
     const boundHeadType = new TypeVariable()
-    const boundTailType = new ListType(new TypeVariable())
+    const boundTailType = new VectorType(new TypeVariable())
 
     // TODO immutable env
     if (head.type === 'Name') {
@@ -132,7 +140,7 @@ const visitors = {
     const headType = typeOf(typedHead)
     const tailType = typeOf(typedTail)
 
-    // the tail must be a list of the head type
+    // the tail must be a vector of the head type
     // the usage types of head and tail must match the declared types
     unify(boundHeadType, boundTailType.getType())
     unify(headType, boundHeadType)
@@ -150,7 +158,7 @@ const visitors = {
       // get the array of arg types
       const patternTypes = clauseNode.pattern.map(argNode => {
         // If this is a `Name` arg, define it in the function's arguments environment.
-        // if it's a destructured list we need to recursively define any named children,
+        // if it's a destructured vector we need to recursively define any named children,
         // so visiting the node will define its names.
         if (argNode.type === 'Name') {
           const argType = new TypeVariable()
@@ -212,11 +220,7 @@ function typesOf (typedNodes) {
 
 // return the type of a function call
 function callFunction (fn, args) {
-  const returnType = new TypeVariable()
-  const callFunctionType = makeFunctionType(typesOf(args), returnType)
 
-  unify(callFunctionType, typeOf(fn))
-  return returnType
 }
 
 //

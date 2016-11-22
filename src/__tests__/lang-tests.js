@@ -118,13 +118,13 @@ testResult(`
 (add-two 4)
 `, 6)
 
-// destructuring lists
+// destructuring vectors
 // TODO repeat argument names should be illegal, except _
-testResult(fixture('list-destructure.peach'), [9, 8, 7])
+testResult(fixture('vector-destructure.peach'), [9, 8, 7])
 
 // destructuring with a non-matching head
 testResult(`
-  (def starts-with-one (1|_) => true _ => false)
+  (def starts-with-one [1|_] => true _ => false)
   (def a (starts-with-one [1 2]))
   (def b (starts-with-one [2 2]))
   [a b]
@@ -132,7 +132,7 @@ testResult(`
 
 // destructuring with a non-matching tail
 testResult(`
-  (def one-second (_|(1|_)) => true _ => false)
+  (def one-second [_|[1|_]] => true _ => false)
   (def a (one-second [1 1]))
   (def b (one-second [2 2]))
   [a b]
@@ -141,7 +141,7 @@ testResult(`
 // mixed regular and destructured arguments
 testResult(`
 (def first-is
-  (n, (h|_)) => (= n h)
+  (n, [h|_]) => (= n h)
 )
 (def l [7 8 9])
 [(first-is 7 l) (first-is 8 l)]
@@ -150,7 +150,7 @@ testResult(`
 // proper tail calls
 testResult(fixture('tail-recursion.peach'), Infinity)
 
-// list functions
+// vector functions
 testResult(`
 (def my-sum (fold + 0))
 (my-sum [1 2 3 4])
@@ -173,8 +173,8 @@ testResult(`(cons 1 [2 3])`, [1, 2, 3])
 // TODO tail recursive!
 testResult(`
 (def _peach-map
-  (_, (), done) => done
-  (fn, (head|tail), done) => (_peach-map fn tail (cons [fn head] done)))
+  (_, [], done) => done
+  (fn, [head|tail], done) => (_peach-map fn tail (cons (fn head) done)))
 
 (def peach-map
   (fn, list) => (reverse (_peach-map fn list [])))
@@ -184,8 +184,8 @@ testResult(`
 
 testResult(`
 (def _peach-filter
-  (_, (), done) => done
-  (fn, (head|tail), done) => (?
+  (_, [], done) => done
+  (fn, [head|tail], done) => (?
     (fn head) (_peach-filter fn tail (cons head done))
     true (_peach-filter fn tail done)))
 
@@ -197,8 +197,8 @@ testResult(`
 
 testResult(`
 (def peach-fold
-  (_, init, ()) => init
-  (fn, init, (head|tail)) =>
+  (_, init, []) => init
+  (fn, init, [head|tail]) =>
     (peach-fold fn (fn init head) tail))
 
 (peach-fold + 0 [1 2 3 4])

@@ -23,4 +23,4 @@ testFixture('str.peach')
 testFixture('tail-recursion.peach')
 
 testParse('(true => 1)')
-testParse('((true|tail) => 1)')
+testParse('([true|tail] => 1)')

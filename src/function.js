@@ -26,12 +26,12 @@ module.exports = {
           //  check if it's a tail call. If so return a thunk so we can use the trampoline
           //  pattern to avoid call stack overflow.
           if (isFunctionCall(body)) {
-            const resolvedFunction = visit(body.values[0], env)[0]
+            const resolvedFunction = visit(body.fn, env)[0]
             if (resolvedFunction === pFunction) {
               // evaluate the re-entrant args without recursing to `visit(body)`
               // there's some duplication here but it's necessary to avoid a potential
               //  overflow in recursive `call` calls that bypass the trampoline.
-              const [, ...recurseArgExprs] = body.values
+              const recurseArgExprs = body.args
               const recurseArgs = recurseArgExprs.map(expr => visit(expr, env)[0])
               return () => call(...recurseArgs)
             }
@@ -117,5 +117,5 @@ function curry (pFunction, appliedArgs) {
 }
 
 function isFunctionCall (node) {
-  return node.type === 'List' && !node.isQuoted
+  return node.type === 'Call'
 }
