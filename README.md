@@ -10,22 +10,22 @@ A statically typed functional language.
   1 => 1
   x => (+ (fib (- x 1)) (fib (- x 2))))
 
-(map fib '(0 1 2 3 4 5 6 7 8 9 10))
-;; [ 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 ]
+(map fib [0 1 2 3 4 5 6 7 8 9 10])
+# [ 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 ]
 ```
 
 # Syntax
-S-Expressions! Peach is inspired by Clojure and @bodil's [BODOL](https://github.com/bodil/BODOL), which I learned about from [this awesome talk](https://www.youtube.com/watch?v=DHubfS8E--o).
+Peach is inspired by JavaScript, Elm, Clojure and @bodil's [BODOL](https://github.com/bodil/BODOL), which I learned about from [this awesome talk](https://www.youtube.com/watch?v=DHubfS8E--o).
 
 ```clojure
 # assignment
-(def x 2) ; 2
+(def x 2) # 2
 
 # equality
-(= x 2) ; true
+(= x 2) # true
 
 # maths and stuff
-(* x 2) ; 4
+(* x 2) # 4
 
 # conditionals
 (?
@@ -36,11 +36,11 @@ S-Expressions! Peach is inspired by Clojure and @bodil's [BODOL](https://github.
 
 # functions
 (def double (x => (* x 2)))
-(map x (x => (pow x 2))) ; [2 4 8 16]
+(map x (x => (pow x 2))) # [2 4 8 16]
 
 # currying
 (def double-all (map double))
-(double-all '(1 2 3 4)) ; (2 4 6 8)
+(double-all [1 2 3 4]) # (2 4 6 8)
 
 # pattern matching
 (fn fib
@@ -50,21 +50,19 @@ S-Expressions! Peach is inspired by Clojure and @bodil's [BODOL](https://github.
 )
 
 (fn starts-with-one
-  (1|_) => true
+  [1|_] => true
   _  => false
 )
 
 # tail call optimisation
-; The first tail recursive peach program
-; n: the accumulating factorial
-; x: a decrementing iteration count
-;;;; factorial : Number -> Number -> Number
+# n: the accumulating factorial
+# x: a decrementing iteration count
+#### factorial : Number -> Number -> Number
 (def factorial
   (n, 1) => n
   (n, x) => (factorial (* n x) (- x 1)))
 
-; sure to overflow with non-tail recursion
-(factorial 1 32768) ; Infinity, because JavaScript. Better than a stack overflow!
+(factorial 1 32768) # Infinity, because JavaScript. Better than a stack overflow!
 ```
 
 # Semantics
@@ -79,24 +77,26 @@ S-Expressions! Peach is inspired by Clojure and @bodil's [BODOL](https://github.
 * Currying
 * Dynamic typing
 * Strict evaluation
-* A JavaScript interpreter
+* A tree-based JavaScript interpreter
 * REPL
 * Proper tails calls
 
 # Plans
 Coming soon:
 * Type hint syntax
+* `let` syntax
 * More stdlib
-* Maps and vectors
-* Lazy sequences
+* Algebraic data types
 
 And then:
-* Interactive debugger
 * JavaScript interop
-* Compile to readable JavaScript
+* JavaScript code generation
+* Lazy sequences
 * IO
 
 One day:
+* Efficient bytecode interpreter
+* Interactive debugger
 * Immutable data structures with structural sharing
 * Self-hosting
 
