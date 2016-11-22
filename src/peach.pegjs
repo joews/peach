@@ -8,8 +8,8 @@ expression
   / numeral
   / boolean
   / string
-  / list
   / vector
+  / call
   / name
 
 expression_list =
@@ -54,7 +54,7 @@ clause = pattern:pattern __ "=>" __ body:expression {
 }
 
 pattern
-  = empty_list { return [] }
+  = lp rp { return [] }
   / single:pattern_term { return [single] }
   / pattern_term_list
 
@@ -65,14 +65,14 @@ pattern_term_list = lp head:pattern_term tail:(__ p:pattern_term { return p })* 
 // TODO I guess it makes sense for the syntax to allow any expression here.
 // unify.js can decide at compile time if the passed expression makes sense
 // (most types do, e.g. a function doesn't).
-pattern_term = literal / name / destructured_list / empty_list
+pattern_term = literal / name / destructured_vector / empty_vector
 
 destructure_head =  literal / name
-destructure_tail = name / destructured_list
+destructure_tail = name / destructured_vector
 
-destructured_list = lp head:destructure_head _ "|" tail:destructure_tail _ rp {
+destructured_vector = ls head:destructure_head _ "|" tail:destructure_tail _ rs {
   return {
-    type: "DestructuredList",
+    type: "DestructuredVector",
     head,
     tail
   }
@@ -142,21 +142,16 @@ escape_sequence
   // binary
   // the weird whitespace things that nobody uses like \b and \v ?
 
-list = empty_list / non_empty_list
-
-empty_list = lp rp {
+call = lp values:expression_list rp {
+  const [fn, ...args] = values
   return {
-    type: "List",
-    values: []
+    type: "Call",
+    fn,
+    args
   }
 }
 
-non_empty_list = lp values:expression_list rp {
-  return {
-    type: "List",
-    values
-  }
-}
+vector = empty_vector / non_empty_vector
 
 empty_vector = ls rs {
   return {
@@ -172,13 +167,12 @@ non_empty_vector = ls values:expression_list rs {
   }
 }
 
-vector = empty_vector / non_empty_vector
 
 lp = "(" _ { return "(" }
 rp = _ ")" { return ")" }
 
 ls = "[" _ { return "[" }
-rs = "]" _ { return "]" }
+rs = _ "]" { return "]" }
 
 // mandatory whitespace
 __ = ignored+

@@ -50,7 +50,7 @@ testFixture('fibonacci.peach')
 testFixture('function.peach')
 testFixture('str.peach')
 testFixture('tail-recursion.peach')
-testFixture('list-destructure.peach')
+testFixture('vector-destructure.peach')
 
 // literals
 testTypeCheck(`1`)
@@ -64,7 +64,7 @@ testTypeCheck('(def x `arf`) x')
 // lambda
 testTypeCheck(`(a => 1)`)
 
-// list
+// vector
 testTypeCheck(`[1 2 3]`)
 testFails(`[1 2 false]`)
 
@@ -194,11 +194,11 @@ testTypeCheck(`
 testTypeCheck(`f => g => arg => (g (f arg))`)
 
 // destructured aguments
-testTypeCheck(`(1|list) => list`)
-testTypeCheck(`((1|(2|t)) => t)`)
-testTypeCheck(`((x|(y|t)) => [[x y] t])`)
-testFails(`((1|(true|t)) => t)`)
-testFails(`((h|(true|t)) => [[h 1] t])`)
+testTypeCheck(`[1|list] => list`)
+testTypeCheck(`([1|[2|t]] => t)`)
+testTypeCheck(`([x|[y|t]] => [[x y] t])`)
+testFails(`([1|[true|t]] => t)`)
+testFails(`([h|[true|t]] => [[h 1] t])`)
 
 // curried function calls
 testTypeCheck(`
@@ -217,8 +217,8 @@ testFails(`
 
 testTypeCheck(`
   (def f
-    (1 2) => [9 9])
-    (a b) => [a b]))
+    (1 2) => [9 9]
+    (a b) => [a b])
 
   (f 1)
   (f 1 2)

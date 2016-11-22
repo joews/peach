@@ -75,10 +75,10 @@ const visitors = {
     return [value, env]
   },
 
-  List ({ values, isQuoted }, env) {
-    const results = values.map((value) => visit(value, env)[0])
-    const [fn, ...args] = results
-    return [applyFunction(fn, args), env]
+  Call ({ fn, args }, env) {
+    const [fnResult] = visit(fn, env)
+    const argResults = args.map((arg) => visit(arg, env)[0])
+    return [applyFunction(fnResult, argResults), env]
   },
 
   Vector ({ values }, env) {

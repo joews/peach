@@ -1,4 +1,27 @@
 exports[`test 
+  (def f
+    (1 2) => [9 9]
+    (a b) => [a b])
+
+  (f 1)
+  (f 1 2)
+  ((f 1) 2)
+  (f 3)
+  (f 3 4)
+  ((f 3) 4)
+ 1`] = `
+Array [
+  "Number -> Number -> Vector<Number>",
+  "Number -> Vector<Number>",
+  "Vector<Number>",
+  "Vector<Number>",
+  "Number -> Vector<Number>",
+  "Vector<Number>",
+  "Vector<Number>",
+]
+`;
+
+exports[`test 
   (def fib
     0 => 1
     1 => 1
@@ -21,7 +44,7 @@ exports[`test
   (g g)
  1`] = `
 Array [
-  "J -> Number",
+  "M -> Number",
   "Number",
 ]
 `;
@@ -31,8 +54,8 @@ exports[`test
   ((pair (id 3)) (id true))
  1`] = `
 Array [
-  "H -> H",
-  "I",
+  "K -> K",
+  "L",
 ]
 `;
 
@@ -50,12 +73,12 @@ exports[`test
   (list true false true)
  1`] = `
 Array [
-  "N -> N -> N -> List<N>",
-  "Number -> Number -> List<Number>",
-  "Number -> List<Number>",
-  "List<Number>",
-  "List<Number>",
-  "List<Boolean>",
+  "R -> R -> R -> Vector<R>",
+  "Number -> Number -> Vector<Number>",
+  "Number -> Vector<Number>",
+  "Vector<Number>",
+  "Vector<Number>",
+  "Vector<Boolean>",
 ]
 `;
 
@@ -65,23 +88,15 @@ Array [
 ]
 `;
 
-exports[`test ((1|(2|t)) => t) 1`] = `
-Array [
-  "List<Number> -> List<Number>",
-]
-`;
-
-exports[`test ((1|(true|t)) => t) 1`] = `"Type error: type mismatch"`;
-
 exports[`test ((addZero 1) 2) 1`] = `
 Array [
-  "D",
+  "G",
 ]
 `;
 
 exports[`test ((pair 1) 2) 1`] = `
 Array [
-  "F",
+  "I",
 ]
 `;
 
@@ -95,29 +110,37 @@ Array [
 ]
 `;
 
-exports[`test (1|(true|t)) => t 1`] = `"Type error: type mismatch"`;
-
-exports[`test (1|list) => list 1`] = `
+exports[`test ([1|[2|t]] => t) 1`] = `
 Array [
-  "List<Number> -> List<Number>",
+  "Vector<Number> -> Vector<Number>",
+]
+`;
+
+exports[`test ([1|[true|t]] => t) 1`] = `"Type error: type mismatch"`;
+
+exports[`test ([h|[true|t]] => [[h 1] t]) 1`] = `"Type error: type mismatch"`;
+
+exports[`test ([x|[y|t]] => [[x y] t]) 1`] = `
+Array [
+  "Vector<Q> -> Vector<Vector<Q>>",
 ]
 `;
 
 exports[`test (a => 1) 1`] = `
 Array [
-  "B -> Number",
+  "E -> Number",
 ]
 `;
 
 exports[`test (addZero 1) 1`] = `
 Array [
-  "C",
+  "F",
 ]
 `;
 
 exports[`test (def id x => x) (id 3) (id \`hello\`) 1`] = `
 Array [
-  "G -> G",
+  "J -> J",
   "Number",
   "String",
 ]
@@ -147,7 +170,7 @@ Array [
 
 exports[`test (pair 1) 1`] = `
 Array [
-  "E",
+  "H",
 ]
 `;
 
@@ -159,11 +182,17 @@ Array [
 
 exports[`test [1 2 3] 1`] = `
 Array [
-  "List<Number>",
+  "Vector<Number>",
 ]
 `;
 
 exports[`test [1 2 false] 1`] = `"Type error: type mismatch"`;
+
+exports[`test [1|list] => list 1`] = `
+Array [
+  "Vector<Number> -> Vector<Number>",
+]
+`;
 
 exports[`test \`the\` 1`] = `
 Array [
@@ -185,14 +214,14 @@ exports[`test f => (f f) 1`] = `"Type error: recursive unification"`;
 
 exports[`test f => g => arg => (g (f arg)) 1`] = `
 Array [
-  "(K -> L) -> (L -> M) -> K -> M",
+  "(N -> O) -> (O -> P) -> N -> P",
 ]
 `;
 
 exports[`test fibonacci.peach 1`] = `
 Array [
   "Number -> Number",
-  "List<Number>",
+  "Vector<Number>",
 ]
 `;
 
@@ -202,19 +231,9 @@ Array [
 ]
 `;
 
-exports[`test list-destructure.peach 1`] = `
-Array [
-  "List<B> -> B",
-  "List<C> -> C",
-  "List<D> -> D",
-  "List<Number>",
-  "List<Number>",
-]
-`;
-
 exports[`test str.peach 1`] = `
 Array [
-  "List<String>",
+  "Vector<String>",
 ]
 `;
 
@@ -229,6 +248,16 @@ Array [
 exports[`test true 1`] = `
 Array [
   "Boolean",
+]
+`;
+
+exports[`test vector-destructure.peach 1`] = `
+Array [
+  "Vector<B> -> B",
+  "Vector<C> -> C",
+  "Vector<D> -> D",
+  "Vector<Number>",
+  "Vector<Number>",
 ]
 `;
 

@@ -1,4 +1,4 @@
-exports[`test ((true|tail) => 1) 1`] = `
+exports[`test ([true|tail] => 1) 1`] = `
 Array [
   Object {
     "clauses": Array [
@@ -17,7 +17,7 @@ Array [
               "name": "tail",
               "type": "Name",
             },
-            "type": "DestructuredList",
+            "type": "DestructuredVector",
           },
         ],
       },
@@ -82,26 +82,11 @@ Array [
         },
         Object {
           "body": Object {
-            "type": "List",
-            "values": Array [
+            "args": Array [
               Object {
-                "name": "+",
-                "type": "Name",
-              },
-              Object {
-                "type": "List",
-                "values": Array [
+                "args": Array [
                   Object {
-                    "name": "fib",
-                    "type": "Name",
-                  },
-                  Object {
-                    "type": "List",
-                    "values": Array [
-                      Object {
-                        "name": "-",
-                        "type": "Name",
-                      },
+                    "args": Array [
                       Object {
                         "name": "x",
                         "type": "Name",
@@ -111,23 +96,23 @@ Array [
                         "value": 1,
                       },
                     ],
+                    "fn": Object {
+                      "name": "-",
+                      "type": "Name",
+                    },
+                    "type": "Call",
                   },
                 ],
+                "fn": Object {
+                  "name": "fib",
+                  "type": "Name",
+                },
+                "type": "Call",
               },
               Object {
-                "type": "List",
-                "values": Array [
+                "args": Array [
                   Object {
-                    "name": "fib",
-                    "type": "Name",
-                  },
-                  Object {
-                    "type": "List",
-                    "values": Array [
-                      Object {
-                        "name": "-",
-                        "type": "Name",
-                      },
+                    "args": Array [
                       Object {
                         "name": "x",
                         "type": "Name",
@@ -137,10 +122,25 @@ Array [
                         "value": 2,
                       },
                     ],
+                    "fn": Object {
+                      "name": "-",
+                      "type": "Name",
+                    },
+                    "type": "Call",
                   },
                 ],
+                "fn": Object {
+                  "name": "fib",
+                  "type": "Name",
+                },
+                "type": "Call",
               },
             ],
+            "fn": Object {
+              "name": "+",
+              "type": "Name",
+            },
+            "type": "Call",
           },
           "pattern": Array [
             Object {
@@ -154,12 +154,7 @@ Array [
     },
   },
   Object {
-    "type": "List",
-    "values": Array [
-      Object {
-        "name": "map",
-        "type": "Name",
-      },
+    "args": Array [
       Object {
         "name": "fib",
         "type": "Name",
@@ -214,6 +209,11 @@ Array [
         ],
       },
     ],
+    "fn": Object {
+      "name": "map",
+      "type": "Name",
+    },
+    "type": "Call",
   },
 ]
 `;
@@ -222,7 +222,43 @@ exports[`test str.peach 1`] = `
 Array [
   Object {
     "type": "Vector",
-    "values": Array [],
+    "values": Array [
+      Object {
+        "type": "Str",
+        "value": "str.peach before escape\\\`and after!",
+      },
+      Object {
+        "type": "Str",
+        "value": "hey 🌟",
+      },
+      Object {
+        "type": "Str",
+        "value": "multi
+      line
+  string",
+      },
+      Object {
+        "type": "Str",
+        "value": "such\\\\\\\\\\\`escape",
+      },
+      Object {
+        "type": "Str",
+        "value": "with	tab",
+      },
+      Object {
+        "type": "Str",
+        "value": "new
+line",
+      },
+      Object {
+        "type": "Str",
+        "value": "back\\slash",
+      },
+      Object {
+        "type": "Str",
+        "value": "back\\\\to\\back",
+      },
+    ],
   },
 ]
 `;
@@ -252,19 +288,9 @@ Array [
         },
         Object {
           "body": Object {
-            "type": "List",
-            "values": Array [
+            "args": Array [
               Object {
-                "name": "factorial",
-                "type": "Name",
-              },
-              Object {
-                "type": "List",
-                "values": Array [
-                  Object {
-                    "name": "*",
-                    "type": "Name",
-                  },
+                "args": Array [
                   Object {
                     "name": "n",
                     "type": "Name",
@@ -274,14 +300,14 @@ Array [
                     "type": "Name",
                   },
                 ],
+                "fn": Object {
+                  "name": "*",
+                  "type": "Name",
+                },
+                "type": "Call",
               },
               Object {
-                "type": "List",
-                "values": Array [
-                  Object {
-                    "name": "-",
-                    "type": "Name",
-                  },
+                "args": Array [
                   Object {
                     "name": "x",
                     "type": "Name",
@@ -291,8 +317,18 @@ Array [
                     "value": 1,
                   },
                 ],
+                "fn": Object {
+                  "name": "-",
+                  "type": "Name",
+                },
+                "type": "Call",
               },
             ],
+            "fn": Object {
+              "name": "factorial",
+              "type": "Name",
+            },
+            "type": "Call",
           },
           "pattern": Array [
             Object {
@@ -316,12 +352,7 @@ Array [
       "clauses": Array [
         Object {
           "body": Object {
-            "type": "List",
-            "values": Array [
-              Object {
-                "name": "factorial",
-                "type": "Name",
-              },
+            "args": Array [
               Object {
                 "type": "Numeral",
                 "value": 1,
@@ -331,6 +362,11 @@ Array [
                 "type": "Name",
               },
             ],
+            "fn": Object {
+              "name": "factorial",
+              "type": "Name",
+            },
+            "type": "Call",
           },
           "pattern": Array [
             Object {
@@ -344,17 +380,17 @@ Array [
     },
   },
   Object {
-    "type": "List",
-    "values": Array [
-      Object {
-        "name": "f",
-        "type": "Name",
-      },
+    "args": Array [
       Object {
         "type": "Numeral",
         "value": 32768,
       },
     ],
+    "fn": Object {
+      "name": "f",
+      "type": "Name",
+    },
+    "type": "Call",
   },
 ]
 `;
