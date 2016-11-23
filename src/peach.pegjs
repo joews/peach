@@ -186,8 +186,5 @@ ignored
 
 whitespace = [ \t\r\n,]
 
-// One of the few places peach presents a syntactic choice
-// I prefer the look of # but it is reasonable to support
-//  classic Lisp-style ; commnets
 comment = comment_leader [^\n]+
-comment_leader = "#" / ";"
+comment_leader = "#"

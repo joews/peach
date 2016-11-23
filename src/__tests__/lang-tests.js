@@ -71,8 +71,8 @@ test('string escapes', () => {
 
 // comments
 testResult(`
-; I heard that commenting code is a good thing
-;; define x to be 9
+# I heard that commenting code is a good thing
+## define x to be 9
 (def x 9)
 # add one to x
 (+ x 2)

@@ -1,13 +1,13 @@
-; The first tail recursive peach program
-; n: the accumulating factorial
-; x: a decrementing iteration count
-;;;; factorial : Number -> Number -> Number
+# The first tail recursive peach program
+# n: the accumulating factorial
+# x: a decrementing iteration count
+#### factorial : Number -> Number -> Number
 (def factorial
   (n, 1) => n
   (n, x) => (factorial (* n x) (- x 1)))
 
 (def f n => (factorial 1 n))
 
-; sure to overflow with a non-tail call
+# sure to overflow with a non-tail call
 (f 32768)
 

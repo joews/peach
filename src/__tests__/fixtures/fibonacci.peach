@@ -1,5 +1,5 @@
-; fibonacci.peach
-; The first real peach program!
+# fibonacci.peach
+# The first real peach program!
 (def fib
   0 => 1
   1 => 1
