@@ -58,13 +58,13 @@ class FunctionType extends TypeOperator {
   }
 }
 
-class VectorType extends TypeOperator {
+class ArrayType extends TypeOperator {
   constructor (argType) {
-    super('Vector', [argType])
+    super('Array', [argType])
   }
 
   static of (name, types) {
-    return new VectorType(types[0])
+    return new ArrayType(types[0])
   }
 
   getType () {
@@ -72,7 +72,7 @@ class VectorType extends TypeOperator {
   }
 
   toString () {
-    return `Vector<${this.getType()}>`
+    return `Array<${this.getType()}>`
   }
 }
 
@@ -118,7 +118,7 @@ module.exports = {
   TypeVariable,
   TypeOperator,
   FunctionType,
-  VectorType,
+  ArrayType,
   NumberType,
   StringType,
   BooleanType,

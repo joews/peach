@@ -1,5 +1,5 @@
 const { PeachError } = require('./errors')
-const { isVector, isEqual } = require('./vector')
+const { isArray, isEqual } = require('./array')
 
 module.exports = function unify (patterns, values) {
   if (patterns.length !== values.length) {
@@ -32,11 +32,11 @@ function unifyOne (pattern, value) {
   }
 
   // TODO generic value equality
-  if (isVector(pattern) && isEqual(pattern.values, value)) {
+  if (isArray(pattern) && isEqual(pattern.values, value)) {
     return {}
   }
 
-  if (isDestructuredVector(pattern)) {
+  if (isDestructuredArray(pattern)) {
     return destructure(pattern, value)
   }
 
@@ -44,15 +44,15 @@ function unifyOne (pattern, value) {
   return null
 }
 
-// TODO this will need to change when Vector is a wrapped type
-function destructure ({ head, tail }, vector) {
-  if (vector.length === 0) {
-    throw new PeachError(`Empty vectors cannot be destructured because they don't have a head`)
+// TODO this will need to change when Array is a wrapped type
+function destructure ({ head, tail }, array) {
+  if (array.length === 0) {
+    throw new PeachError(`Empty arrays cannot be destructured because they don't have a head`)
   }
 
-  const boundHead = unifyOne(head, vector[0])
+  const boundHead = unifyOne(head, array[0])
   if (boundHead !== null) {
-    const boundTail = unifyOne(tail, vector.slice(1))
+    const boundTail = unifyOne(tail, array.slice(1))
     if (boundTail) {
       return Object.assign(boundHead, boundTail)
     }
@@ -81,12 +81,12 @@ function isValue ({ type }) {
   return ['Bool', 'Str', 'Numeral'].includes(type)
 }
 
-function isDestructuredVector ({ type }) {
-  return type === 'DestructuredVector'
+function isDestructuredArray ({ type }) {
+  return type === 'DestructuredArray'
 }
 
 // TODO stdlib
-function zip (vectorA, vectorB) {
-  return vectorA.map((e, i) => [e, vectorB[i]])
+function zip (arrayA, arrayB) {
+  return arrayA.map((e, i) => [e, arrayB[i]])
 }
 

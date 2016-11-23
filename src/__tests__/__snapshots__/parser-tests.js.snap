@@ -17,7 +17,7 @@ Array [
               "name": "tail",
               "type": "Name",
             },
-            "type": "DestructuredVector",
+            "type": "DestructuredArray",
           },
         ],
       },
@@ -160,7 +160,7 @@ Array [
         "type": "Name",
       },
       Object {
-        "type": "Vector",
+        "type": "Array",
         "values": Array [
           Object {
             "type": "Numeral",
@@ -221,7 +221,7 @@ Array [
 exports[`test str.peach 1`] = `
 Array [
   Object {
-    "type": "Vector",
+    "type": "Array",
     "values": Array [
       Object {
         "type": "Str",

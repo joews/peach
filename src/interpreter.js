@@ -81,7 +81,7 @@ const visitors = {
     return [applyFunction(fnResult, argResults), env]
   },
 
-  Vector ({ values }, env) {
+  Array ({ values }, env) {
     const results = values.map((value) => visit(value, env)[0])
     return [results, env]
   },

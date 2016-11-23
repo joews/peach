@@ -3,7 +3,7 @@ const { PeachError } = require('./errors')
 const {
   TypeVariable,
   TypeOperator,
-  VectorType,
+  ArrayType,
   NumberType,
   StringType,
   BooleanType,
@@ -99,29 +99,29 @@ const visitors = {
     return [typed(node, returnType), env]
   },
 
-  Vector (node, env, nonGeneric) {
+  Array (node, env, nonGeneric) {
     let itemType
 
     if (node.values.length > 0) {
       const typedValues = node.values.map((value) => visit(value, env, nonGeneric)[0])
       const types = typedValues.map(value => value.exprType)
 
-      // vectors are homogenous: all items must have the same type
+      // arrays are homogenous: all items must have the same type
       unifyAll(types)
       itemType = types[0]
     } else {
       itemType = new TypeVariable()
     }
 
-    const vectorType = new VectorType(itemType)
-    return [typed(node, vectorType), env]
+    const arrayType = new ArrayType(itemType)
+    return [typed(node, arrayType), env]
   },
 
-  DestructuredVector (node, env, nonGeneric) {
+  DestructuredArray (node, env, nonGeneric) {
     const { head, tail } = node
 
     const boundHeadType = new TypeVariable()
-    const boundTailType = new VectorType(new TypeVariable())
+    const boundTailType = new ArrayType(new TypeVariable())
 
     // TODO immutable env
     if (head.type === 'Name') {
@@ -140,7 +140,7 @@ const visitors = {
     const headType = typeOf(typedHead)
     const tailType = typeOf(typedTail)
 
-    // the tail must be a vector of the head type
+    // the tail must be a array of the head type
     // the usage types of head and tail must match the declared types
     unify(boundHeadType, boundTailType.getType())
     unify(headType, boundHeadType)
@@ -158,7 +158,7 @@ const visitors = {
       // get the array of arg types
       const patternTypes = clauseNode.pattern.map(argNode => {
         // If this is a `Name` arg, define it in the function's arguments environment.
-        // if it's a destructured vector we need to recursively define any named children,
+        // if it's a destructured array we need to recursively define any named children,
         // so visiting the node will define its names.
         if (argNode.type === 'Name') {
           const argType = new TypeVariable()

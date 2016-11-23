@@ -1,7 +1,7 @@
 const { makeNativeFunction, applyFunction } = require('./function')
 const {
   TypeVariable,
-  VectorType,
+  ArrayType,
   NumberType,
   StringType,
   BooleanType,
@@ -33,7 +33,7 @@ module.exports = {
     return 0
   }, NumberType, BooleanType),
 
-  // vectors
+  // arrays
   map: map(),
   filter: filter(),
   find: find(),
@@ -57,9 +57,9 @@ function anyType () {
   return new TypeVariable()
 }
 
-// Factory for a vector that contains items of the given type
-function vectorType (itemType = anyType()) {
-  return new VectorType(itemType)
+// Factory for a array that contains items of the given type
+function arrayType (itemType = anyType()) {
+  return new ArrayType(itemType)
 }
 
 // Utility
@@ -73,45 +73,45 @@ function proxyArrayMethod (name) {
 
 // (A -> A) -> List<A> -> List<A>
 function map () {
-  const inputVectorType = vectorType()
-  const itemType = inputVectorType.getType()
-  const returnType = inputVectorType
+  const inputArrayType = arrayType()
+  const itemType = inputArrayType.getType()
+  const returnType = inputArrayType
   const iterateeType = makeFunctionType([itemType], itemType)
   const fn = proxyArrayMethod('map')
 
-  return makeNativeFunction('map', fn, [iterateeType, inputVectorType], returnType)
+  return makeNativeFunction('map', fn, [iterateeType, inputArrayType], returnType)
 }
 
 // (A -> Boolean) -> List<A> -> List<A>
 function filter () {
-  const inputVectorType = vectorType()
-  const itemType = inputVectorType.getType()
-  const returnType = inputVectorType
+  const inputArrayType = arrayType()
+  const itemType = inputArrayType.getType()
+  const returnType = inputArrayType
   const iterateeType = makeFunctionType([itemType], BooleanType)
   const fn = proxyArrayMethod('filter')
 
-  return makeNativeFunction('filter', fn, [iterateeType, inputVectorType], returnType)
+  return makeNativeFunction('filter', fn, [iterateeType, inputArrayType], returnType)
 }
 
 // TODO Maybe
 // (A -> Boolean) -> List<A> -> A
 function find () {
-  const inputVectorType = vectorType()
-  const itemType = inputVectorType.getType()
+  const inputArrayType = arrayType()
+  const itemType = inputArrayType.getType()
   const returnType = itemType
   const iterateeType = makeFunctionType([itemType], BooleanType)
   const fn = proxyArrayMethod('find')
 
-  return makeNativeFunction('find', fn, [iterateeType, inputVectorType], returnType)
+  return makeNativeFunction('find', fn, [iterateeType, inputArrayType], returnType)
 }
 
 // List<A> -> List<A>
 function reverse () {
-  const inputVectorType = vectorType()
-  const returnType = inputVectorType
+  const inputArrayType = arrayType()
+  const returnType = inputArrayType
   const fn = (list) => list.reverse()
 
-  return makeNativeFunction('reverse', fn, [inputVectorType], returnType)
+  return makeNativeFunction('reverse', fn, [inputArrayType], returnType)
 }
 
 // (A -> B -> B) -> B -> List<A> -> B
@@ -124,14 +124,14 @@ function fold () {
     list.reduce((e, a) =>
       applyFunction(pFunction, [e, a]), init)
 
-  return makeNativeFunction('fold', fn, [iterateeType, returnType, vectorType(itemType)], returnType)
+  return makeNativeFunction('fold', fn, [iterateeType, returnType, arrayType(itemType)], returnType)
 }
 
 // A -> List<A> -> List<A>
 function cons () {
   const headType = anyType()
-  const tailType = vectorType(headType)
+  const tailType = arrayType(headType)
   const fn = (item, list) => [item, ...list]
 
-  return makeNativeFunction('cons', fn, [headType, VectorType], tailType)
+  return makeNativeFunction('cons', fn, [headType, ArrayType], tailType)
 }

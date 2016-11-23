@@ -11,13 +11,13 @@ exports[`test
   ((f 3) 4)
  1`] = `
 Array [
-  "Number -> Number -> Vector<Number>",
-  "Number -> Vector<Number>",
-  "Vector<Number>",
-  "Vector<Number>",
-  "Number -> Vector<Number>",
-  "Vector<Number>",
-  "Vector<Number>",
+  "Number -> Number -> Array<Number>",
+  "Number -> Array<Number>",
+  "Array<Number>",
+  "Array<Number>",
+  "Number -> Array<Number>",
+  "Array<Number>",
+  "Array<Number>",
 ]
 `;
 
@@ -73,12 +73,12 @@ exports[`test
   (list true false true)
  1`] = `
 Array [
-  "R -> R -> R -> Vector<R>",
-  "Number -> Number -> Vector<Number>",
-  "Number -> Vector<Number>",
-  "Vector<Number>",
-  "Vector<Number>",
-  "Vector<Boolean>",
+  "R -> R -> R -> Array<R>",
+  "Number -> Number -> Array<Number>",
+  "Number -> Array<Number>",
+  "Array<Number>",
+  "Array<Number>",
+  "Array<Boolean>",
 ]
 `;
 
@@ -112,7 +112,7 @@ Array [
 
 exports[`test ([1|[2|t]] => t) 1`] = `
 Array [
-  "Vector<Number> -> Vector<Number>",
+  "Array<Number> -> Array<Number>",
 ]
 `;
 
@@ -122,7 +122,7 @@ exports[`test ([h|[true|t]] => [[h 1] t]) 1`] = `"Type error: type mismatch"`;
 
 exports[`test ([x|[y|t]] => [[x y] t]) 1`] = `
 Array [
-  "Vector<Q> -> Vector<Vector<Q>>",
+  "Array<Q> -> Array<Array<Q>>",
 ]
 `;
 
@@ -182,7 +182,7 @@ Array [
 
 exports[`test [1 2 3] 1`] = `
 Array [
-  "Vector<Number>",
+  "Array<Number>",
 ]
 `;
 
@@ -190,7 +190,7 @@ exports[`test [1 2 false] 1`] = `"Type error: type mismatch"`;
 
 exports[`test [1|list] => list 1`] = `
 Array [
-  "Vector<Number> -> Vector<Number>",
+  "Array<Number> -> Array<Number>",
 ]
 `;
 
@@ -210,6 +210,16 @@ Array [
 ]
 `;
 
+exports[`test array-destructure.peach 1`] = `
+Array [
+  "Array<B> -> B",
+  "Array<C> -> C",
+  "Array<D> -> D",
+  "Array<Number>",
+  "Array<Number>",
+]
+`;
+
 exports[`test f => (f f) 1`] = `"Type error: recursive unification"`;
 
 exports[`test f => g => arg => (g (f arg)) 1`] = `
@@ -221,7 +231,7 @@ Array [
 exports[`test fibonacci.peach 1`] = `
 Array [
   "Number -> Number",
-  "Vector<Number>",
+  "Array<Number>",
 ]
 `;
 
@@ -233,7 +243,7 @@ Array [
 
 exports[`test str.peach 1`] = `
 Array [
-  "Vector<String>",
+  "Array<String>",
 ]
 `;
 
@@ -248,16 +258,6 @@ Array [
 exports[`test true 1`] = `
 Array [
   "Boolean",
-]
-`;
-
-exports[`test vector-destructure.peach 1`] = `
-Array [
-  "Vector<B> -> B",
-  "Vector<C> -> C",
-  "Vector<D> -> D",
-  "Vector<Number>",
-  "Vector<Number>",
 ]
 `;
 

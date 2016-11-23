@@ -50,7 +50,7 @@ testFixture('fibonacci.peach')
 testFixture('function.peach')
 testFixture('str.peach')
 testFixture('tail-recursion.peach')
-testFixture('vector-destructure.peach')
+testFixture('array-destructure.peach')
 
 // literals
 testTypeCheck(`1`)
@@ -64,7 +64,7 @@ testTypeCheck('(def x `arf`) x')
 // lambda
 testTypeCheck(`(a => 1)`)
 
-// vector
+// array
 testTypeCheck(`[1 2 3]`)
 testFails(`[1 2 false]`)
 

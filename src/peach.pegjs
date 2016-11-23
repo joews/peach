@@ -72,7 +72,7 @@ destructure_tail = name / destructured_vector
 
 destructured_vector = ls head:destructure_head _ "|" tail:destructure_tail _ rs {
   return {
-    type: "DestructuredVector",
+    type: "DestructuredArray",
     head,
     tail
   }
@@ -155,14 +155,14 @@ vector = empty_vector / non_empty_vector
 
 empty_vector = ls rs {
   return {
-    type: "Vector",
+    type: "Array",
     values: []
   }
 }
 
 non_empty_vector = ls values:expression_list rs {
   return {
-    type: "Vector",
+    type: "Array",
     values
   }
 }

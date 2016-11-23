@@ -10,8 +10,8 @@ const { PeachError } = require('../errors')
 // setting and getting values
 testResult(`(def x 2) (def y 5) (* (+ x y) x)`, 14)
 
-// vectors
-testResult(`(def vector [1 2 3])`, [1, 2, 3])
+// arrays
+testResult(`(def array [1 2 3])`, [1, 2, 3])
 
 // reference error
 test('referencing an undefined variable throws an error', () => {
@@ -118,9 +118,9 @@ testResult(`
 (add-two 4)
 `, 6)
 
-// destructuring vectors
+// destructuring arrays
 // TODO repeat argument names should be illegal, except _
-testResult(fixture('vector-destructure.peach'), [9, 8, 7])
+testResult(fixture('array-destructure.peach'), [9, 8, 7])
 
 // destructuring with a non-matching head
 testResult(`
@@ -150,7 +150,7 @@ testResult(`
 // proper tail calls
 testResult(fixture('tail-recursion.peach'), Infinity)
 
-// vector functions
+// array functions
 testResult(`
 (def my-sum (fold + 0))
 (my-sum [1 2 3 4])
