@@ -28,11 +28,12 @@ Peach is inspired by JavaScript, Elm, Clojure and @bodil's [BODOL](https://githu
 (* x 2) # 4
 
 # conditionals
-(?
-  true "yes"
-  false "no"
-  _ "wat"
-) # "yes"
+if ((< x 10))
+  `little`
+else if ((< x 20))
+  `medium`
+else
+  `large`
 
 # functions
 (def double (x => (* x 2)))
