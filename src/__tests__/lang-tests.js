@@ -53,16 +53,16 @@ testResult(`(def f ((x) => 1)) (f 0)`, 1)
 testResult(`(def f () => 1) (f)`, 1)
 
 // if
+testResult(`if (false) 3 else 4`, 4)
 testResult(`
-(?
-  false 3
-  true 4
-)
-`, 4)
-
-// tests must be boolean
-// FIXME a conditional must have a branch for every possible input
-testResult(`(? false 1)`, null) // falsy
+(def x 14)
+if ((< x 10))
+  \`S\`
+else if ((< x 20))
+  \`M\`
+else
+  \`L\`
+`, `M`)
 
 // strings - easier to test without JS String literal escapes
 test('string escapes', () => {
@@ -170,7 +170,6 @@ testResult(`
 testResult(`(cons 1 [2 3])`, [1, 2, 3])
 
 // Test peach implementions of stdlib functions
-// TODO tail recursive!
 testResult(`
 (def _peach-map
   (_, [], done) => done
@@ -185,9 +184,11 @@ testResult(`
 testResult(`
 (def _peach-filter
   (_, [], done) => done
-  (fn, [head|tail], done) => (?
-    (fn head) (_peach-filter fn tail (cons head done))
-    true (_peach-filter fn tail done)))
+  (fn, [head|tail], done) =>
+    if ((fn head))
+      (_peach-filter fn tail (cons head done))
+    else
+      (_peach-filter fn tail done))
 
 (def peach-filter
   (fn, list) => (reverse (_peach-filter fn list [])))

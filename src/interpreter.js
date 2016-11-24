@@ -91,21 +91,10 @@ const visitors = {
     return [fn, env]
   },
 
-  If ({ clauses }, env) {
-    for (const [test, consequent] of clauses) {
-      // TODO a formal "else" concept - for now use `true`.
-      const [testResult] = visit(test, env)
-      if (isTruthy(testResult)) {
-        return visit(consequent, env)
-      }
-    }
+  If ({ condition, ifBranch, elseBranch }, env) {
+    const [testResult] = visit(condition, env)
+    const branch = (testResult) ? ifBranch : elseBranch
 
-    // TODO fail to compile if not all outcomes are accounted for;
-    // reutrn null until peach has static typing
-    return [null, env]
+    return visit(branch, env)
   }
-}
-
-function isTruthy (value) {
-  return value !== false && value != null
 }

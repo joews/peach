@@ -183,25 +183,14 @@ const visitors = {
   },
 
   If (node, env, nonGeneric) {
-    const { clauses } = node
-    const testTypes = clauses.map(([test]) => {
-      const [typed] = visit(test, env, nonGeneric)
-      return typeOf(typed)
-    })
+    const [condition] = visit(node.condition, env, nonGeneric)
+    const [ifBranch] = visit(node.ifBranch, env, nonGeneric)
+    const [elseBranch] = visit(node.elseBranch, env, nonGeneric)
 
-    const branchTypes = clauses.map(([, branch]) => {
-      const [typed] = visit(branch, env, nonGeneric)
-      return typeOf(typed)
-    })
+    unify(typeOf(condition), BooleanType)
+    unify(typeOf(ifBranch), typeOf(elseBranch))
 
-    // every test must be a boolean
-    unifyAll([BooleanType, ...testTypes])
-
-    // every branch must have the same type
-    unifyAll(branchTypes)
-
-    // if we succeeded, the we can use the type of any branch as the type of the if expression
-    return [typed(node, branchTypes[0]), env]
+    return [typed(node, typeOf(ifBranch)), env]
   }
 }
 

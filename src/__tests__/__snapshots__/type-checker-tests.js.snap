@@ -100,16 +100,6 @@ Array [
 ]
 `;
 
-exports[`test (? 1 1 false 2) 1`] = `"Type error: type mismatch"`;
-
-exports[`test (? true 1 false \`two\`) 1`] = `"Type error: type mismatch"`;
-
-exports[`test (? true 1 false 2) 1`] = `
-Array [
-  "Number",
-]
-`;
-
 exports[`test ([1|[2|t]] => t) 1`] = `
 Array [
   "Array<Number> -> Array<Number>",
@@ -161,6 +151,8 @@ Array [
   "Boolean",
 ]
 `;
+
+exports[`test (if (true) 1 else \`two\`) 1`] = `"Type error: type mismatch"`;
 
 exports[`test (inc 1) 1`] = `
 Array [
@@ -238,6 +230,14 @@ Array [
 exports[`test function.peach 1`] = `
 Array [
   "A -> A",
+]
+`;
+
+exports[`test if (1) 1 else 2 1`] = `"Type error: type mismatch"`;
+
+exports[`test if (true) 1 else 2 1`] = `
+Array [
+  "Number",
 ]
 `;
 

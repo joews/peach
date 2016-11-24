@@ -69,14 +69,13 @@ testTypeCheck(`[1 2 3]`)
 testFails(`[1 2 false]`)
 
 // if
-// * TODO branches must cover all possibilities
-testTypeCheck(`(? true 1 false 2)`)
+testTypeCheck(`if (true) 1 else 2`)
 
 // branches evaluate to different types
-testFails(`(? true 1 false \`two\`)`)
+testFails(`(if (true) 1 else \`two\`)`)
 
 // non-boolean condition
-testFails(`(? 1 1 false 2)`)
+testFails(`if (1) 1 else 2`)
 
 // test with some pre-defined types and symbols
 // run adapted version of Rob Smallshire's python implementation for a sanity test:

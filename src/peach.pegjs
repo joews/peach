@@ -78,10 +78,12 @@ destructured_vector = ls head:destructure_head _ "|" tail:destructure_tail _ rs 
   }
 }
 
-if = lp "?" __ clauses:expression_pair_list rp {
+if = "if" _ lp condition:expression rp __ ifBranch:expression __ "else" __ elseBranch:expression {
   return {
     type: "If",
-    clauses
+    condition,
+    ifBranch,
+    elseBranch
   }
 }
 
