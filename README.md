@@ -22,7 +22,7 @@ Peach is inspired by JavaScript, Elm, Clojure and @bodil's [BODOL](https://githu
 (def x 2) # 2
 
 # equality
-(= x 2) # true
+(== x 2) # true
 
 # maths and stuff
 (* x 2) # 4

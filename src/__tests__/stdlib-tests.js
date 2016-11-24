@@ -4,8 +4,8 @@ const { testResult } = require('./helpers')
 // e2e tests for build-in functions
 //
 
-testResult(`(= 1 1)`, true)
-testResult(`(= 1 0)`, false)
+testResult(`(== 1 1)`, true)
+testResult(`(== 1 0)`, false)
 testResult(`(< 1 0)`, false)
 testResult(`(> 1 0)`, true)
 testResult(`(<=> 1 0)`, 1)

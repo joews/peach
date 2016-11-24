@@ -141,7 +141,7 @@ testResult(`
 // mixed regular and destructured arguments
 testResult(`
 (def first-is
-  (n, [h|_]) => (= n h)
+  (n, [h|_]) => (== n h)
 )
 (def l [7 8 9])
 [(first-is 7 l) (first-is 8 l)]
@@ -158,7 +158,7 @@ testResult(`
 
 testResult(`
 (def l [1 2 3 4 5])
-(def is-even x => (= 0 (% x 2)))
+(def is-even x => (== 0 (% x 2)))
 (filter is-even l)
 `, [2, 4])
 

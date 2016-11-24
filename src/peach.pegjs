@@ -98,7 +98,7 @@ name_value
   = reserved_name
   / first:[a-zA-Z_\$] chars:[a-zA-Z0-9\-_\$]* { return first + chars.join("") }
 
-reserved_name = "!" / "+" / "-" / "*" / "/" / "%" / "&&" / "||" / "=" / "<=>" / "<=" / "<" / ">=" / ">"
+reserved_name = "!" / "+" / "-" / "*" / "/" / "%" / "&&" / "||" / "==" / "=" / "<=>" / "<=" / "<" / ">=" / ">"
 
 literal = numeral / boolean / string
 
