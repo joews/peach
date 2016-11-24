@@ -26,10 +26,10 @@ expression_pair_list =
   return [head, ...tail];
 }
 
-def = lp "def" __ name_exp:name __ value:expression rp {
+def = name_expr:name __ "=" __ value:expression {
   return {
     type: "Def",
-    name: name_exp.name,
+    name: name_expr.name,
     value
   }
 }

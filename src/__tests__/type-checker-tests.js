@@ -58,8 +58,8 @@ testTypeCheck(`true`)
 testTypeCheck('`the`')
 
 // def
-testTypeCheck(`(def x 1) (def y true) x y`)
-testTypeCheck('(def x `arf`) x')
+testTypeCheck(`x = 1 y = true x y`)
+testTypeCheck('x = `arf` x')
 
 // lambda
 testTypeCheck(`(a => 1)`)
@@ -137,21 +137,21 @@ testTypeCheck(`((addZero 1) 2)`, testEnv())
 
 testTypeCheck(`(pair 1)`, testEnv())
 testTypeCheck(`((pair 1) 2)`, testEnv())
-testTypeCheck(`(def id x => x) (id 3) (id \`hello\`)`, testEnv())
+testTypeCheck(`id = x => x (id 3) (id \`hello\`)`, testEnv())
 
 testTypeCheck(`
-  (def fib
+ fib =
     0 => 1
     1 => 1
-    x => ((add (fib ((sub x) 1))) (fib ((sub x) 2))))
+    x => ((add (fib ((sub x) 1))) (fib ((sub x) 2)))
 `, testEnv())
 
 // type mismatch in recursive call
 testFails(`
-  (def fibc
+  fibc =
     0 => 1
     1 => 1
-    x => ((add (fibc true)) (fibc ((sub x) 3))))
+    x => ((add (fibc true)) (fibc ((sub x) 3)))
 `, testEnv())
 
 // type mismatch in patterns
@@ -165,7 +165,7 @@ testFails(`x => ((pair (x 3)) (x true))`, testEnv())
 
 // polymorphic function call
 testTypeCheck(`
-  (def id x => x)
+  id = x => x
   ((pair (id 3)) (id true))
 `, testEnv())
 
@@ -174,7 +174,7 @@ testFails(`f => (f f)`)
 
 // ...but it's ok when there is more information available
 testTypeCheck(`
-  (def g f => 5)
+  g = f => 5
   (g g)
 `)
 
@@ -201,7 +201,7 @@ testFails(`([h|[true|t]] => [[h 1] t])`)
 
 // curried function calls
 testTypeCheck(`
-  (def list (a, b, c) => [a b c])
+  list = (a, b, c) => [a b c]
   (list 1)
   (list 1 2)
   (list 1 2 3)
@@ -210,14 +210,14 @@ testTypeCheck(`
 `)
 
 testFails(`
-  (def list (a, b, c) => [a b c])
+  list = (a, b, c) => [a b c]
   (list 1 true)
 `)
 
 testTypeCheck(`
-  (def f
+  f =
     (1 2) => [9 9]
-    (a b) => [a b])
+    (a b) => [a b]
 
   (f 1)
   (f 1 2)

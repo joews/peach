@@ -1,7 +1,7 @@
 exports[`test 
-  (def f
+  f =
     (1 2) => [9 9]
-    (a b) => [a b])
+    (a b) => [a b]
 
   (f 1)
   (f 1 2)
@@ -22,25 +22,14 @@ Array [
 `;
 
 exports[`test 
-  (def fib
+  fibc =
     0 => 1
     1 => 1
-    x => ((add (fib ((sub x) 1))) (fib ((sub x) 2))))
- 1`] = `
-Array [
-  "Number -> Number",
-]
-`;
-
-exports[`test 
-  (def fibc
-    0 => 1
-    1 => 1
-    x => ((add (fibc true)) (fibc ((sub x) 3))))
+    x => ((add (fibc true)) (fibc ((sub x) 3)))
  1`] = `"Type error: type mismatch"`;
 
 exports[`test 
-  (def g f => 5)
+  g = f => 5
   (g g)
  1`] = `
 Array [
@@ -50,7 +39,7 @@ Array [
 `;
 
 exports[`test 
-  (def id x => x)
+  id = x => x
   ((pair (id 3)) (id true))
  1`] = `
 Array [
@@ -60,12 +49,12 @@ Array [
 `;
 
 exports[`test 
-  (def list (a, b, c) => [a b c])
+  list = (a, b, c) => [a b c]
   (list 1 true)
  1`] = `"Type error: type mismatch"`;
 
 exports[`test 
-  (def list (a, b, c) => [a b c])
+  list = (a, b, c) => [a b c]
   (list 1)
   (list 1 2)
   (list 1 2 3)
@@ -79,6 +68,17 @@ Array [
   "Array<Number>",
   "Array<Number>",
   "Array<Boolean>",
+]
+`;
+
+exports[`test 
+ fib =
+    0 => 1
+    1 => 1
+    x => ((add (fib ((sub x) 1))) (fib ((sub x) 2)))
+ 1`] = `
+Array [
+  "Number -> Number",
 ]
 `;
 
@@ -125,30 +125,6 @@ Array [
 exports[`test (addZero 1) 1`] = `
 Array [
   "F",
-]
-`;
-
-exports[`test (def id x => x) (id 3) (id \`hello\`) 1`] = `
-Array [
-  "J -> J",
-  "Number",
-  "String",
-]
-`;
-
-exports[`test (def x \`arf\`) x 1`] = `
-Array [
-  "String",
-  "String",
-]
-`;
-
-exports[`test (def x 1) (def y true) x y 1`] = `
-Array [
-  "Number",
-  "Boolean",
-  "Number",
-  "Boolean",
 ]
 `;
 
@@ -233,6 +209,14 @@ Array [
 ]
 `;
 
+exports[`test id = x => x (id 3) (id \`hello\`) 1`] = `
+Array [
+  "J -> J",
+  "Number",
+  "String",
+]
+`;
+
 exports[`test if (1) 1 else 2 1`] = `"Type error: type mismatch"`;
 
 exports[`test if (true) 1 else 2 1`] = `
@@ -257,6 +241,22 @@ Array [
 
 exports[`test true 1`] = `
 Array [
+  "Boolean",
+]
+`;
+
+exports[`test x = \`arf\` x 1`] = `
+Array [
+  "String",
+  "String",
+]
+`;
+
+exports[`test x = 1 y = true x y 1`] = `
+Array [
+  "Number",
+  "Boolean",
+  "Number",
   "Boolean",
 ]
 `;
