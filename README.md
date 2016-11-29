@@ -5,10 +5,10 @@
 A statically typed functional language.
 
 ```
-(def fib
+fib =
   0 => 1
   1 => 1
-  x => (+ (fib (- x 1)) (fib (- x 2))))
+  x => (+ (fib (- x 1)) (fib (- x 2)))
 
 (map fib [0 1 2 3 4 5 6 7 8 9 10])
 # [ 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89 ]
@@ -19,7 +19,7 @@ Peach is inspired by JavaScript, Elm, Clojure and @bodil's [BODOL](https://githu
 
 ```clojure
 # assignment
-(def x 2) # 2
+x = 2 # 2
 
 # equality
 (== x 2) # true
@@ -36,11 +36,11 @@ else
   `large`
 
 # functions
-(def double (x => (* x 2)))
+double = (x => (* x 2))
 (map x (x => (pow x 2))) # [2 4 8 16]
 
 # currying
-(def double-all (map double))
+double-all = (map double)
 (double-all [1 2 3 4]) # (2 4 6 8)
 
 # pattern matching
@@ -58,10 +58,9 @@ else
 # tail call optimisation
 # n: the accumulating factorial
 # x: a decrementing iteration count
-#### factorial : Number -> Number -> Number
-(def factorial
+factorial =
   (n, 1) => n
-  (n, x) => (factorial (* n x) (- x 1)))
+  (n, x) => (factorial (* n x) (- x 1))
 
 (factorial 1 32768) # Infinity, because JavaScript. Better than a stack overflow!
 ```
