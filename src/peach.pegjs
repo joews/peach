@@ -17,15 +17,6 @@ expression_list =
   return [head, ...tail];
 }
 
-expression_pair = first:expression __ second:expression {
-  return [first, second];
-}
-
-expression_pair_list =
-  head:expression_pair tail:(__ p:expression_pair { return p })* {
-  return [head, ...tail];
-}
-
 def = name_expr:name __ "=" __ value:expression {
   return {
     type: "Def",
