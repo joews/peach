@@ -1,5 +1,10 @@
 start
-  = _ program:expression_list _ { return program }
+  = _ program:program _ { return program }
+
+// a program is a list of newline-delimted expressions
+program = head:expression tail:(eol e:expression { return e })* {
+  return [head, ...tail];
+}
 
 expression
   = def
@@ -12,6 +17,7 @@ expression
   / call
   / name
 
+// a list of whitespace-delimited expressions
 expression_list =
   head:expression tail:(__ e:expression { return e })* {
   return [head, ...tail];
@@ -179,5 +185,7 @@ ignored
 
 whitespace = [ \t\r\n,]
 
-comment = comment_leader [^\n]+
+eol = [\r\n]+ ignored*
+
+comment = comment_leader [^\r\n]*
 comment_leader = "#"

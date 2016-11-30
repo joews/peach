@@ -58,8 +58,17 @@ testTypeCheck(`true`)
 testTypeCheck('`the`')
 
 // def
-testTypeCheck(`x = 1 y = true x y`)
-testTypeCheck('x = `arf` x')
+testTypeCheck(`
+  x = 1
+  y = true
+  x
+  y
+`)
+
+testTypeCheck(`
+  x = \`arf\`
+  x
+`)
 
 // lambda
 testTypeCheck(`(a => 1)`)
@@ -137,7 +146,11 @@ testTypeCheck(`((addZero 1) 2)`, testEnv())
 
 testTypeCheck(`(pair 1)`, testEnv())
 testTypeCheck(`((pair 1) 2)`, testEnv())
-testTypeCheck(`id = x => x (id 3) (id \`hello\`)`, testEnv())
+testTypeCheck(`
+  id = x => x
+  (id 3)
+  (id \`hello\`)
+`, testEnv())
 
 testTypeCheck(`
  fib =

@@ -49,6 +49,18 @@ Array [
 `;
 
 exports[`test 
+  id = x => x
+  (id 3)
+  (id \`hello\`)
+ 1`] = `
+Array [
+  "J -> J",
+  "Number",
+  "String",
+]
+`;
+
+exports[`test 
   list = (a, b, c) => [a b c]
   (list 1 true)
  1`] = `"Type error: type mismatch"`;
@@ -68,6 +80,30 @@ Array [
   "Array<Number>",
   "Array<Number>",
   "Array<Boolean>",
+]
+`;
+
+exports[`test 
+  x = \`arf\`
+  x
+ 1`] = `
+Array [
+  "String",
+  "String",
+]
+`;
+
+exports[`test 
+  x = 1
+  y = true
+  x
+  y
+ 1`] = `
+Array [
+  "Number",
+  "Boolean",
+  "Number",
+  "Boolean",
 ]
 `;
 
@@ -209,14 +245,6 @@ Array [
 ]
 `;
 
-exports[`test id = x => x (id 3) (id \`hello\`) 1`] = `
-Array [
-  "J -> J",
-  "Number",
-  "String",
-]
-`;
-
 exports[`test if (1) 1 else 2 1`] = `"Type error: type mismatch"`;
 
 exports[`test if (true) 1 else 2 1`] = `
@@ -241,22 +269,6 @@ Array [
 
 exports[`test true 1`] = `
 Array [
-  "Boolean",
-]
-`;
-
-exports[`test x = \`arf\` x 1`] = `
-Array [
-  "String",
-  "String",
-]
-`;
-
-exports[`test x = 1 y = true x y 1`] = `
-Array [
-  "Number",
-  "Boolean",
-  "Number",
   "Boolean",
 ]
 `;

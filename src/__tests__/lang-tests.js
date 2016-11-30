@@ -8,7 +8,11 @@ const { PeachError } = require('../errors')
 //
 
 // setting and getting values
-testResult(`x = 2 y = 5 (* (+ x y) x)`, 14)
+testResult(`
+  x = 2
+  y = 5
+  (* (+ x y) x)
+`, 14)
 
 // arrays
 testResult(`array = [1 2 3]`, [1, 2, 3])
@@ -44,13 +48,31 @@ testResult(`
 `, 2002)
 
 // parentheses are optional
-testResult(`f = x => 1 (f 0)`, 1)
-testResult(`f = (x => 1) (f 0)`, 1)
-testResult(`f = (x) => 1 (f 0)`, 1)
-testResult(`f = ((x) => 1) (f 0)`, 1)
+testResult(`
+  f = x => 1
+  (f 0)
+`, 1)
+
+testResult(`
+  f = (x => 1)
+  (f 0)
+`, 1)
+
+testResult(`
+  f = (x) => 1
+  (f 0)
+`, 1)
+
+testResult(`
+  f = ((x) => 1)
+  (f 0)
+`, 1)
 
 // functions with no args
-testResult(`f = () => 1 (f)`, 1)
+testResult(`
+  f = () => 1
+  (f)
+`, 1)
 
 // if
 testResult(`if (false) 3 else 4`, 4)
