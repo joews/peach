@@ -1,5 +1,5 @@
 const unify = require('./unify')
-const { create } = require('./util')
+const { create, restAndLast } = require('./util')
 const { PeachError } = require('./errors')
 const { makeFunctionType } = require('./types')
 
@@ -22,22 +22,31 @@ module.exports = {
         if (didMatch !== false) {
           const env = create(parentEnv, bindings)
 
-          // If the body is a function call (Peach functions have a single expression body),
+          // For now only the last node can be a tail-recursive function call.
+          // This isn't right, because in `if a then b else b`, both `b` and `c` could
+          // be tail-recursive.
+          const [otherNodes, lastNode] = restAndLast(body)
+          for (const node of otherNodes) {
+            visit(node, env)
+          }
+
+          // If the last node is a function call,
           //  check if it's a tail call. If so return a thunk so we can use the trampoline
-          //  pattern to avoid call stack overflow.
-          if (isFunctionCall(body)) {
-            const resolvedFunction = visit(body.fn, env)[0]
+          //  pattern to avoid call stack overflow. As above - this test needs refining
+          // to include any terminal expression in a function.
+          if (isFunctionCall(lastNode)) {
+            const resolvedFunction = visit(lastNode.fn, env)[0]
             if (resolvedFunction === pFunction) {
-              // evaluate the re-entrant args without recursing to `visit(body)`
+              // evaluate the re-entrant args without recursing to `visit(lastNode)`
               // there's some duplication here but it's necessary to avoid a potential
               //  overflow in recursive `call` calls that bypass the trampoline.
-              const recurseArgExprs = body.args
+              const recurseArgExprs = lastNode.args
               const recurseArgs = recurseArgExprs.map(expr => visit(expr, env)[0])
               return () => call(...recurseArgs)
             }
           }
 
-          const [returnValue] = visit(body, env)
+          const [returnValue] = visit(lastNode, env)
           return returnValue
         }
       }
@@ -59,9 +68,6 @@ module.exports = {
     return pFunction
   },
 
-  // TODO WH
-  // > add the type args to the node in a way that gets them into the typechecker's initial env
-  // Make a built-in function from a JavaScript function
   makeNativeFunction (name, jsFunction, argTypes, returnType) {
     const typeFix = makeFunctionType(argTypes, returnType)
 
@@ -75,7 +81,7 @@ module.exports = {
   },
 
   applyFunction (pFunction, args) {
-    // FIXME the type checker shoould catch this
+    // the type checker catches this; sanity check only
     if (args.length > pFunction.arity) {
       throw new PeachError(`Function ${pFunction.name} was called with too many arguments. It expected ${pFunction.maxArity} arguments, but it was called with ${args.length}: ${JSON.stringify(args)}`)
     }

@@ -242,3 +242,19 @@ testTypeCheck(`
 
 // FIXME #6 - extra parens needed to immediately invoke a no-arg function
 testTypeCheck('((() => `look ma no args`))')
+
+// Functions with multi expression bodies
+testTypeCheck(`
+1 => 2
+x => {
+  y = 3
+  f = a => 2
+  (f y)
+}`)
+
+// defs can't use already-bound names
+testFails(`
+x => {
+  x = 3
+  x
+}`)

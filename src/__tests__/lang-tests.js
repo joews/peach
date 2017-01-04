@@ -241,3 +241,39 @@ f = (a, b) =>
 ((f 5 6))
 
 `, 18)
+
+// Functions with multi-expression bodies
+testResult(`
+f =
+  1 => 2
+  x => {
+    y = 3
+    (print y)
+    (+ y x)
+  }
+(f 2)
+`, 5)
+
+// Inner expressions are applied in series, so they can use defs
+// from earlier in the same block
+testResult(`
+f = a => {
+  g = b => 10
+  c = (g a)
+  (+ a c)
+}
+(f 2)
+`, 12)
+
+// Inner defs have nested scopes
+testResult(`
+a = 1
+f = a => {
+  g = b => {
+    a = 3
+    (+ b a)
+  }
+  [a, (g a)]
+}
+[[a], (f 2)]
+`, [[1], [2, 5]])
