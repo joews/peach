@@ -68,15 +68,13 @@ factorial =
 # Semantics
 * Static typing (with [Damas-Hindley-Milner type inference](https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system))
 * Pure functions
+* Everything is an expression
 * Immutability
-* Minimal syntax
+* Strict evaluation
+* Currying
 
 # Features
-* [Homoiconicity](https://en.wikipedia.org/wiki/Homoiconicity) - code is data is code is data
-* Everything is an expression
-* Currying
-* Dynamic typing
-* Strict evaluation
+* Minimal syntax
 * A tree-based JavaScript interpreter
 * REPL
 * Proper tails calls
