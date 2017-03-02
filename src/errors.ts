@@ -1,5 +1,5 @@
 // with help from http://stackoverflow.com/a/32749533/2806996
-class PeachError extends Error {
+export default class PeachError extends Error {
   constructor (message) {
     super(message)
     this.name = this.constructor.name
@@ -12,8 +12,4 @@ class PeachError extends Error {
       this.stack = (new Error(message).stack)
     }
   }
-}
-
-module.exports = {
-  PeachError
 }

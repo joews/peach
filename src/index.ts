@@ -1,0 +1,5 @@
+export { default as parse } from './parser'
+export { default as interpret } from './interpreter'
+export { default as typeCheck } from './type-checker'
+export { default as stdlib } from './stdlib'
+export { default as PeachError } from './errors'

@@ -1,4 +1,6 @@
-exports[`test ([true|tail] => 1) 1`] = `
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`([true|tail] => 1) 1`] = `
 Array [
   Object {
     "clauses": Array [
@@ -29,7 +31,7 @@ Array [
 ]
 `;
 
-exports[`test (true => 1) 1`] = `
+exports[`(true => 1) 1`] = `
 Array [
   Object {
     "clauses": Array [
@@ -53,7 +55,7 @@ Array [
 ]
 `;
 
-exports[`test fibonacci.peach 1`] = `
+exports[`fibonacci.peach 1`] = `
 Array [
   Object {
     "name": "fib",
@@ -228,14 +230,14 @@ Array [
 ]
 `;
 
-exports[`test str.peach 1`] = `
+exports[`str.peach 1`] = `
 Array [
   Object {
     "type": "Array",
     "values": Array [
       Object {
         "type": "Str",
-        "value": "str.peach before escape\\\`and after!",
+        "value": "str.peach before escape\\\\\`and after!",
       },
       Object {
         "type": "Str",
@@ -249,7 +251,7 @@ Array [
       },
       Object {
         "type": "Str",
-        "value": "such\\\\\\\\\\\`escape",
+        "value": "such\\\\\\\\\\\\\\\\\\\\\`escape",
       },
       Object {
         "type": "Str",
@@ -262,18 +264,18 @@ line",
       },
       Object {
         "type": "Str",
-        "value": "back\\slash",
+        "value": "back\\\\slash",
       },
       Object {
         "type": "Str",
-        "value": "back\\\\to\\back",
+        "value": "back\\\\\\\\to\\\\back",
       },
     ],
   },
 ]
 `;
 
-exports[`test tail-recursion.peach 1`] = `
+exports[`tail-recursion.peach 1`] = `
 Array [
   Object {
     "name": "factorial",

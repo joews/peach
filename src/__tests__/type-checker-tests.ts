@@ -1,20 +1,21 @@
 /* eslint-env jest */
-const parse = require('../parser')
-const typeCheck = require('../type-checker')
-const { fixture } = require('./helpers')
-const { clone } = require('../util')
+import parse from '../parser'
+import typeCheck, { getTypeEnv } from '../type-checker'
+import { getRootEnv } from '../interpreter'
+import { fixture } from './helpers'
+import { clone } from '../util'
 
-const {
+import {
   TypeVariable,
   TypeOperator,
   FunctionType,
   NumberType,
   BooleanType
-} = require('../types')
+} from '../types'
 
 // TODO unify envs
-const rootEnv = require('../interpreter').getRootEnv()
-const defaultEnv = () => clone(typeCheck.getTypeEnv(rootEnv))
+const rootEnv = getRootEnv()
+const defaultEnv = () => clone(getTypeEnv(rootEnv))
 
 //
 // snapshot tests for the parser
@@ -105,8 +106,8 @@ class PairType extends TypeOperator {
     super('*', [a, b])
   }
 
-  static of (name, typeArgs) {
-    return new PairType(...typeArgs)
+  static of (name, [a, b]) {
+    return new PairType(a, b)
   }
 
   toString () {

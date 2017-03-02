@@ -1,7 +1,13 @@
-const { PeachError } = require('./errors')
-const { isArray, isEqual } = require('./array')
+import PeachError from './errors'
+import { isArray, isEqual } from './array'
 
-module.exports = function unify (patterns, values) {
+// FIXME union type - with didMatch: false, there are never bindings.
+interface unification {
+  didMatch: boolean,
+  bindings: object
+}
+
+export default function unify (patterns, values) : unification {
   if (patterns.length !== values.length) {
     return didNotMatch
   }
@@ -61,11 +67,12 @@ function destructure ({ head, tail }, array) {
   return null
 }
 
-const didNotMatch = {
-  didMatch: false
+const didNotMatch : unification = {
+  didMatch: false,
+  bindings: {}
 }
 
-function didMatch (bindings) {
+function didMatch (bindings) : unification {
   return {
     didMatch: true,
     bindings

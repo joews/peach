@@ -1,7 +1,17 @@
 // Type definitions used by the type checker
-class TypeOperator {
-  constructor (name, typeArgs = []) {
+class Type {
+  name: string
+
+  constructor(name) {
     this.name = name
+  }
+}
+
+export class TypeOperator extends Type {
+  typeArgs: Array<Type>
+
+  constructor (name, typeArgs = []) {
+    super(name)
     this.typeArgs = typeArgs
   }
 
@@ -15,11 +25,11 @@ class TypeOperator {
   }
 }
 
-const NumberType = new TypeOperator('Number')
-const StringType = new TypeOperator('String')
-const BooleanType = new TypeOperator('Boolean')
+export const NumberType = new TypeOperator('Number')
+export const StringType = new TypeOperator('String')
+export const BooleanType = new TypeOperator('Boolean')
 
-class FunctionType extends TypeOperator {
+export class FunctionType extends TypeOperator {
   constructor (argType, returnType) {
     super('->', [argType, returnType])
   }
@@ -48,7 +58,7 @@ class FunctionType extends TypeOperator {
     let argString
     if (argType == null) {
       argString = '()'
-    } else if (argType instanceof FunctionType || argType.instance instanceof FunctionType) {
+    } else if (argType instanceof FunctionType || argType instanceof TypeVariable && argType.instance instanceof FunctionType) {
       argString = `(${argType})`
     } else {
       argString = argType
@@ -58,7 +68,7 @@ class FunctionType extends TypeOperator {
   }
 }
 
-class ArrayType extends TypeOperator {
+export class ArrayType extends TypeOperator {
   constructor (argType) {
     super('Array', [argType])
   }
@@ -76,10 +86,16 @@ class ArrayType extends TypeOperator {
   }
 }
 
-class TypeVariable {
+export class TypeVariable extends Type {
+  static nextId: number
+  static nextName: number
+
+  id: number
+  instance: Type
+
   constructor () {
+    super(null)
     this.id = TypeVariable.nextId ++
-    this.name = null
   }
 
   toString () {
@@ -96,7 +112,7 @@ class TypeVariable {
 }
 
 // Factory for curried function types that take any number of arguments
-function makeFunctionType (argTypes, returnType) {
+export function makeFunctionType (argTypes, returnType) {
   const [firstArgType, ...tailArgTypes] = argTypes
 
   if (tailArgTypes.length === 0) {
@@ -113,14 +129,3 @@ function makeFunctionType (argTypes, returnType) {
 //   go to AA.
 TypeVariable.nextId = 0
 TypeVariable.nextName = 65
-
-module.exports = {
-  TypeVariable,
-  TypeOperator,
-  FunctionType,
-  ArrayType,
-  NumberType,
-  StringType,
-  BooleanType,
-  makeFunctionType
-}

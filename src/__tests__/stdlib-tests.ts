@@ -1,4 +1,4 @@
-const { testResult } = require('./helpers')
+import { testResult } from './helpers'
 
 //
 // e2e tests for build-in functions
