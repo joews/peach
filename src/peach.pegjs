@@ -46,9 +46,13 @@ clause_list = head:clause tail:(__ c:clause { return c })* {
   return [head, ...tail];
 }
 
-clause = pattern:pattern __ "=>" __ body:expression {
-  return { pattern, body };
+clause = pattern:pattern __ "=>" __ body:clause_body {
+  return Object.assign({ pattern }, body );
 }
+
+clause_body
+  = single_expr:expression { return { body: [single_expr] } }
+  / lb body:expression_list rb { return { body } }
 
 pattern
   = lp rp { return [] }
@@ -83,6 +87,7 @@ if = "if" _ lp condition:expression rp __ ifBranch:expression __ "else" __ elseB
     elseBranch
   }
 }
+
 
 name = value:name_value {
   return {
@@ -172,6 +177,10 @@ rp = _ ")" { return ")" }
 
 ls = "[" _ { return "[" }
 rs = _ "]" { return "]" }
+
+// FIXME for some reason { and } cause pegjs syntax errors in return blocks
+lb = "{" _ { return "lb" }
+rb = _ "}" { return "rb" }
 
 // mandatory whitespace
 __ = ignored+

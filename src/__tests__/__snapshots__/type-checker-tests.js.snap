@@ -118,6 +118,24 @@ Array [
 ]
 `;
 
+exports[`test 
+1 => 2
+x => {
+  y = 3
+  f = a => 2
+  (f y)
+} 1`] = `
+Array [
+  "Number -> Number",
+]
+`;
+
+exports[`test 
+x => {
+  x = 3
+  x
+} 1`] = `"x has already been defined"`;
+
 exports[`test ((() => \`look ma no args\`)) 1`] = `
 Array [
   "String",

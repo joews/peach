@@ -27,11 +27,14 @@ function getTypeEnv (valueEnv) {
 
 module.exports.getTypeEnv = getTypeEnv
 
-// Visit each of `nodes` in order, returning the result
-// and environment of the last node.
-// returns [typedNode, env]
 function visitAll (nodes, env, nonGeneric) {
   return nodes.map(node => visit(node, env, nonGeneric))
+}
+
+function visitSerial (nodes, env, nonGeneric) {
+  return nodes.reduce(([, nextEnv], nextNode) =>
+    visit(nextNode, nextEnv, nonGeneric)
+  , [null, env])
 }
 
 function visit (node, env, nonGeneric) {
@@ -170,8 +173,8 @@ const visitors = {
         return typeOf(typedArgNode)
       })
 
-      const [bodyNode] = visit(clauseNode.body, env, nonGeneric)
-      const returnType = prune(typeOf(bodyNode))
+      const [lastBodyNode] = visitSerial(clauseNode.body, env, nonGeneric)
+      const returnType = prune(typeOf(lastBodyNode))
 
       const clauseType = makeFunctionType(patternTypes, returnType)
       return typed(clauseNode, clauseType)
@@ -205,11 +208,6 @@ function typeOf (node) {
 // return an array of types for the given array of typed nodes
 function typesOf (typedNodes) {
   return typedNodes.map(node => node.exprType)
-}
-
-// return the type of a function call
-function callFunction (fn, args) {
-
 }
 
 //
