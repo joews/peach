@@ -1,5 +1,5 @@
 /* eslint-env jest */
-const unify = require('../unify.js')
+import unify from '../unify'
 
 describe('unify', () => {
   it('can unify one matching value', () => {
@@ -24,19 +24,19 @@ describe('unify', () => {
   it('cannot unify a loosely equal value', () => {
     const patterns = [{ type: 'Numeral', value: 0 }]
     const values = [false]
-    expect(unify(patterns, values)).toEqual({ didMatch: false })
+    expect(unify(patterns, values)).toEqual({ didMatch: false, bindings: {} })
   })
 
   it('cannot unify when the number of patterns and values differs', () => {
     const patterns = [{ type: 'Numeral', value: 1 }, { type: 'Numeral', value: 2 }]
     const values = [1]
-    expect(unify(patterns, values)).toEqual({ didMatch: false })
+    expect(unify(patterns, values)).toEqual({ didMatch: false, bindings: {} })
   })
 
   it('cannot unify when some but not all patterns match', () => {
     const patterns = [{ type: 'Numeral', value: 1 }, { type: 'Numeral', value: 2 }]
     const values = [1, 3]
-    expect(unify(patterns, values)).toEqual({ didMatch: false })
+    expect(unify(patterns, values)).toEqual({ didMatch: false, bindings: {} })
   })
 
   it('can unify a variable', () => {

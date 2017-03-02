@@ -1,6 +1,6 @@
-const { create, extend } = require('./util')
-const { PeachError } = require('./errors')
-const {
+import { create, extend } from './util'
+import PeachError from './errors'
+import {
   TypeVariable,
   TypeOperator,
   ArrayType,
@@ -8,15 +8,15 @@ const {
   StringType,
   BooleanType,
   makeFunctionType
-} = require('./types')
+} from './types'
 
-module.exports = function analyse (rawAst, typeEnv, nonGeneric = new Set()) {
+export default function analyse (rawAst, typeEnv, nonGeneric = new Set()) {
   return visitAll(rawAst, typeEnv, nonGeneric)
 }
 
 // Given an environment that maps names to values, return an environment that maps names to types
 // FIXME unify the two types of environment, remove this hack.
-function getTypeEnv (valueEnv) {
+export function getTypeEnv (valueEnv) {
   return Object.keys(valueEnv).reduce((env, name) => {
     if (valueEnv[name].typeFix) {
       env[name] = typed(valueEnv[name], valueEnv[name].typeFix)
@@ -24,8 +24,6 @@ function getTypeEnv (valueEnv) {
     return env
   }, {})
 }
-
-module.exports.getTypeEnv = getTypeEnv
 
 function visitAll (nodes, env, nonGeneric) {
   return nodes.map(node => visit(node, env, nonGeneric))
@@ -236,7 +234,9 @@ function fresh (type, nonGeneric) {
       }
     } else if (pruned instanceof TypeOperator) {
       const freshTypeArgs = pruned.typeArgs.map(f)
-      return pruned.constructor.of(pruned.name, freshTypeArgs)
+
+      // FIXME find out how to do this with type safety, given type erasure.
+      return (<any>pruned.constructor).of(pruned.name, freshTypeArgs)
     }
   }
 
@@ -284,10 +284,10 @@ function unify (type1, exprType) {
 // for a type variable, that's the most deeply nested `instance`.
 // for a type operator it's t itself.
 // Always returns a TypeOperator or an unbound TypeVariable.
-function prune (t, x = false) {
+function prune (t) {
   if (t instanceof TypeVariable) {
     if (t.instance != null) {
-      t.instance = prune(t.instance, 1)
+      t.instance = prune(t.instance)
       return t.instance
     }
   }

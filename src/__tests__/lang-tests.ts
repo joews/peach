@@ -1,6 +1,6 @@
 /* eslint-env jest */
-const { testResult, fixture, run } = require('./helpers')
-const { PeachError } = require('../errors')
+import { testResult, fixture, run } from './helpers'
+import PeachError from '../errors'
 
 //
 // e2e tests for the parser and interpreter
@@ -19,7 +19,7 @@ testResult(`array = [1 2 3]`, [1, 2, 3])
 
 // reference error
 test('referencing an undefined variable throws an error', () => {
-  expect(() => run(`(y)`)).toThrow(PeachError)
+  expect(() => run(`(y)`)).toThrowError(PeachError)
 })
 
 // syntax error

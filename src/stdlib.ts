@@ -1,14 +1,15 @@
-const { makeNativeFunction, applyFunction } = require('./function')
-const {
+import { makeNativeFunction, applyFunction } from './function'
+import {
   TypeVariable,
   ArrayType,
   NumberType,
   StringType,
   BooleanType,
   makeFunctionType
-} = require('./types')
+} from './types'
 
-module.exports = {
+// TODO idiomatic export
+export default {
   // operators
   '+': binaryOp('+', (a, b) => a + b, NumberType, NumberType),
   '-': binaryOp('-', (a, b) => a - b, NumberType, NumberType),

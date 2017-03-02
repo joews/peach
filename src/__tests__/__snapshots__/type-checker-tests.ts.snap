@@ -1,4 +1,6 @@
-exports[`test 
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`
   f =
     (1 2) => [9 9]
     (a b) => [a b]
@@ -21,14 +23,14 @@ Array [
 ]
 `;
 
-exports[`test 
+exports[`
   fibc =
     0 => 1
     1 => 1
     x => ((add (fibc true)) (fibc ((sub x) 3)))
  1`] = `"Type error: type mismatch"`;
 
-exports[`test 
+exports[`
   g = f => 5
   (g g)
  1`] = `
@@ -38,7 +40,7 @@ Array [
 ]
 `;
 
-exports[`test 
+exports[`
   id = x => x
   ((pair (id 3)) (id true))
  1`] = `
@@ -48,7 +50,7 @@ Array [
 ]
 `;
 
-exports[`test 
+exports[`
   id = x => x
   (id 3)
   (id \`hello\`)
@@ -60,12 +62,12 @@ Array [
 ]
 `;
 
-exports[`test 
+exports[`
   list = (a, b, c) => [a b c]
   (list 1 true)
  1`] = `"Type error: type mismatch"`;
 
-exports[`test 
+exports[`
   list = (a, b, c) => [a b c]
   (list 1)
   (list 1 2)
@@ -83,7 +85,7 @@ Array [
 ]
 `;
 
-exports[`test 
+exports[`
   x = \`arf\`
   x
  1`] = `
@@ -93,7 +95,7 @@ Array [
 ]
 `;
 
-exports[`test 
+exports[`
   x = 1
   y = true
   x
@@ -107,7 +109,7 @@ Array [
 ]
 `;
 
-exports[`test 
+exports[`
  fib =
     0 => 1
     1 => 1
@@ -118,7 +120,7 @@ Array [
 ]
 `;
 
-exports[`test 
+exports[`
 1 => 2
 x => {
   y = 3
@@ -130,109 +132,109 @@ Array [
 ]
 `;
 
-exports[`test 
+exports[`
 x => {
   x = 3
   x
 } 1`] = `"x has already been defined"`;
 
-exports[`test ((() => \`look ma no args\`)) 1`] = `
+exports[`((() => \`look ma no args\`)) 1`] = `
 Array [
   "String",
 ]
 `;
 
-exports[`test ((addZero 1) 2) 1`] = `
+exports[`((addZero 1) 2) 1`] = `
 Array [
   "G",
 ]
 `;
 
-exports[`test ((pair 1) 2) 1`] = `
+exports[`((pair 1) 2) 1`] = `
 Array [
   "I",
 ]
 `;
 
-exports[`test ([1|[2|t]] => t) 1`] = `
+exports[`([1|[2|t]] => t) 1`] = `
 Array [
   "Array<Number> -> Array<Number>",
 ]
 `;
 
-exports[`test ([1|[true|t]] => t) 1`] = `"Type error: type mismatch"`;
+exports[`([1|[true|t]] => t) 1`] = `"Type error: type mismatch"`;
 
-exports[`test ([h|[true|t]] => [[h 1] t]) 1`] = `"Type error: type mismatch"`;
+exports[`([h|[true|t]] => [[h 1] t]) 1`] = `"Type error: type mismatch"`;
 
-exports[`test ([x|[y|t]] => [[x y] t]) 1`] = `
+exports[`([x|[y|t]] => [[x y] t]) 1`] = `
 Array [
   "Array<Q> -> Array<Array<Q>>",
 ]
 `;
 
-exports[`test (a => 1) 1`] = `
+exports[`(a => 1) 1`] = `
 Array [
   "E -> Number",
 ]
 `;
 
-exports[`test (addZero 1) 1`] = `
+exports[`(addZero 1) 1`] = `
 Array [
   "F",
 ]
 `;
 
-exports[`test (if (true) 1 else \`two\`) 1`] = `"Type error: type mismatch"`;
+exports[`(if (true) 1 else \`two\`) 1`] = `"Type error: type mismatch"`;
 
-exports[`test (inc 1) 1`] = `
+exports[`(inc 1) 1`] = `
 Array [
   "Number",
 ]
 `;
 
-exports[`test (pair 1) 1`] = `
+exports[`(pair 1) 1`] = `
 Array [
   "H",
 ]
 `;
 
-exports[`test (zero 0) 1`] = `
+exports[`(zero 0) 1`] = `
 Array [
   "Boolean",
 ]
 `;
 
-exports[`test [1 2 3] 1`] = `
+exports[`[1 2 3] 1`] = `
 Array [
   "Array<Number>",
 ]
 `;
 
-exports[`test [1 2 false] 1`] = `"Type error: type mismatch"`;
+exports[`[1 2 false] 1`] = `"Type error: type mismatch"`;
 
-exports[`test [1|list] => list 1`] = `
+exports[`[1|list] => list 1`] = `
 Array [
   "Array<Number> -> Array<Number>",
 ]
 `;
 
-exports[`test \`the\` 1`] = `
+exports[`\`the\` 1`] = `
 Array [
   "String",
 ]
 `;
 
-exports[`test 0 => 0, 1 => true 1`] = `"Type error: type mismatch"`;
+exports[`0 => 0, 1 => true 1`] = `"Type error: type mismatch"`;
 
-exports[`test 0 => 0, true => 1 1`] = `"Type error: type mismatch"`;
+exports[`0 => 0, true => 1 1`] = `"Type error: type mismatch"`;
 
-exports[`test 1 1`] = `
+exports[`1 1`] = `
 Array [
   "Number",
 ]
 `;
 
-exports[`test array-destructure.peach 1`] = `
+exports[`array-destructure.peach 1`] = `
 Array [
   "Array<B> -> B",
   "Array<C> -> C",
@@ -242,42 +244,42 @@ Array [
 ]
 `;
 
-exports[`test f => (f f) 1`] = `"Type error: recursive unification"`;
+exports[`f => (f f) 1`] = `"Type error: recursive unification"`;
 
-exports[`test f => g => arg => (g (f arg)) 1`] = `
+exports[`f => g => arg => (g (f arg)) 1`] = `
 Array [
   "(N -> O) -> (O -> P) -> N -> P",
 ]
 `;
 
-exports[`test fibonacci.peach 1`] = `
+exports[`fibonacci.peach 1`] = `
 Array [
   "Number -> Number",
   "Array<Number>",
 ]
 `;
 
-exports[`test function.peach 1`] = `
+exports[`function.peach 1`] = `
 Array [
   "A -> A",
 ]
 `;
 
-exports[`test if (1) 1 else 2 1`] = `"Type error: type mismatch"`;
+exports[`if (1) 1 else 2 1`] = `"Type error: type mismatch"`;
 
-exports[`test if (true) 1 else 2 1`] = `
+exports[`if (true) 1 else 2 1`] = `
 Array [
   "Number",
 ]
 `;
 
-exports[`test str.peach 1`] = `
+exports[`str.peach 1`] = `
 Array [
   "Array<String>",
 ]
 `;
 
-exports[`test tail-recursion.peach 1`] = `
+exports[`tail-recursion.peach 1`] = `
 Array [
   "Number -> Number -> Number",
   "Number -> Number",
@@ -285,15 +287,15 @@ Array [
 ]
 `;
 
-exports[`test true 1`] = `
+exports[`true 1`] = `
 Array [
   "Boolean",
 ]
 `;
 
-exports[`test x => ((pair (x 3)) (x true)) 1`] = `"Type error: type mismatch"`;
+exports[`x => ((pair (x 3)) (x true)) 1`] = `"Type error: type mismatch"`;
 
-exports[`test zero 1`] = `
+exports[`zero 1`] = `
 Array [
   "Number -> Boolean",
 ]

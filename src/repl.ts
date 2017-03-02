@@ -1,13 +1,20 @@
-const repl = require('repl')
+import { start } from 'repl'
+
+// FIXME no Recoverable on REPL typing, raise PR
+const { Recoverable } = require('repl')
+// /FIXME
+
+import interpret, { getRootEnv } from "./interpreter"
+import typeCheck, { getTypeEnv } from "./type-checker"
+import { parse, PeachError } from '.'
 
 const { version } = require('../package.json')
-const { parse, interpret, typeCheck, PeachError } = require('..')
 
-module.exports = function startRepl (options, onExit) {
+export default function startRepl (options, onExit) {
   console.log(`🍑  peach v${version}`)
 
-  const rootEnv = interpret.getRootEnv()
-  const rootTypeEnv = typeCheck.getTypeEnv(rootEnv)
+  const rootEnv =  getRootEnv()
+  const rootTypeEnv = getTypeEnv(rootEnv)
 
   // remember the environment from each command to pass to the next
   // TODO unify the type check and interpreter environments
@@ -29,14 +36,14 @@ module.exports = function startRepl (options, onExit) {
       return callback(null, typedResult)
     } catch (e) {
       if (isRecoverableError(e)) {
-        return callback(new repl.Recoverable(e))
+        return callback(new Recoverable(e))
       } else {
         return callback(getErrorMessage(e))
       }
     }
   }
 
-  const server = repl.start({
+  const server = start({
     prompt: '❯ ',
     eval: evalPeach,
     writer: getOutput

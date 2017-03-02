@@ -1,21 +1,19 @@
 'use strict'
-const { makeFunction, applyFunction } = require('./function')
-const stdlib = require('./stdlib')
-const { extend, clone } = require('./util')
-const { PeachError } = require('./errors')
+import { makeFunction, applyFunction } from './function'
+import stdlib from './stdlib'
+import { extend, clone } from './util'
+import PeachError from './errors'
 
-module.exports = function interpret (ast, rootEnv = getRootEnv()) {
+export default function interpret (ast, rootEnv = getRootEnv()) {
   const [result, env] = visitAll(ast, rootEnv)
 
   return [result, env]
 }
 
-function getRootEnv () {
+// TODO a better way to expose the root environment
+export function getRootEnv () {
   return clone(stdlib)
 }
-
-// TODO a better way to expose the root environment
-module.exports.getRootEnv = getRootEnv
 
 // Visit each of `nodes` in order, returning the result
 // and environment of the last node.

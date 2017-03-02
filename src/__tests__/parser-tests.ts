@@ -1,6 +1,6 @@
 /* eslint-env jest */
-const parse = require('../parser')
-const { fixture } = require('./helpers')
+import parse from '../parser'
+import { fixture } from './helpers'
 
 //
 // snapshot tests for the parser

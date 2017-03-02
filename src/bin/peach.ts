@@ -1,11 +1,14 @@
-#! /usr/bin/env node
-'use strict'
-const fs = require('fs')
-const path = require('path')
+#!/usr/bin/env node
+import { readFileSync } from 'fs'
+import { resolve } from 'path'
+
+// TODO I don't understand the minimist type definition yet
 const parseArgs = require('minimist')
 
-const { parse, interpret, typeCheck } = require('../index.js')
-const startRepl = require('../src/repl.js')
+import { parse } from '..'
+import startRepl from '../repl'
+import interpret, { getRootEnv } from "../interpreter"
+import typeCheck, { getTypeEnv } from "../type-checker"
 
 function readArgs (inputArgs) {
   const argv = parseArgs(inputArgs)
@@ -14,7 +17,7 @@ function readArgs (inputArgs) {
 }
 
 function read (filePath) {
-  return fs.readFileSync(filePath, 'utf8')
+  return readFileSync(filePath, 'utf8')
 }
 
 function runScript (path) {
@@ -22,8 +25,8 @@ function runScript (path) {
     const ast = parse(read(path))
 
     // TODO unify the type and value environments
-    const rootEnv = interpret.getRootEnv()
-    const typeEnv = typeCheck.getTypeEnv(rootEnv)
+    const rootEnv = getRootEnv()
+    const typeEnv = getTypeEnv(rootEnv)
 
     typeCheck(ast, typeEnv)
     interpret(ast, rootEnv)
@@ -40,8 +43,8 @@ function runScript (path) {
 }
 
 function runPath (args, done) {
-  const scriptPath = path.resolve(args.inputPath)
-  const status = runScript(scriptPath, args)
+  const scriptPath = resolve(args.inputPath)
+  const status = runScript(scriptPath)
 
   return done(status)
 }
@@ -60,4 +63,3 @@ function run (args, onComplete) {
 
 const args = readArgs(process.argv.slice(2))
 run(args, (status) => process.exit(status))
-
