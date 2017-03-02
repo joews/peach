@@ -82,7 +82,6 @@ factorial =
 # Plans
 Coming soon:
 * Type hint syntax
-* `let` syntax
 * More stdlib
 * Algebraic data types
 
