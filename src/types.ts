@@ -1,5 +1,5 @@
 // Type definitions used by the type checker
-class Type {
+export class Type {
   name: string
 
   constructor(name) {

@@ -68,13 +68,13 @@ export function  makeFunction (functionNode, parentEnv, visit) {
 }
 
 export function makeNativeFunction (name, jsFunction, argTypes, returnType) {
-  const typeFix = makeFunctionType(argTypes, returnType)
+  const exprType = makeFunctionType(argTypes, returnType)
 
   return {
     name,
     arity: argTypes.length,
     call: jsFunction,
-    typeFix,
+    exprType,
     toString: () => `built-in ${name}`
   }
 }

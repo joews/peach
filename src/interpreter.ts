@@ -31,9 +31,9 @@ function visit (node, env) {
 
 const visitors = {
   Def ({ name, value }, env) {
-    if (env.hasOwnProperty(name)) {
-      throw new PeachError(`${name} has already been defined`)
-    }
+    // if (env.hasOwnProperty(name)) {
+    //   throw new PeachError(`${name} has already been defined`)
+    // }
 
     // Give the named value an inherent name property
     // This avoids the need for a seperate `defn`, though it fails where

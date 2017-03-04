@@ -15,18 +15,23 @@ export default function startRepl (options, onExit) {
   console.log(`🍑  peach v${version}`)
 
   const rootEnv =  getRootEnv()
+  const typeEnv = getRootEnv()
 
   // remember the environment from each command to pass to the next
   let lastEnv = rootEnv
+  // let lastTypeEnv = getTypedEnv(rootEnv)
+  let lastTypeEnv = typeEnv
 
   function evalPeach (src, context, filename, callback) {
     try {
       const ast = parse(src)
 
-      const checked = typeCheck(ast, lastEnv)
-      const [typed, typedEnv] = checked[checked.length - 1]
-      const [result, nextEnv] = interpret(ast, typedEnv)
+      const checked = typeCheck(ast, lastTypeEnv)
+      const [typed, nextTypeEnv] = checked[checked.length - 1]
+      console.log(typed)
+      const [result, nextEnv] = interpret(ast, lastEnv)
       lastEnv = nextEnv
+      lastTypeEnv = nextTypeEnv
 
       const typedResult = `${result}: ${typed.exprType}`
       return callback(null, typedResult)
@@ -63,6 +68,6 @@ function getErrorMessage (e) {
 }
 
 function getOutput (value) {
-  return value ? value.toString() : value
-  // return JSON.stringify(value)
+  // return value ? value.toString() : value
+  return JSON.stringify(value)
 }

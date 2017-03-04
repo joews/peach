@@ -10,22 +10,9 @@ import {
   makeFunctionType
 } from './types'
 
-export default function analyse (rawAst, rootEnv, nonGeneric = new Set()) {
+export default function analyse (rawAst, typedEnv, nonGeneric = new Set()) {
   // console.log(rootEnv)
-  const typedEnv = getTypedEnv(rootEnv)
   return visitAll(rawAst, typedEnv, nonGeneric)
-}
-
-// Given an environment that maps names to values, return an environment that maps names to types
-function getTypedEnv (valueEnv) {
-  return Object.keys(valueEnv).reduce((env, name) => {
-    if (valueEnv[name].typeFix) {
-      env[name] = typed(valueEnv[name], valueEnv[name].typeFix)
-    } else {
-      env[name] = valueEnv[name]
-    }
-    return env
-  }, {})
 }
 
 function visitAll (nodes, env, nonGeneric) {
