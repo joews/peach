@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import parse from '../parser'
-import typeCheck, { getTypeEnv } from '../type-checker'
-import { getRootEnv } from '../interpreter'
+import typeCheck from '../type-checker'
+import { getRootEnv } from '../env'
 import { fixture } from './helpers'
 import { clone } from '../util'
 
@@ -15,8 +15,7 @@ import {
 
 // TODO unify envs
 const rootEnv = getRootEnv()
-const defaultEnv = () => clone(getTypeEnv(rootEnv))
-
+const defaultEnv = () => getRootEnv() 
 //
 // snapshot tests for the parser
 //

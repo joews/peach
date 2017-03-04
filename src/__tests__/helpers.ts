@@ -2,9 +2,10 @@
 import { readFileSync } from 'fs'
 import { join } from 'path'
 
+import { getRootEnv } from '../env'
 import parse from '../parser'
-import typeCheck, { getTypeEnv } from '../type-checker'
-import interpret, { getRootEnv } from '../interpreter'
+import typeCheck from '../type-checker'
+import interpret from '../interpreter'
 
 export function fixture (fileName) {
   const filePath = join(__dirname, 'fixtures', fileName)
@@ -13,10 +14,8 @@ export function fixture (fileName) {
 
 export function run (program) {
   const rootEnv = getRootEnv()
-  const rootTypeEnv = getTypeEnv(rootEnv)
-
   const ast = parse(program)
-  typeCheck(ast, rootTypeEnv)
+  typeCheck(ast, rootEnv)
 
   return interpret(ast, rootEnv)
 }

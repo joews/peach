@@ -15,8 +15,7 @@ export default function analyse (rawAst, typeEnv, nonGeneric = new Set()) {
 }
 
 // Given an environment that maps names to values, return an environment that maps names to types
-// FIXME unify the two types of environment, remove this hack.
-export function getTypeEnv (valueEnv) {
+export function getDefaultEnv (valueEnv) {
   return Object.keys(valueEnv).reduce((env, name) => {
     if (valueEnv[name].typeFix) {
       env[name] = typed(valueEnv[name], valueEnv[name].typeFix)

@@ -4,8 +4,9 @@ import { start } from 'repl'
 const { Recoverable } = require('repl')
 // /FIXME
 
-import interpret, { getRootEnv } from "./interpreter"
-import typeCheck, { getTypeEnv } from "./type-checker"
+import { getRootEnv } from './env'
+import interpret from "./interpreter"
+import typeCheck from "./type-checker"
 import { parse, PeachError } from '.'
 
 const { version } = require('../package.json')
@@ -14,23 +15,18 @@ export default function startRepl (options, onExit) {
   console.log(`🍑  peach v${version}`)
 
   const rootEnv =  getRootEnv()
-  const rootTypeEnv = getTypeEnv(rootEnv)
 
   // remember the environment from each command to pass to the next
-  // TODO unify the type check and interpreter environments
   let lastEnv = rootEnv
-  let lastTypeEnv = rootTypeEnv
 
   function evalPeach (src, context, filename, callback) {
     try {
       const ast = parse(src)
 
-      const checked = typeCheck(ast, lastTypeEnv)
-      const [typed, typeEnv] = checked[checked.length - 1]
-      lastTypeEnv = typeEnv
-
-      const [result, env] = interpret(ast, lastEnv)
-      lastEnv = env
+      const checked = typeCheck(ast, lastEnv)
+      const [typed, typedEnv] = checked[checked.length - 1]
+      const [result, nextEnv] = interpret(ast, typedEnv)
+      lastEnv = nextEnv
 
       const typedResult = `${result}: ${typed.exprType}`
       return callback(null, typedResult)
