@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import parse from '../parser'
-import typeCheck, { getTypeEnv } from '../type-checker'
-import { getRootEnv } from '../interpreter'
+import typeCheck from '../type-checker'
+import { getRootEnv } from '../env'
 import { fixture } from './helpers'
 import { clone } from '../util'
 
@@ -13,15 +13,7 @@ import {
   BooleanType
 } from '../types'
 
-// TODO unify envs
-const rootEnv = getRootEnv()
-const defaultEnv = () => clone(getTypeEnv(rootEnv))
-
-//
-// snapshot tests for the parser
-//
-
-function testTypeCheck (code, env = defaultEnv()) {
+function testTypeCheck (code, env = getRootEnv()) {
   test(code, () => {
     const parsed = parse(code)
     const analysed = typeCheck(parsed, env)
@@ -31,14 +23,14 @@ function testTypeCheck (code, env = defaultEnv()) {
   })
 };
 
-function testFails (code, env = defaultEnv()) {
+function testFails (code, env = getRootEnv()) {
   test(code, () => {
     const parsed = parse(code)
     expect(() => typeCheck(parsed, env)).toThrowErrorMatchingSnapshot()
   })
 }
 
-function testFixture (fixtureName, env = defaultEnv()) {
+function testFixture (fixtureName, env = getRootEnv()) {
   // assert that the no-op analyser makes no changes
   test(fixtureName, () => {
     const parsed = parse(fixture(fixtureName))

@@ -10,19 +10,8 @@ import {
   makeFunctionType
 } from './types'
 
-export default function analyse (rawAst, typeEnv, nonGeneric = new Set()) {
-  return visitAll(rawAst, typeEnv, nonGeneric)
-}
-
-// Given an environment that maps names to values, return an environment that maps names to types
-// FIXME unify the two types of environment, remove this hack.
-export function getTypeEnv (valueEnv) {
-  return Object.keys(valueEnv).reduce((env, name) => {
-    if (valueEnv[name].typeFix) {
-      env[name] = typed(valueEnv[name], valueEnv[name].typeFix)
-    }
-    return env
-  }, {})
+export default function analyse (rawAst, typedEnv, nonGeneric = new Set()) {
+  return visitAll(rawAst, typedEnv, nonGeneric)
 }
 
 function visitAll (nodes, env, nonGeneric) {

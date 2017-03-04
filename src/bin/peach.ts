@@ -7,8 +7,9 @@ const parseArgs = require('minimist')
 
 import { parse } from '..'
 import startRepl from '../repl'
-import interpret, { getRootEnv } from "../interpreter"
-import typeCheck, { getTypeEnv } from "../type-checker"
+import { getRootEnv } from '../env'
+import interpret from "../interpreter"
+import typeCheck from "../type-checker"
 
 function readArgs (inputArgs) {
   const argv = parseArgs(inputArgs)
@@ -24,12 +25,8 @@ function runScript (path) {
   try {
     const ast = parse(read(path))
 
-    // TODO unify the type and value environments
-    const rootEnv = getRootEnv()
-    const typeEnv = getTypeEnv(rootEnv)
-
-    typeCheck(ast, typeEnv)
-    interpret(ast, rootEnv)
+    typeCheck(ast, getRootEnv())
+    interpret(ast, getRootEnv())
     return 0
   } catch (e) {
     if (/ENOENT/.test(e.message)) {

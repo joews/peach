@@ -1,18 +1,12 @@
 'use strict'
 import { makeFunction, applyFunction } from './function'
-import stdlib from './stdlib'
 import { extend, clone } from './util'
 import PeachError from './errors'
+import { getRootEnv } from './env'
 
 export default function interpret (ast, rootEnv = getRootEnv()) {
   const [result, env] = visitAll(ast, rootEnv)
-
   return [result, env]
-}
-
-// TODO a better way to expose the root environment
-export function getRootEnv () {
-  return clone(stdlib)
 }
 
 // Visit each of `nodes` in order, returning the result
