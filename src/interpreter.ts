@@ -6,7 +6,6 @@ import { getRootEnv } from './env'
 
 export default function interpret (ast, rootEnv = getRootEnv()) {
   const [result, env] = visitAll(ast, rootEnv)
-
   return [result, env]
 }
 
