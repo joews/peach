@@ -24,10 +24,9 @@ function read (filePath) {
 function runScript (path) {
   try {
     const ast = parse(read(path))
-    const env = getRootEnv()
 
-    typeCheck(ast, env)
-    interpret(ast, env)
+    typeCheck(ast, getRootEnv())
+    interpret(ast, getRootEnv())
     return 0
   } catch (e) {
     if (/ENOENT/.test(e.message)) {

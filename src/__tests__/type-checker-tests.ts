@@ -13,13 +13,6 @@ import {
   BooleanType
 } from '../types'
 
-// TODO unify envs
-const rootEnv = getRootEnv()
-const defaultEnv = () => getRootEnv() 
-//
-// snapshot tests for the parser
-//
-
 function testTypeCheck (code, env = getRootEnv()) {
   test(code, () => {
     const parsed = parse(code)

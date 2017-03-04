@@ -13,11 +13,9 @@ export function fixture (fileName) {
 }
 
 export function run (program) {
-  const rootEnv = getRootEnv()
   const ast = parse(program)
-  typeCheck(ast, rootEnv)
-
-  return interpret(ast, rootEnv)
+  typeCheck(ast, getRootEnv())
+  return interpret(ast, getRootEnv())
 }
 
 export function testResult (program, expectedOutput) {

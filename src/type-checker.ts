@@ -11,7 +11,6 @@ import {
 } from './types'
 
 export default function analyse (rawAst, typedEnv, nonGeneric = new Set()) {
-  // console.log(rootEnv)
   return visitAll(rawAst, typedEnv, nonGeneric)
 }
 
