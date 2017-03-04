@@ -20,7 +20,7 @@ const defaultEnv = () => getRootEnv()
 // snapshot tests for the parser
 //
 
-function testTypeCheck (code, env = defaultEnv()) {
+function testTypeCheck (code, env = getRootEnv()) {
   test(code, () => {
     const parsed = parse(code)
     const analysed = typeCheck(parsed, env)
@@ -30,14 +30,14 @@ function testTypeCheck (code, env = defaultEnv()) {
   })
 };
 
-function testFails (code, env = defaultEnv()) {
+function testFails (code, env = getRootEnv()) {
   test(code, () => {
     const parsed = parse(code)
     expect(() => typeCheck(parsed, env)).toThrowErrorMatchingSnapshot()
   })
 }
 
-function testFixture (fixtureName, env = defaultEnv()) {
+function testFixture (fixtureName, env = getRootEnv()) {
   // assert that the no-op analyser makes no changes
   test(fixtureName, () => {
     const parsed = parse(fixture(fixtureName))
