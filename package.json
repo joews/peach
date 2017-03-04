@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "prepublish": "npm run dist",
-    "lint": "standard",
+    "lint": "tslint src/**/*.ts",
     "dist": "mkdir -p dist && cp -r src/peach.pegjs src/__tests__/fixtures dist && tsc && chmod u+x ./dist/bin/peach.js",
     "clean": "rm -rf dist"
   },
@@ -37,9 +37,9 @@
     "@types/minimist": "^1.2.0",
     "@types/node": "^7.0.5",
     "@types/pegjs": "^0.10.0",
-    "chalkline": "0.0.5",
     "jest": "^19.0.2",
-    "standard": "^8.3.0",
+    "tslint": "^4.5.1",
+    "tslint-config-standard": "^4.0.0",
     "typescript": "^2.2.1"
   },
   "jest": {

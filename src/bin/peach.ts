@@ -8,8 +8,8 @@ const parseArgs = require('minimist')
 import { parse } from '..'
 import startRepl from '../repl'
 import { getRootEnv } from '../env'
-import interpret from "../interpreter"
-import typeCheck from "../type-checker"
+import interpret from '../interpreter'
+import typeCheck from '../type-checker'
 
 function readArgs (inputArgs) {
   const argv = parseArgs(inputArgs)
