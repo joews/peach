@@ -14,13 +14,12 @@ const { version } = require('../package.json')
 export default function startRepl (options, onExit) {
   console.log(`🍑  peach v${version}`)
 
-  const rootEnv =  getRootEnv()
-  const typeEnv = getRootEnv()
-
   // remember the environment from each command to pass to the next
-  let lastEnv = rootEnv
-  // let lastTypeEnv = getTypedEnv(rootEnv)
-  let lastTypeEnv = typeEnv
+  // remember a separate environment for type checking, because the REPL
+  // needs to continually type check the new input against existing definitions
+  // TODO type annotations
+  let lastEnv = getRootEnv()      // name -> value
+  let lastTypeEnv = getRootEnv()  // name -> typed AST node
 
   function evalPeach (src, context, filename, callback) {
     try {
@@ -28,8 +27,8 @@ export default function startRepl (options, onExit) {
 
       const checked = typeCheck(ast, lastTypeEnv)
       const [typed, nextTypeEnv] = checked[checked.length - 1]
-      console.log(typed)
       const [result, nextEnv] = interpret(ast, lastEnv)
+
       lastEnv = nextEnv
       lastTypeEnv = nextTypeEnv
 
@@ -68,6 +67,5 @@ function getErrorMessage (e) {
 }
 
 function getOutput (value) {
-  // return value ? value.toString() : value
-  return JSON.stringify(value)
+  return value ? value.toString() : value
 }
