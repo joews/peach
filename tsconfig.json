@@ -4,7 +4,8 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "outDir": "./dist",
-        "target": "es2017"
+        "target": "es2017",
+        "sourceMap": true
     },
     "include": [
         "./src/**/*"

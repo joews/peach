@@ -1,9 +1,10 @@
 /* eslint-env jest */
 import parse from '../parser'
 import typeCheck from '../type-checker'
-import { getRootEnv } from '../env'
+import { getRootEnv, getTypeEnv } from '../env'
 import { fixture } from './helpers'
 import { clone } from '../util'
+import { TypedNode, AstNode } from '../node-types'
 
 import {
   TypeVariable,
@@ -13,7 +14,7 @@ import {
   BooleanType
 } from '../types'
 
-function testTypeCheck (code, env = getRootEnv()) {
+function testTypeCheck (code, env = getTypeEnv(getRootEnv())) {
   test(code, () => {
     const parsed = parse(code)
     const [lastNode] = typeCheck(parsed, env)
@@ -22,14 +23,14 @@ function testTypeCheck (code, env = getRootEnv()) {
   })
 };
 
-function testFails (code, env = getRootEnv()) {
+function testFails (code, env = getTypeEnv(getRootEnv())) {
   test(code, () => {
     const parsed = parse(code)
     expect(() => typeCheck(parsed, env)).toThrowErrorMatchingSnapshot()
   })
 }
 
-function testFixture (fixtureName, env = getRootEnv()) {
+function testFixture (fixtureName, env = getTypeEnv(getRootEnv())) {
   // assert that the no-op analyser makes no changes
   test(fixtureName, () => {
     const parsed = parse(fixture(fixtureName))
@@ -86,9 +87,10 @@ testFails(`if (1) 1 else 2`)
 
 // the peach type checker works over nodes with an `exprType` property.
 // helper for creating nodes for synthetic type tests
-function typed (type) {
+function typed (type): TypedNode<AstNode> {
   return {
-    exprType: type
+    exprType: type,
+    type: 'Str'
   }
 }
 

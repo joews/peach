@@ -7,7 +7,7 @@ const parseArgs = require('minimist')
 
 import { parse } from '..'
 import startRepl from '../repl'
-import { getRootEnv } from '../env'
+import { getRootEnv, getTypeEnv } from '../env'
 import interpret from '../interpreter'
 import typeCheck from '../type-checker'
 
@@ -24,9 +24,11 @@ function read (filePath) {
 function runScript (path) {
   try {
     const ast = parse(read(path))
+    const env = getRootEnv()
+    const typeEnv = getTypeEnv(env)
 
-    typeCheck(ast, getRootEnv())
-    interpret(ast, getRootEnv())
+    const [typedAst] = typeCheck(ast, typeEnv)
+    interpret(typedAst, env)
     return 0
   } catch (e) {
     if (/ENOENT/.test(e.message)) {
