@@ -1,66 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`([true|tail] => 1) 1`] = `
-Array [
-  Object {
-    "clauses": Array [
-      Object {
-        "body": Array [
-          Object {
-            "type": "Numeral",
-            "value": 1,
-          },
-        ],
-        "pattern": Array [
-          Object {
-            "head": Object {
-              "type": "Bool",
-              "value": true,
-            },
-            "tail": Object {
-              "name": "tail",
-              "type": "Name",
-            },
-            "type": "DestructuredArray",
-          },
-        ],
-      },
-    ],
-    "type": "Fn",
-  },
-]
-`;
-
-exports[`(true => 1) 1`] = `
-Array [
-  Object {
-    "clauses": Array [
-      Object {
-        "body": Array [
-          Object {
-            "type": "Numeral",
-            "value": 1,
-          },
-        ],
-        "pattern": Array [
-          Object {
-            "type": "Bool",
-            "value": true,
-          },
-        ],
-      },
-    ],
-    "type": "Fn",
-  },
-]
-`;
-
-exports[`fibonacci.peach 1`] = `
-Array [
-  Object {
-    "name": "fib",
-    "type": "Def",
-    "value": Object {
+Object {
+  "expressions": Array [
+    Object {
       "clauses": Array [
         Object {
           "body": Array [
@@ -70,345 +13,417 @@ Array [
             },
           ],
           "pattern": Array [
+            Object {
+              "head": Object {
+                "type": "Bool",
+                "value": true,
+              },
+              "tail": Object {
+                "name": "tail",
+                "type": "Name",
+              },
+              "type": "DestructuredArray",
+            },
+          ],
+        },
+      ],
+      "type": "Fn",
+    },
+  ],
+  "type": "Program",
+}
+`;
+
+exports[`(true => 1) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "clauses": Array [
+        Object {
+          "body": Array [
+            Object {
+              "type": "Numeral",
+              "value": 1,
+            },
+          ],
+          "pattern": Array [
+            Object {
+              "type": "Bool",
+              "value": true,
+            },
+          ],
+        },
+      ],
+      "type": "Fn",
+    },
+  ],
+  "type": "Program",
+}
+`;
+
+exports[`fibonacci.peach 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "name": "fib",
+      "type": "Def",
+      "value": Object {
+        "clauses": Array [
+          Object {
+            "body": Array [
+              Object {
+                "type": "Numeral",
+                "value": 1,
+              },
+            ],
+            "pattern": Array [
+              Object {
+                "type": "Numeral",
+                "value": 0,
+              },
+            ],
+          },
+          Object {
+            "body": Array [
+              Object {
+                "type": "Numeral",
+                "value": 1,
+              },
+            ],
+            "pattern": Array [
+              Object {
+                "type": "Numeral",
+                "value": 1,
+              },
+            ],
+          },
+          Object {
+            "body": Array [
+              Object {
+                "args": Array [
+                  Object {
+                    "args": Array [
+                      Object {
+                        "args": Array [
+                          Object {
+                            "name": "x",
+                            "type": "Name",
+                          },
+                          Object {
+                            "type": "Numeral",
+                            "value": 1,
+                          },
+                        ],
+                        "fn": Object {
+                          "name": "-",
+                          "type": "Name",
+                        },
+                        "type": "Call",
+                      },
+                    ],
+                    "fn": Object {
+                      "name": "fib",
+                      "type": "Name",
+                    },
+                    "type": "Call",
+                  },
+                  Object {
+                    "args": Array [
+                      Object {
+                        "args": Array [
+                          Object {
+                            "name": "x",
+                            "type": "Name",
+                          },
+                          Object {
+                            "type": "Numeral",
+                            "value": 2,
+                          },
+                        ],
+                        "fn": Object {
+                          "name": "-",
+                          "type": "Name",
+                        },
+                        "type": "Call",
+                      },
+                    ],
+                    "fn": Object {
+                      "name": "fib",
+                      "type": "Name",
+                    },
+                    "type": "Call",
+                  },
+                ],
+                "fn": Object {
+                  "name": "+",
+                  "type": "Name",
+                },
+                "type": "Call",
+              },
+            ],
+            "pattern": Array [
+              Object {
+                "name": "x",
+                "type": "Name",
+              },
+            ],
+          },
+        ],
+        "type": "Fn",
+      },
+    },
+    Object {
+      "args": Array [
+        Object {
+          "name": "fib",
+          "type": "Name",
+        },
+        Object {
+          "type": "Array",
+          "values": Array [
             Object {
               "type": "Numeral",
               "value": 0,
             },
-          ],
-        },
-        Object {
-          "body": Array [
             Object {
               "type": "Numeral",
               "value": 1,
             },
-          ],
-          "pattern": Array [
             Object {
               "type": "Numeral",
-              "value": 1,
+              "value": 2,
             },
-          ],
-        },
-        Object {
-          "body": Array [
             Object {
-              "args": Array [
-                Object {
-                  "args": Array [
-                    Object {
-                      "args": Array [
-                        Object {
-                          "name": "x",
-                          "type": "Name",
-                        },
-                        Object {
-                          "type": "Numeral",
-                          "value": 1,
-                        },
-                      ],
-                      "fn": Object {
-                        "name": "-",
-                        "type": "Name",
-                      },
-                      "type": "Call",
-                    },
-                  ],
-                  "fn": Object {
-                    "name": "fib",
-                    "type": "Name",
-                  },
-                  "type": "Call",
-                },
-                Object {
-                  "args": Array [
-                    Object {
-                      "args": Array [
-                        Object {
-                          "name": "x",
-                          "type": "Name",
-                        },
-                        Object {
-                          "type": "Numeral",
-                          "value": 2,
-                        },
-                      ],
-                      "fn": Object {
-                        "name": "-",
-                        "type": "Name",
-                      },
-                      "type": "Call",
-                    },
-                  ],
-                  "fn": Object {
-                    "name": "fib",
-                    "type": "Name",
-                  },
-                  "type": "Call",
-                },
-              ],
-              "fn": Object {
-                "name": "+",
-                "type": "Name",
-              },
-              "type": "Call",
+              "type": "Numeral",
+              "value": 3,
             },
-          ],
-          "pattern": Array [
             Object {
-              "name": "x",
-              "type": "Name",
+              "type": "Numeral",
+              "value": 4,
+            },
+            Object {
+              "type": "Numeral",
+              "value": 5,
+            },
+            Object {
+              "type": "Numeral",
+              "value": 6,
+            },
+            Object {
+              "type": "Numeral",
+              "value": 7,
+            },
+            Object {
+              "type": "Numeral",
+              "value": 8,
+            },
+            Object {
+              "type": "Numeral",
+              "value": 9,
+            },
+            Object {
+              "type": "Numeral",
+              "value": 10,
             },
           ],
         },
       ],
-      "type": "Fn",
-    },
-  },
-  Object {
-    "args": Array [
-      Object {
-        "name": "fib",
+      "fn": Object {
+        "name": "map",
         "type": "Name",
       },
-      Object {
-        "type": "Array",
-        "values": Array [
-          Object {
-            "type": "Numeral",
-            "value": 0,
-          },
-          Object {
-            "type": "Numeral",
-            "value": 1,
-          },
-          Object {
-            "type": "Numeral",
-            "value": 2,
-          },
-          Object {
-            "type": "Numeral",
-            "value": 3,
-          },
-          Object {
-            "type": "Numeral",
-            "value": 4,
-          },
-          Object {
-            "type": "Numeral",
-            "value": 5,
-          },
-          Object {
-            "type": "Numeral",
-            "value": 6,
-          },
-          Object {
-            "type": "Numeral",
-            "value": 7,
-          },
-          Object {
-            "type": "Numeral",
-            "value": 8,
-          },
-          Object {
-            "type": "Numeral",
-            "value": 9,
-          },
-          Object {
-            "type": "Numeral",
-            "value": 10,
-          },
-        ],
-      },
-    ],
-    "fn": Object {
-      "name": "map",
-      "type": "Name",
+      "type": "Call",
     },
-    "type": "Call",
-  },
-]
+  ],
+  "type": "Program",
+}
 `;
 
 exports[`str.peach 1`] = `
-Array [
-  Object {
-    "type": "Array",
-    "values": Array [
-      Object {
-        "type": "Str",
-        "value": "str.peach before escape\\\\\`and after!",
-      },
-      Object {
-        "type": "Str",
-        "value": "hey 🌟",
-      },
-      Object {
-        "type": "Str",
-        "value": "multi
+Object {
+  "expressions": Array [
+    Object {
+      "type": "Array",
+      "values": Array [
+        Object {
+          "type": "Str",
+          "value": "str.peach before escape\\\\\`and after!",
+        },
+        Object {
+          "type": "Str",
+          "value": "hey 🌟",
+        },
+        Object {
+          "type": "Str",
+          "value": "multi
       line
   string",
-      },
-      Object {
-        "type": "Str",
-        "value": "such\\\\\\\\\\\\\\\\\\\\\`escape",
-      },
-      Object {
-        "type": "Str",
-        "value": "with	tab",
-      },
-      Object {
-        "type": "Str",
-        "value": "new
+        },
+        Object {
+          "type": "Str",
+          "value": "such\\\\\\\\\\\\\\\\\\\\\`escape",
+        },
+        Object {
+          "type": "Str",
+          "value": "with	tab",
+        },
+        Object {
+          "type": "Str",
+          "value": "new
 line",
-      },
-      Object {
-        "type": "Str",
-        "value": "back\\\\slash",
-      },
-      Object {
-        "type": "Str",
-        "value": "back\\\\\\\\to\\\\back",
-      },
-    ],
-  },
-]
+        },
+        Object {
+          "type": "Str",
+          "value": "back\\\\slash",
+        },
+        Object {
+          "type": "Str",
+          "value": "back\\\\\\\\to\\\\back",
+        },
+      ],
+    },
+  ],
+  "type": "Program",
+}
 `;
 
 exports[`tail-recursion.peach 1`] = `
-Array [
-  Object {
-    "name": "factorial",
-    "type": "Def",
-    "value": Object {
-      "clauses": Array [
-        Object {
-          "body": Array [
-            Object {
-              "name": "n",
-              "type": "Name",
-            },
-          ],
-          "pattern": Array [
-            Object {
-              "name": "n",
-              "type": "Name",
-            },
-            Object {
-              "type": "Numeral",
-              "value": 1,
-            },
-          ],
-        },
-        Object {
-          "body": Array [
-            Object {
-              "args": Array [
-                Object {
-                  "args": Array [
-                    Object {
-                      "name": "n",
-                      "type": "Name",
-                    },
-                    Object {
-                      "name": "x",
-                      "type": "Name",
-                    },
-                  ],
-                  "fn": Object {
-                    "name": "*",
-                    "type": "Name",
-                  },
-                  "type": "Call",
-                },
-                Object {
-                  "args": Array [
-                    Object {
-                      "name": "x",
-                      "type": "Name",
-                    },
-                    Object {
-                      "type": "Numeral",
-                      "value": 1,
-                    },
-                  ],
-                  "fn": Object {
-                    "name": "-",
-                    "type": "Name",
-                  },
-                  "type": "Call",
-                },
-              ],
-              "fn": Object {
-                "name": "factorial",
+Object {
+  "expressions": Array [
+    Object {
+      "name": "factorial",
+      "type": "Def",
+      "value": Object {
+        "clauses": Array [
+          Object {
+            "body": Array [
+              Object {
+                "name": "n",
                 "type": "Name",
               },
-              "type": "Call",
-            },
-          ],
-          "pattern": Array [
-            Object {
-              "name": "n",
-              "type": "Name",
-            },
-            Object {
-              "name": "x",
-              "type": "Name",
-            },
-          ],
-        },
-      ],
-      "type": "Fn",
-    },
-  },
-  Object {
-    "name": "f",
-    "type": "Def",
-    "value": Object {
-      "clauses": Array [
-        Object {
-          "body": Array [
-            Object {
-              "args": Array [
-                Object {
-                  "type": "Numeral",
-                  "value": 1,
-                },
-                Object {
-                  "name": "n",
+            ],
+            "pattern": Array [
+              Object {
+                "name": "n",
+                "type": "Name",
+              },
+              Object {
+                "type": "Numeral",
+                "value": 1,
+              },
+            ],
+          },
+          Object {
+            "body": Array [
+              Object {
+                "args": Array [
+                  Object {
+                    "args": Array [
+                      Object {
+                        "name": "n",
+                        "type": "Name",
+                      },
+                      Object {
+                        "name": "x",
+                        "type": "Name",
+                      },
+                    ],
+                    "fn": Object {
+                      "name": "*",
+                      "type": "Name",
+                    },
+                    "type": "Call",
+                  },
+                  Object {
+                    "args": Array [
+                      Object {
+                        "name": "x",
+                        "type": "Name",
+                      },
+                      Object {
+                        "type": "Numeral",
+                        "value": 1,
+                      },
+                    ],
+                    "fn": Object {
+                      "name": "-",
+                      "type": "Name",
+                    },
+                    "type": "Call",
+                  },
+                ],
+                "fn": Object {
+                  "name": "factorial",
                   "type": "Name",
                 },
-              ],
-              "fn": Object {
-                "name": "factorial",
+                "type": "Call",
+              },
+            ],
+            "pattern": Array [
+              Object {
+                "name": "n",
                 "type": "Name",
               },
-              "type": "Call",
-            },
-          ],
-          "pattern": Array [
-            Object {
-              "name": "n",
-              "type": "Name",
-            },
-          ],
+              Object {
+                "name": "x",
+                "type": "Name",
+              },
+            ],
+          },
+        ],
+        "type": "Fn",
+      },
+    },
+    Object {
+      "name": "f",
+      "type": "Def",
+      "value": Object {
+        "clauses": Array [
+          Object {
+            "body": Array [
+              Object {
+                "args": Array [
+                  Object {
+                    "type": "Numeral",
+                    "value": 1,
+                  },
+                  Object {
+                    "name": "n",
+                    "type": "Name",
+                  },
+                ],
+                "fn": Object {
+                  "name": "factorial",
+                  "type": "Name",
+                },
+                "type": "Call",
+              },
+            ],
+            "pattern": Array [
+              Object {
+                "name": "n",
+                "type": "Name",
+              },
+            ],
+          },
+        ],
+        "type": "Fn",
+      },
+    },
+    Object {
+      "args": Array [
+        Object {
+          "type": "Numeral",
+          "value": 32768,
         },
       ],
-      "type": "Fn",
-    },
-  },
-  Object {
-    "args": Array [
-      Object {
-        "type": "Numeral",
-        "value": 32768,
+      "fn": Object {
+        "name": "f",
+        "type": "Name",
       },
-    ],
-    "fn": Object {
-      "name": "f",
-      "type": "Name",
+      "type": "Call",
     },
-    "type": "Call",
-  },
-]
+  ],
+  "type": "Program",
+}
 `;

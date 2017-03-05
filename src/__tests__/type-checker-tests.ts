@@ -16,10 +16,9 @@ import {
 function testTypeCheck (code, env = getRootEnv()) {
   test(code, () => {
     const parsed = parse(code)
-    const analysed = typeCheck(parsed, env)
-
-    const types = analysed.map(e => e[0].exprType.toString())
-    expect(types).toMatchSnapshot()
+    const [lastNode] = typeCheck(parsed, env)
+    const type = lastNode.exprType.toString()
+    expect(type).toMatchSnapshot()
   })
 };
 
@@ -34,8 +33,9 @@ function testFixture (fixtureName, env = getRootEnv()) {
   // assert that the no-op analyser makes no changes
   test(fixtureName, () => {
     const parsed = parse(fixture(fixtureName))
-    const analysed = typeCheck(parsed, env)
-    expect(analysed.map(e => e[0].exprType.toString())).toMatchSnapshot()
+    const [lastNode] = typeCheck(parsed, env)
+    const type = lastNode.exprType.toString()
+    expect(type).toMatchSnapshot()
   })
 };
 

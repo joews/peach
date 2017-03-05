@@ -3,7 +3,10 @@ start
 
 // a program is a list of newline-delimted expressions
 program = head:expression tail:(eol e:expression { return e })* {
-  return [head, ...tail];
+  return {
+    type: "Program",
+    expressions: [head, ...tail]
+  }
 }
 
 expression

@@ -11,17 +11,7 @@ exports[`
   (f 3)
   (f 3 4)
   ((f 3) 4)
- 1`] = `
-Array [
-  "Number -> Number -> Array<Number>",
-  "Number -> Array<Number>",
-  "Array<Number>",
-  "Array<Number>",
-  "Number -> Array<Number>",
-  "Array<Number>",
-  "Array<Number>",
-]
-`;
+ 1`] = `"Array<Number>"`;
 
 exports[`
   fibc =
@@ -33,34 +23,18 @@ exports[`
 exports[`
   g = f => 5
   (g g)
- 1`] = `
-Array [
-  "M -> Number",
-  "Number",
-]
-`;
+ 1`] = `"Number"`;
 
 exports[`
   id = x => x
   ((pair (id 3)) (id true))
- 1`] = `
-Array [
-  "K -> K",
-  "L",
-]
-`;
+ 1`] = `"G"`;
 
 exports[`
   id = x => x
   (id 3)
   (id \`hello\`)
- 1`] = `
-Array [
-  "J -> J",
-  "Number",
-  "String",
-]
-`;
+ 1`] = `"String"`;
 
 exports[`
   list = (a, b, c) => [a b c]
@@ -74,51 +48,26 @@ exports[`
   (list 1 2 3)
   ((list 1) 2 3)
   (list true false true)
- 1`] = `
-Array [
-  "R -> R -> R -> Array<R>",
-  "Number -> Number -> Array<Number>",
-  "Number -> Array<Number>",
-  "Array<Number>",
-  "Array<Number>",
-  "Array<Boolean>",
-]
-`;
+ 1`] = `"Array<Boolean>"`;
 
 exports[`
   x = \`arf\`
   x
- 1`] = `
-Array [
-  "String",
-  "String",
-]
-`;
+ 1`] = `"String"`;
 
 exports[`
   x = 1
   y = true
   x
   y
- 1`] = `
-Array [
-  "Number",
-  "Boolean",
-  "Number",
-  "Boolean",
-]
-`;
+ 1`] = `"Boolean"`;
 
 exports[`
  fib =
     0 => 1
     1 => 1
     x => ((add (fib ((sub x) 1))) (fib ((sub x) 2)))
- 1`] = `
-Array [
-  "Number -> Number",
-]
-`;
+ 1`] = `"Number -> Number"`;
 
 exports[`
 1 => 2
@@ -126,11 +75,7 @@ x => {
   y = 3
   f = a => 2
   (f y)
-} 1`] = `
-Array [
-  "Number -> Number",
-]
-`;
+} 1`] = `"Number -> Number"`;
 
 exports[`
 x => {
@@ -138,165 +83,66 @@ x => {
   x
 } 1`] = `"x has already been defined"`;
 
-exports[`((() => \`look ma no args\`)) 1`] = `
-Array [
-  "String",
-]
-`;
+exports[`((() => \`look ma no args\`)) 1`] = `"String"`;
 
-exports[`((addZero 1) 2) 1`] = `
-Array [
-  "G",
-]
-`;
+exports[`((addZero 1) 2) 1`] = `"D"`;
 
-exports[`((pair 1) 2) 1`] = `
-Array [
-  "I",
-]
-`;
+exports[`((pair 1) 2) 1`] = `"F"`;
 
-exports[`([1|[2|t]] => t) 1`] = `
-Array [
-  "Array<Number> -> Array<Number>",
-]
-`;
+exports[`([1|[2|t]] => t) 1`] = `"Array<Number> -> Array<Number>"`;
 
 exports[`([1|[true|t]] => t) 1`] = `"Type error: type mismatch"`;
 
 exports[`([h|[true|t]] => [[h 1] t]) 1`] = `"Type error: type mismatch"`;
 
-exports[`([x|[y|t]] => [[x y] t]) 1`] = `
-Array [
-  "Array<Q> -> Array<Array<Q>>",
-]
-`;
+exports[`([x|[y|t]] => [[x y] t]) 1`] = `"Array<K> -> Array<Array<K>>"`;
 
-exports[`(a => 1) 1`] = `
-Array [
-  "E -> Number",
-]
-`;
+exports[`(a => 1) 1`] = `"B -> Number"`;
 
-exports[`(addZero 1) 1`] = `
-Array [
-  "F",
-]
-`;
+exports[`(addZero 1) 1`] = `"C"`;
 
 exports[`(if (true) 1 else \`two\`) 1`] = `"Type error: type mismatch"`;
 
-exports[`(inc 1) 1`] = `
-Array [
-  "Number",
-]
-`;
+exports[`(inc 1) 1`] = `"Number"`;
 
-exports[`(pair 1) 1`] = `
-Array [
-  "H",
-]
-`;
+exports[`(pair 1) 1`] = `"E"`;
 
-exports[`(zero 0) 1`] = `
-Array [
-  "Boolean",
-]
-`;
+exports[`(zero 0) 1`] = `"Boolean"`;
 
-exports[`[1 2 3] 1`] = `
-Array [
-  "Array<Number>",
-]
-`;
+exports[`[1 2 3] 1`] = `"Array<Number>"`;
 
 exports[`[1 2 false] 1`] = `"Type error: type mismatch"`;
 
-exports[`[1|list] => list 1`] = `
-Array [
-  "Array<Number> -> Array<Number>",
-]
-`;
+exports[`[1|list] => list 1`] = `"Array<Number> -> Array<Number>"`;
 
-exports[`\`the\` 1`] = `
-Array [
-  "String",
-]
-`;
+exports[`\`the\` 1`] = `"String"`;
 
 exports[`0 => 0, 1 => true 1`] = `"Type error: type mismatch"`;
 
 exports[`0 => 0, true => 1 1`] = `"Type error: type mismatch"`;
 
-exports[`1 1`] = `
-Array [
-  "Number",
-]
-`;
+exports[`1 1`] = `"Number"`;
 
-exports[`array-destructure.peach 1`] = `
-Array [
-  "Array<B> -> B",
-  "Array<C> -> C",
-  "Array<D> -> D",
-  "Array<Number>",
-  "Array<Number>",
-]
-`;
+exports[`array-destructure.peach 1`] = `"Array<Number>"`;
 
 exports[`f => (f f) 1`] = `"Type error: recursive unification"`;
 
-exports[`f => g => arg => (g (f arg)) 1`] = `
-Array [
-  "(N -> O) -> (O -> P) -> N -> P",
-]
-`;
+exports[`f => g => arg => (g (f arg)) 1`] = `"(H -> I) -> (I -> J) -> H -> J"`;
 
-exports[`fibonacci.peach 1`] = `
-Array [
-  "Number -> Number",
-  "Array<Number>",
-]
-`;
+exports[`fibonacci.peach 1`] = `"Array<Number>"`;
 
-exports[`function.peach 1`] = `
-Array [
-  "A -> A",
-]
-`;
+exports[`function.peach 1`] = `"A -> A"`;
 
 exports[`if (1) 1 else 2 1`] = `"Type error: type mismatch"`;
 
-exports[`if (true) 1 else 2 1`] = `
-Array [
-  "Number",
-]
-`;
+exports[`if (true) 1 else 2 1`] = `"Number"`;
 
-exports[`str.peach 1`] = `
-Array [
-  "Array<String>",
-]
-`;
+exports[`str.peach 1`] = `"Array<String>"`;
 
-exports[`tail-recursion.peach 1`] = `
-Array [
-  "Number -> Number -> Number",
-  "Number -> Number",
-  "Number",
-]
-`;
+exports[`tail-recursion.peach 1`] = `"Number"`;
 
-exports[`true 1`] = `
-Array [
-  "Boolean",
-]
-`;
+exports[`true 1`] = `"Boolean"`;
 
 exports[`x => ((pair (x 3)) (x true)) 1`] = `"Type error: type mismatch"`;
 
-exports[`zero 1`] = `
-Array [
-  "Number -> Boolean",
-]
-`;
+exports[`zero 1`] = `"Number -> Boolean"`;

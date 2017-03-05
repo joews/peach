@@ -3,15 +3,16 @@ import { makeFunction, applyFunction } from './function'
 import { extend, clone } from './util'
 import PeachError from './errors'
 import { getRootEnv } from './env'
+import { Ast } from './node-types'
 
-export default function interpret (ast, rootEnv = getRootEnv()) {
-  const [result, env] = visitAll(ast, rootEnv)
+export default function interpret (ast: Ast, rootEnv = getRootEnv()) {
+  const [result, env] = visit(ast, rootEnv)
   return [result, env]
 }
 
 // Visit each of `nodes` in order, returning the result
 // and environment of the last node.
-function visitAll (nodes, rootEnv) {
+function visitSerial (nodes, rootEnv) {
   return nodes.reduce(([, env], node) => (
     visit(node, env)
   ), [null, rootEnv])
@@ -30,6 +31,10 @@ function visit (node, env) {
 }
 
 const visitors = {
+  Program (node, env, nonGeneric) {
+    return visitSerial(node.expressions, env)
+  },
+
   Def ({ name, value }, env) {
     if (env.hasOwnProperty(name)) {
       throw new PeachError(`${name} has already been defined`)
