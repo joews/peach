@@ -12,17 +12,11 @@ import {
   makeFunctionType
 } from './types'
 
-export default function analyse (rawAst: Ast, typedEnv: TypeEnv, nonGeneric = new Set()): TypeCheckResult {
-  return visitAll(rawAst, typedEnv, nonGeneric)
+export default function analyse (ast: Ast, typedEnv: TypeEnv, nonGeneric = new Set()): TypeCheckResult {
+  return visit(ast, typedEnv, nonGeneric)
 }
 
-// TODO add the Program node type, so SingleTypeCheckResult becomes the only TypeCheckResult
-export type TypeCheckResult = Array<SingleTypeCheckResult>
-type SingleTypeCheckResult = [TypeCheckNode, TypeEnv]
-
-function visitAll (nodes, env, nonGeneric) {
-  return nodes.map(node => visit(node, env, nonGeneric))
-}
+export type TypeCheckResult = [TypeCheckNode, TypeEnv]
 
 function visitSerial (nodes, env, nonGeneric) {
   return nodes.reduce(([, nextEnv], nextNode) =>
@@ -37,6 +31,10 @@ function visit (node, env, nonGeneric) {
 }
 
 const visitors = {
+  Program (node, env, nonGeneric) {
+    return visitSerial(node.expressions, env, nonGeneric)
+  },
+
   Def (node, env, nonGeneric) {
     if (env.hasOwnProperty(node.name)) {
       throw new PeachError(`${node.name} has already been defined`)
