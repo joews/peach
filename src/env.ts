@@ -5,3 +5,10 @@ import { clone } from './util'
 export function getRootEnv () {
   return clone(stdlib)
 }
+
+// TODO
+export type TypeEnv = any
+
+// TODO
+export type RuntimeEnv =  any
+
