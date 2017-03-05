@@ -1,8 +1,9 @@
 import { create, extend } from './util'
 import PeachError from './errors'
-import { Ast, TypeCheckNode } from './node-types'
+import { Ast, AstNode, TypeCheckNode } from './node-types'
 import { TypeEnv } from './env'
 import {
+  Type,
   TypeVariable,
   TypeOperator,
   ArrayType,
@@ -12,25 +13,35 @@ import {
   makeFunctionType
 } from './types'
 
-export default function analyse (ast: Ast, typedEnv: TypeEnv, nonGeneric = new Set()): TypeCheckResult {
-  return visit(ast, typedEnv, nonGeneric)
+export default function analyse (ast: Ast, typedEnv: TypeEnv): TypeCheckResult {
+  return visit(ast, typedEnv, new Set<Type>())
 }
 
 export type TypeCheckResult = [TypeCheckNode, TypeEnv]
 
-function visitSerial (nodes, env, nonGeneric) {
+// TODO: Node type is "a subclass of AstNode", but we don't have have formal
+// types for AstNodes yet and I don't know how TypeScript does this kind of
+// polymorphism.
+type TypeCheckVisitor = (node: any, env: TypeEnv, nonGeneric: Set<Type>) => TypeCheckResult
+
+// Visit a list of Nodes, returning the typed node and environment
+// of the last Node.
+function visitSerial (nodes: Array<AstNode>, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult {
+  const initialState: TypeCheckResult = [null, env]
+
   return nodes.reduce(([, nextEnv], nextNode) =>
     visit(nextNode, nextEnv, nonGeneric)
-  , [null, env])
+  , initialState)
 }
 
-function visit (node, env, nonGeneric) {
+function visit (node: AstNode, env: TypeEnv, nonGeneric: Set<Type>) {
   const visitor = visitors[node.type]
   // console.log(`TRACE ${node.type}`)
   return visitor(node, env, nonGeneric)
 }
 
-const visitors = {
+const visitors:  { [nodeType: string]: TypeCheckVisitor }
+ = {
   Program (node, env, nonGeneric) {
     return visitSerial(node.expressions, env, nonGeneric)
   },
@@ -188,8 +199,8 @@ const visitors = {
   }
 }
 
-function typed (node, type) {
-  return extend(node, { exprType: type })
+function typed (node: AstNode, type: Type): TypeCheckNode {
+  return { exprType: type, node }
 }
 
 function typeOf (node) {

@@ -4,8 +4,9 @@ export interface AstNode {
   type: string
 }
 
-export interface TypeCheckNode extends AstNode {
-  exprType: Type
+export interface TypeCheckNode {
+  exprType: Type,
+  node: AstNode
 }
 
 export type Ast = AstNode
