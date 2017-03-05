@@ -4,7 +4,7 @@ import { start } from 'repl'
 const { Recoverable } = require('repl')
 // /FIXME
 
-import { getRootEnv } from './env'
+import { getRootEnv, getTypeEnv, RuntimeEnv, TypeEnv } from './env'
 import interpret from './interpreter'
 import typeCheck from './type-checker'
 import { parse, PeachError } from '.'
@@ -17,17 +17,15 @@ export default function startRepl (options, onExit) {
   // remember the environment from each command to pass to the next
   // remember a separate environment for type checking, because the REPL
   // needs to continually type check the new input against existing definitions
-  // TODO type annotations
-  let lastEnv = getRootEnv()      // name -> value
-  let lastTypeEnv = getRootEnv()  // name -> typed AST node
+  let lastEnv: RuntimeEnv = getRootEnv()
+  let lastTypeEnv: TypeEnv = getTypeEnv(lastEnv)
 
   function evalPeach (src, context, filename, callback) {
     try {
       const ast = parse(src)
 
-      const checked = typeCheck(ast, lastTypeEnv)
-      const [typed, nextTypeEnv] = checked
-      const [result, nextEnv] = interpret(ast, lastEnv)
+      const [typed, nextTypeEnv] = typeCheck(ast, lastTypeEnv)
+      const [result, nextEnv] = interpret(typed, lastEnv)
 
       lastEnv = nextEnv
       lastTypeEnv = nextTypeEnv

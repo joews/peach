@@ -1,7 +1,14 @@
-import { create, extend } from './util'
+import { create, extend, last } from './util'
 import PeachError from './errors'
-import { Ast, AstNode, TypeCheckNode } from './node-types'
 import { TypeEnv } from './env'
+
+import {
+  Ast, AstNode, TypedNode, AstProgramNode, AstDefNode, AstNameNode,
+  AstNumeralNode, AstBooleanNode, AstStringNode, AstCallNode, AstArrayNode,
+  AstDestructuredArrayNode, AstFunctionNode, AstIfNode,
+  isAstNameNode
+} from './node-types'
+
 import {
   Type,
   TypeVariable,
@@ -13,40 +20,47 @@ import {
   makeFunctionType
 } from './types'
 
-export default function analyse (ast: Ast, typedEnv: TypeEnv): TypeCheckResult {
-  return visit(ast, typedEnv, new Set<Type>())
+export default function analyse (ast: Ast, typedEnv: TypeEnv): TypeCheckResult<Ast> {
+  // TODO the cast is needed because of the visitor lookup by Ast Node type. It could
+  // be avoided by refactoring AstNodes to classes and using `if (node instanceof AstXyzNode)`
+  // guards, or `isAstAyzNode` function guards.
+  return visit(ast, typedEnv, new Set<Type>()) as TypeCheckResult<Ast>
 }
 
-export type TypeCheckResult = [TypeCheckNode, TypeEnv]
+export type TypeCheckResult<T extends AstNode> = [TypedNode<T>, TypeEnv]
+type TypeCheckVisitor<T extends AstNode> = (node: T, env: TypeEnv, nonGeneric: Set<Type>) => TypeCheckResult<T>
 
-// TODO: Node type is "a subclass of AstNode", but we don't have have formal
-// types for AstNodes yet and I don't know how TypeScript does this kind of
-// polymorphism.
-type TypeCheckVisitor = (node: any, env: TypeEnv, nonGeneric: Set<Type>) => TypeCheckResult
-
-// Visit a list of Nodes, returning the typed node and environment
-// of the last Node.
-function visitSerial (nodes: Array<AstNode>, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult {
-  const initialState: TypeCheckResult = [null, env]
+// Visit a list of Nodes, returning the typed node and environment of the last Node.
+function visitSerial (nodes: AstNode[], env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<AstNode> {
+  const initialState: TypeCheckResult<AstNode> = [null, env]
 
   return nodes.reduce(([, nextEnv], nextNode) =>
     visit(nextNode, nextEnv, nonGeneric)
   , initialState)
 }
 
+function visitAll (nodes, rootEnv, nonGeneric) {
+  return nodes.reduce(([nodes, env], node) => {
+    const [outNode, outEnv] = visit(node, env, nonGeneric)
+    return [[...nodes, outNode], outEnv]
+  }, [[], rootEnv])
+}
+
 function visit (node: AstNode, env: TypeEnv, nonGeneric: Set<Type>) {
   const visitor = visitors[node.type]
-  // console.log(`TRACE ${node.type}`)
   return visitor(node, env, nonGeneric)
 }
 
-const visitors:  { [nodeType: string]: TypeCheckVisitor }
- = {
-  Program (node, env, nonGeneric) {
-    return visitSerial(node.expressions, env, nonGeneric)
+const visitors: { [nodeType: string]: TypeCheckVisitor<AstNode> } = {
+  Program (node: AstProgramNode, env, nonGeneric) {
+    const [expressions, finalEnv] = visitAll(node.expressions, env, nonGeneric)
+    const programType = typeOf(last(expressions))
+
+    const typedNode = typed({ ...node, expressions }, programType)
+    return [typedNode, finalEnv]
   },
 
-  Def (node, env, nonGeneric) {
+  Def (node: AstDefNode, env, nonGeneric) {
     if (env.hasOwnProperty(node.name)) {
       throw new PeachError(`${node.name} has already been defined`)
     }
@@ -63,14 +77,15 @@ const visitors:  { [nodeType: string]: TypeCheckVisitor }
       ? new Set([...nonGeneric, t])
       : nonGeneric
 
-    const [typedNode] = visit(node.value, env, innerNonGeneric)
-    unify(typeOf(typedNode), t)
+    const [value] = visit(node.value, env, innerNonGeneric)
+    unify(typeOf(value), t)
 
+    const typedNode = typed({ ...node, value }, t)
     return [typedNode, env]
   },
 
   // identifier
-  Name (node, env, nonGeneric) {
+  Name (node: AstNameNode, env, nonGeneric) {
     if (!(node.name in env)) {
       throw new PeachError(`${node.name} is not defined`)
     }
@@ -81,19 +96,19 @@ const visitors:  { [nodeType: string]: TypeCheckVisitor }
     return [typed(node, freshType), env]
   },
 
-  Numeral (node, env) {
+  Numeral (node: AstNumeralNode, env) {
     return [typed(node, NumberType), env]
   },
 
-  Bool (node, env) {
+  Bool (node: AstBooleanNode, env) {
     return [typed(node, BooleanType), env]
   },
 
-  Str (node, env) {
+  Str (node: AstStringNode, env) {
     return [typed(node, StringType), env]
   },
 
-  Call (node, env, nonGeneric) {
+  Call (node: AstCallNode, env, nonGeneric) {
     const [fn] = visit(node.fn, env, nonGeneric)
     const args = node.args.map((arg) => visit(arg, env, nonGeneric)[0])
 
@@ -101,14 +116,17 @@ const visitors:  { [nodeType: string]: TypeCheckVisitor }
     const callFunctionType = makeFunctionType(typesOf(args), returnType)
 
     unify(callFunctionType, typeOf(fn))
-    return [typed(node, returnType), env]
+
+    const typedNode = typed({ ...node, args }, returnType)
+    return [typedNode, env]
   },
 
-  Array (node, env, nonGeneric) {
+  Array (node: AstArrayNode, env, nonGeneric) {
     let itemType
+    let typedValues
 
     if (node.values.length > 0) {
-      const typedValues = node.values.map((value) => visit(value, env, nonGeneric)[0])
+      typedValues = node.values.map((value) => visit(value, env, nonGeneric)[0])
       const types = typedValues.map(value => value.exprType)
 
       // arrays are homogenous: all items must have the same type
@@ -116,25 +134,28 @@ const visitors:  { [nodeType: string]: TypeCheckVisitor }
       itemType = types[0]
     } else {
       itemType = new TypeVariable()
+      typedValues = []
     }
 
     const arrayType = new ArrayType(itemType)
-    return [typed(node, arrayType), env]
+    const typedNode = typed({ ...node, values: typedValues }, arrayType)
+
+    return [typedNode, env]
   },
 
-  DestructuredArray (node, env, nonGeneric) {
+  DestructuredArray (node: AstDestructuredArrayNode, env, nonGeneric) {
     const { head, tail } = node
 
     const boundHeadType = new TypeVariable()
     const boundTailType = new ArrayType(new TypeVariable())
 
     // TODO immutable env
-    if (head.type === 'Name') {
+    if (isAstNameNode(head)) {
       env[head.name] = typed(head, boundHeadType)
       nonGeneric.add(boundHeadType)
     }
 
-    if (tail.type === 'Name') {
+    if (isAstNameNode(tail)) {
       env[tail.name] = typed(tail, boundTailType)
       nonGeneric.add(boundTailType)
     }
@@ -151,10 +172,11 @@ const visitors:  { [nodeType: string]: TypeCheckVisitor }
     unify(headType, boundHeadType)
     unify(tailType, boundTailType)
 
+    const typedNode = typed({ ...node, head: typedHead, tail: typedTail }, tailType)
     return [typed(node, tailType), env]
   },
 
-  Fn (node, parentEnv, outerNonGeneric) {
+  Fn (node: AstFunctionNode, parentEnv, outerNonGeneric) {
     // TODO clauses must be exhaustive - functions must accept any input of the right types
     const clauses = node.clauses.map((clauseNode) => {
       const nonGeneric = new Set([...outerNonGeneric])
@@ -165,7 +187,7 @@ const visitors:  { [nodeType: string]: TypeCheckVisitor }
         // If this is a `Name` arg, define it in the function's arguments environment.
         // if it's a destructured array we need to recursively define any named children,
         // so visiting the node will define its names.
-        if (argNode.type === 'Name') {
+        if (isAstNameNode(argNode)) {
           const argType = new TypeVariable()
           env[argNode.name] = typed(argNode, argType)
           nonGeneric.add(argType)
@@ -184,10 +206,12 @@ const visitors:  { [nodeType: string]: TypeCheckVisitor }
 
     // all clauses must have tbe same type
     unifyAll(typesOf(clauses))
-    return [typed(node, typeOf(clauses[0])), parentEnv]
+
+    const typedNode = typed({ ...node, clauses }, typeOf(clauses[0]))
+    return [typedNode, parentEnv]
   },
 
-  If (node, env, nonGeneric) {
+  If (node: AstIfNode, env, nonGeneric) {
     const [condition] = visit(node.condition, env, nonGeneric)
     const [ifBranch] = visit(node.ifBranch, env, nonGeneric)
     const [elseBranch] = visit(node.elseBranch, env, nonGeneric)
@@ -195,12 +219,13 @@ const visitors:  { [nodeType: string]: TypeCheckVisitor }
     unify(typeOf(condition), BooleanType)
     unify(typeOf(ifBranch), typeOf(elseBranch))
 
-    return [typed(node, typeOf(ifBranch)), env]
+    const typedNode = typed({ ...node, condition, ifBranch, elseBranch }, typeOf(ifBranch))
+    return [typedNode, env]
   }
 }
 
-function typed (node: AstNode, type: Type): TypeCheckNode {
-  return { exprType: type, node }
+function typed<T extends AstNode> (node: T, type: Type): TypedNode<T> {
+  return Object.assign({}, node, { exprType: type })
 }
 
 function typeOf (node) {
@@ -240,7 +265,7 @@ function fresh (type, nonGeneric) {
       const freshTypeArgs = pruned.typeArgs.map(f)
 
       // FIXME find out how to do this with type safety, given type erasure.
-      return (<any>pruned.constructor).of(pruned.name, freshTypeArgs)
+      return (pruned.constructor as any).of(pruned.name, freshTypeArgs)
     }
   }
 

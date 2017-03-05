@@ -12,7 +12,11 @@ export function create (proto, properties = null) {
 }
 
 export function restAndLast (arr) {
-  const [last] = arr.slice(-1)
+  const _last = last(arr)
   const rest = arr.slice(0, -1)
-  return [rest, last]
+  return [rest, _last]
+}
+
+export function last (arr) {
+  return arr[arr.length - 1]
 }
