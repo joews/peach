@@ -1,5 +1,7 @@
 import { create, extend } from './util'
 import PeachError from './errors'
+import { Ast, TypeCheckNode } from './node-types'
+import { TypeEnv } from './env'
 import {
   TypeVariable,
   TypeOperator,
@@ -10,9 +12,13 @@ import {
   makeFunctionType
 } from './types'
 
-export default function analyse (rawAst, typedEnv, nonGeneric = new Set()) {
+export default function analyse (rawAst: Ast, typedEnv: TypeEnv, nonGeneric = new Set()): TypeCheckResult {
   return visitAll(rawAst, typedEnv, nonGeneric)
 }
+
+// TODO add the Program node type, so SingleTypeCheckResult becomes the only TypeCheckResult
+export type TypeCheckResult = Array<SingleTypeCheckResult>
+type SingleTypeCheckResult = [TypeCheckNode, TypeEnv]
 
 function visitAll (nodes, env, nonGeneric) {
   return nodes.map(node => visit(node, env, nonGeneric))
