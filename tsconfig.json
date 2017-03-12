@@ -6,7 +6,9 @@
         "outDir": "./dist",
         "target": "es2017",
         "sourceMap": true,
-        "noImplicitAny": true
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "alwaysStrict": true
     },
     "include": [
         "./src/**/*"
