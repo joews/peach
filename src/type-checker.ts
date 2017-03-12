@@ -3,9 +3,12 @@ import PeachError from './errors'
 import { TypeEnv } from './env'
 
 import {
-  Ast, AstNode, TypedNode, AstProgramNode, AstDefNode, AstNameNode,
+  Ast, AstNode, AstProgramNode, AstDefNode, AstNameNode,
   AstNumeralNode, AstBooleanNode, AstStringNode, AstCallNode, AstArrayNode,
   AstDestructuredArrayNode, AstFunctionNode, AstIfNode,
+  TypedAst, TypedNode, TypedProgramNode, TypedDefNode, TypedNameNode,
+  TypedNumeralNode, TypedBooleanNode, TypedStringNode, TypedCallNode, TypedArrayNode,
+  TypedDestructuredArrayNode, TypedFunctionNode, TypedIfNode,
   isAstNameNode
 } from './node-types'
 
@@ -20,19 +23,19 @@ import {
   makeFunctionType
 } from './types'
 
-export default function analyse (ast: Ast, typedEnv: TypeEnv): TypeCheckResult<Ast> {
+export default function analyse (ast: Ast, typedEnv: TypeEnv): TypeCheckResult<TypedAst> {
   // TODO the cast is needed because of the visitor lookup by Ast Node type. It could
   // be avoided by refactoring AstNodes to classes and using `if (node instanceof AstXyzNode)`
   // guards, or `isAstAyzNode` function guards.
-  return visit(ast, typedEnv, new Set<Type>()) as TypeCheckResult<Ast>
+  return visit(ast, typedEnv, new Set<Type>()) as TypeCheckResult<TypedAst>
 }
 
-export type TypeCheckResult<T extends AstNode> = [TypedNode<T>, TypeEnv]
-type TypeCheckVisitor<T extends AstNode> = (node: T, env: TypeEnv, nonGeneric: Set<Type>) => TypeCheckResult<T>
+export type TypeCheckResult<T extends TypedNode> = [T, TypeEnv]
+type TypeCheckVisitor<T extends TypedNode> = (node: AstNode, env: TypeEnv, nonGeneric: Set<Type>) => TypeCheckResult<T>
 
 // Visit a list of Nodes, returning the typed node and environment of the last Node.
-function visitSerial (nodes: AstNode[], env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<AstNode> {
-  const initialState: TypeCheckResult<AstNode> = [null, env]
+function visitSerial (nodes: AstNode[], env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedNode> {
+  const initialState: TypeCheckResult<TypedNode> = [null, env]
 
   return nodes.reduce(([, nextEnv], nextNode) =>
     visit(nextNode, nextEnv, nonGeneric)
@@ -51,7 +54,7 @@ function visit (node: AstNode, env: TypeEnv, nonGeneric: Set<Type>) {
   return visitor(node, env, nonGeneric)
 }
 
-const visitors: { [nodeType: string]: TypeCheckVisitor<AstNode> } = {
+const visitors: { [nodeType: string]: TypeCheckVisitor<TypedNode> } = {
   Program (node: AstProgramNode, env, nonGeneric) {
     const [expressions, finalEnv] = visitAll(node.expressions, env, nonGeneric)
     const programType = typeOf(last(expressions))
@@ -224,7 +227,7 @@ const visitors: { [nodeType: string]: TypeCheckVisitor<AstNode> } = {
   }
 }
 
-function typed<T extends AstNode> (node: T, type: Type): TypedNode<T> {
+function typed<T extends AstNode> (node: T, type: Type): TypedNode {
   return Object.assign({}, node, { exprType: type })
 }
 
