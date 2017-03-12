@@ -89,7 +89,8 @@ testFails(`if (1) 1 else 2`)
 function typed (type): TypedNode {
   return {
     exprType: type,
-    type: 'Str'
+    type: 'Str',
+    value: 'dummy'
   }
 }
 

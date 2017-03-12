@@ -6,8 +6,7 @@ import { getRootEnv, RuntimeEnv } from './env'
 import {
   Value, TypedAst, TypedNode, TypedProgramNode, TypedDefNode, TypedNameNode,
   TypedNumeralNode, TypedBooleanNode, TypedStringNode, TypedCallNode, TypedArrayNode,
-  TypedDestructuredArrayNode, TypedFunctionNode, TypedIfNode,
-  isAstNameNode
+  TypedDestructuredArrayNode, TypedFunctionNode, TypedIfNode
 } from './node-types'
 
 export type InterpreterResult = [Value, RuntimeEnv]

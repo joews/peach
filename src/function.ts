@@ -1,7 +1,8 @@
-import unify from "./unify"
-import { create, restAndLast } from "./util"
-import PeachError from "./errors"
-import { makeFunctionType } from "./types"
+import unify from './unify'
+import { create, restAndLast } from './util'
+import PeachError from './errors'
+import { makeFunctionType } from './types'
+import { TypedFunctionNode } from './node-types'
 
 const ANONYMOUS = 'anonymous'
 
@@ -9,7 +10,7 @@ const ANONYMOUS = 'anonymous'
 // https://jsfiddle.net/v6j4a9qh/6/
 
 // Make a user-defined function from an AST node
-export function  makeFunction (functionNode, parentEnv, visit) {
+export function makeFunction (functionNode: TypedFunctionNode, parentEnv, visit) {
   const { clauses } = functionNode
   const name = getName(functionNode)
 
@@ -33,7 +34,7 @@ export function  makeFunction (functionNode, parentEnv, visit) {
         //  check if it's a tail call. If so return a thunk so we can use the trampoline
         //  pattern to avoid call stack overflow. As above - this test needs refining
         // to include any terminal expression in a function.
-        if (isFunctionCall(lastNode)) {
+        if (lastNode.type === 'Call') {
           const resolvedFunction = visit(lastNode.fn, env)[0]
           if (resolvedFunction === pFunction) {
             // evaluate the re-entrant args without recursing to `visit(lastNode)`
@@ -90,7 +91,6 @@ export function applyFunction (pFunction, args) {
     : curry(pFunction, args)
 }
 
-
 function getName (node) {
   return node.boundName || ANONYMOUS
 }
@@ -119,8 +119,4 @@ function curry (pFunction, appliedArgs) {
     arity: pFunction.arity - appliedArgs.length,
     call: pFunction.call.bind(null, ...appliedArgs)
   })
-}
-
-function isFunctionCall (node) {
-  return node.type === 'Call'
 }
