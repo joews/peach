@@ -31,74 +31,95 @@ function visitUnknown (node, env): InterpreterResult {
   throw new PeachError(`unknown node type: ${node.type}`)
 }
 
-function visit (node: TypedNode, env: RuntimeEnv) {
-  const visitor = visitors[node.type] || visitUnknown
-  // console.log(`TRACE interpreter: ${node.type} of ${node.exprType}`)
-  return visitor(node, env)
+function visit (node: TypedNode, env: RuntimeEnv): InterpreterResult {
+  // console.log(`TRACE interpreter: ${node.type}\n${JSON.stringify(node)}`)
+
+  switch (node.type) {
+    case 'Program':
+      return visitProgram(node, env)
+    case 'Def':
+      return visitDef(node, env)
+    case 'Name':
+      return visitName(node, env)
+    case 'Numeral':
+      return visitNumeral(node, env)
+    case 'Bool':
+      return visitBool(node, env)
+    case 'Str':
+      return visitStr(node, env)
+    case 'Call':
+      return visitCall(node, env)
+    case 'Array':
+      return visitArray(node, env)
+    case 'Fn':
+      return visitFn(node, env)
+    case 'If':
+      return visitIf(node, env)
+    default:
+      throw new Error(`Uncrecognised AST node type: ${node.type}`)
+  }
 }
 
-const visitors: { [nodeType: string]: Visitor } = {
-  Program (node: TypedProgramNode, env) {
-    return visitSerial(node.expressions, env)
-  },
+function visitProgram (node: TypedProgramNode, env): InterpreterResult {
+  return visitSerial(node.expressions, env)
+}
 
-  Def ({ name, value }: TypedDefNode, env) {
-    if (env.hasOwnProperty(name)) {
-      throw new PeachError(`${name} has already been defined`)
-    }
-
-    // Give the named value an inherent name property
-    // This avoids the need for a seperate `defn`, though it fails where
-    //  nodes are assigned to several names.
-    const namedValue = extend(value, { boundName: name })
-
-    // TODO immutable env
-    const [result] = visit(namedValue, env)
-    env[name] = result
-
-    return [result, env]
-  },
-
-  Name ({ name }: TypedNameNode, env) {
-    if (!(name in env)) {
-      throw new PeachError(`${name} is not defined`)
-    }
-
-    return [env[name], env]
-  },
-
-  Numeral ({ value }: TypedNumeralNode, env) {
-    return [value, env]
-  },
-
-  Bool ({ value }: TypedBooleanNode, env) {
-    return [value, env]
-  },
-
-  Str ({ value }: TypedStringNode, env) {
-    return [value, env]
-  },
-
-  Call ({ fn, args }: TypedCallNode, env) {
-    const [fnResult] = visit(fn, env)
-    const argResults = args.map((arg) => visit(arg, env)[0])
-    return [applyFunction(fnResult, argResults), env]
-  },
-
-  Array ({ values }: TypedArrayNode, env) {
-    const results = values.map((value) => visit(value, env)[0])
-    return [results, env]
-  },
-
-  Fn (node: TypedFunctionNode, env) {
-    const fn = makeFunction(node, env, visit)
-    return [fn, env]
-  },
-
-  If ({ condition, ifBranch, elseBranch }: TypedIfNode, env) {
-    const [testResult] = visit(condition, env)
-    const branch = (testResult) ? ifBranch : elseBranch
-
-    return visit(branch, env)
+function visitDef ({ name, value }: TypedDefNode, env): InterpreterResult {
+  if (env.hasOwnProperty(name)) {
+    throw new PeachError(`${name} has already been defined`)
   }
+
+  // Give the named value an inherent name property
+  // This avoids the need for a seperate `defn`, though it fails where
+  //  nodes are assigned to several names.
+  const namedValue = extend(value, { boundName: name })
+
+  // TODO immutable env
+  const [result] = visit(namedValue, env)
+  env[name] = result
+
+  return [result, env]
+}
+
+function visitName ({ name }: TypedNameNode, env): InterpreterResult {
+  if (!(name in env)) {
+    throw new PeachError(`${name} is not defined`)
+  }
+
+  return [env[name], env]
+}
+
+function visitNumeral ({ value }: TypedNumeralNode, env): InterpreterResult {
+  return [value, env]
+}
+
+function visitBool ({ value }: TypedBooleanNode, env): InterpreterResult {
+  return [value, env]
+}
+
+function visitStr ({ value }: TypedStringNode, env): InterpreterResult {
+  return [value, env]
+}
+
+function visitCall ({ fn, args }: TypedCallNode, env): InterpreterResult {
+  const [fnResult] = visit(fn, env)
+  const argResults = args.map((arg) => visit(arg, env)[0])
+  return [applyFunction(fnResult, argResults), env]
+}
+
+function visitArray ({ values }: TypedArrayNode, env): InterpreterResult {
+  const results = values.map((value) => visit(value, env)[0])
+  return [results, env]
+}
+
+function visitFn (node: TypedFunctionNode, env): InterpreterResult {
+  const fn = makeFunction(node, env, visit)
+  return [fn, env]
+}
+
+function visitIf ({ condition, ifBranch, elseBranch }: TypedIfNode, env): InterpreterResult {
+  const [testResult] = visit(condition, env)
+  const branch = (testResult) ? ifBranch : elseBranch
+
+  return visit(branch, env)
 }
