@@ -29,26 +29,20 @@ export default function analyse (ast: Ast, typedEnv: TypeEnv): TypeCheckResult<T
 export type TypeCheckResult<T extends TypedNode> = [T, TypeEnv]
 type TypeCheckVisitor<T extends TypedNode> = (node: AstNode, env: TypeEnv, nonGeneric: Set<Type>) => TypeCheckResult<T>
 
-// Visit a list of Nodes, returning the typed node and environment of the last Node.
-function visitSerial (nodes: AstNode[], env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedNode> {
-  const initialState: TypeCheckResult<TypedNode> = [null, env]
-
-  return nodes.reduce(([, nextEnv], nextNode) =>
-    visit(nextNode, nextEnv, nonGeneric)
-  , initialState)
-}
-
 // Visit a list of nodes, each in the returned env of the previous step.
 // Return an array of their resolved types and the last environment.
-// TODO DRY visitSerial to use this function
-// TODO static type for `nodes` - the callback throws type errors for nodes: AstNode[]
-function visitAll (nodes: any[], rootEnv: TypeEnv, nonGeneric: Set<any>): [TypedNode[], TypeEnv] {
-  const initialState: [TypedNode[], TypeEnv] = [[], rootEnv]
+function visitAll (nodes: AstNode[], rootEnv: TypeEnv, nonGeneric: Set<any>): [TypedNode[], TypeEnv] {
+  type NodesAndEnv = [TypedNode[], TypeEnv]
 
-  return nodes.reduce(([nodes, env]: [TypedNode[], TypeEnv], node) => {
+  const initialState: NodesAndEnv = [[], rootEnv]
+
+  const reducer = ([nodes, env]: NodesAndEnv, node: AstNode): NodesAndEnv => {
     const [outNode, outEnv] = visit(node, env, nonGeneric)
-    return [[...nodes, outNode], outEnv]
-  }, initialState)
+    const nextNodes = [...nodes, outNode]
+    return [nextNodes, outEnv]
+  }
+
+  return nodes.reduce(reducer, initialState)
 }
 
 function visit (node: AstNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedNode> {
