@@ -8,131 +8,152 @@ export type Ast = AstProgramNode
 export type TypedAst = TypedProgramNode
 
 // Ast*: parser output. Typed raw AST nodes.
-export interface AstNode {
+export interface AstBaseNode {
   type: string
 }
 
+export type AstNode
+  = AstProgramNode
+  | AstDefNode
+  | AstNameNode
+  | AstNumeralNode
+  | AstBooleanNode
+  | AstStringNode
+  | AstCallNode
+  | AstArrayNode
+  | AstDestructuredArrayNode
+  | AstFunctionNode
+  | AstFunctionClauseNode
+  | AstIfNode
+
 // Typed*: type checker output. AST nodes augmented with Peach static types.
-export interface TypedNode extends AstNode {
+export type TypedNode
+  = TypedProgramNode
+  | TypedDefNode
+  | TypedNameNode
+  | TypedNumeralNode
+  | TypedBooleanNode
+  | TypedStringNode
+  | TypedCallNode
+  | TypedArrayNode
+  | TypedDestructuredArrayNode
+  | TypedFunctionNode
+  | TypedFunctionClauseNode
+  | TypedIfNode
+
+export interface Typed {
   exprType: Type
 }
 
 export interface AstProgramNode {
-  type: string,
+  type: 'Program',
   expressions: AstNode[]
 }
 
-export interface TypedProgramNode extends AstProgramNode, TypedNode {
+export interface TypedProgramNode extends AstProgramNode, Typed {
   expressions: TypedNode[]
 }
 
 export interface AstDefNode {
-  type: string,
+  type: 'Def',
   name: string,
   value: AstNode
 }
 
-export interface TypedDefNode extends AstDefNode, TypedNode {
+export interface TypedDefNode extends AstDefNode, Typed {
   value: TypedNode
 }
 
 export interface AstNameNode {
-  type: string,
+  type: 'Name',
   name: string
 }
 
-export interface TypedNameNode extends AstNameNode, TypedNode { }
+export interface TypedNameNode extends AstNameNode, Typed { }
 
 export interface AstNumeralNode {
-  type: string,
+  type: 'Numeral',
   value: number
 }
 
-export interface TypedNumeralNode extends AstNumeralNode, TypedNode { }
+export interface TypedNumeralNode extends AstNumeralNode, Typed { }
 
 export interface AstBooleanNode {
-  type: string,
+  type: 'Bool',
   value: boolean
 }
 
-export interface TypedBooleanNode extends AstBooleanNode, TypedNode { }
+export interface TypedBooleanNode extends AstBooleanNode, Typed { }
 
 export interface AstStringNode {
-  type: string,
+  type: 'Str',
   value: string
 }
 
-export interface TypedStringNode extends AstStringNode, TypedNode { }
+export interface TypedStringNode extends AstStringNode, Typed { }
 
 export interface AstCallNode {
-  type: string,
-  fn: AstFunctionNode,
+  type: 'Call',
+  fn: AstNode,
   args: AstNode[]
 }
 
-export interface TypedCallNode extends AstCallNode, TypedNode {
+export interface TypedCallNode extends AstCallNode, Typed {
   fn: TypedFunctionNode,
   args: TypedNode[]
 }
 
 export interface AstArrayNode {
-  type: string,
+  type: 'Array',
   values: AstNode[]
 }
 
-export interface TypedArrayNode extends AstArrayNode, TypedNode {
+export interface TypedArrayNode extends AstArrayNode, Typed {
   values: TypedNode[]
 }
 
 export interface AstDestructuredArrayNode {
-  type: string,
+  type: 'DestructuredArray',
   head: AstNode,
   tail: AstNode
 }
 
-export interface TypedDestructuredArrayNode extends AstDestructuredArrayNode, TypedNode {
+export interface TypedDestructuredArrayNode extends AstDestructuredArrayNode, Typed {
   head: TypedNode,
   tail: TypedNode
 }
 
 export interface AstFunctionNode {
-  type: string,
+  type: 'Fn',
   clauses: AstFunctionClauseNode[]
 }
 
-export interface TypedFunctionNode extends AstFunctionNode, TypedNode {
+export interface TypedFunctionNode extends AstFunctionNode, Typed {
   clauses: TypedFunctionClauseNode[]
 }
 
 export interface AstFunctionClauseNode {
-  type: string,
+  type: 'FunctionClause',
   pattern: AstNode[],
   body: AstNode[]
 }
 
-export interface TypedFunctionClauseNode extends AstFunctionClauseNode, TypedNode {
+export interface TypedFunctionClauseNode extends AstFunctionClauseNode, Typed {
   pattern: TypedNode[],
   body: TypedNode[]
 }
 
 export interface AstIfNode {
-  type: string,
+  type: 'If',
   condition: AstNode,
   ifBranch: AstNode,
   elseBranch: AstNode
 }
 
-export interface TypedIfNode extends AstIfNode, TypedNode {
+export interface TypedIfNode extends AstIfNode, Typed {
   condition: TypedNode,
   ifBranch: TypedNode,
   elseBranch: TypedNode
-}
-
-//
-// Type guard functions
-//
-export function isAstNameNode (node: AstNode): node is AstNameNode {
-  return node.type === 'Name'
 }
 
 //

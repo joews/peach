@@ -11,12 +11,12 @@ export function create (proto, properties = null) {
   return Object.assign(Object.create(proto), properties)
 }
 
-export function restAndLast (arr) {
+export function restAndLast<T> (arr: T[]): [T[], T] {
   const _last = last(arr)
   const rest = arr.slice(0, -1)
   return [rest, _last]
 }
 
-export function last (arr) {
+export function last<T> (arr: T[]): T {
   return arr[arr.length - 1]
 }
