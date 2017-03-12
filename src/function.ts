@@ -1,22 +1,31 @@
 import unify from './unify'
 import { create, restAndLast } from './util'
 import PeachError from './errors'
-import { makeFunctionType } from './types'
-import { TypedFunctionNode } from './node-types'
+import { Type, makeFunctionType } from './types'
+import { TypedFunctionNode, Value } from './node-types'
+import { RuntimeEnv } from './env'
+import { Visitor } from './interpreter'
 
 const ANONYMOUS = 'anonymous'
+
+export interface PeachFunction {
+  name: string,
+  arity: number, // TODO deprecate
+  call: (args: Value[]) => Value,
+  toString: () => string
+}
 
 // Trampoline notes
 // https://jsfiddle.net/v6j4a9qh/6/
 
 // Make a user-defined function from an AST node
-export function makeFunction (functionNode: TypedFunctionNode, parentEnv, visit) {
+export function makeFunction (functionNode: TypedFunctionNode, parentEnv: RuntimeEnv, visit: Visitor) {
   const { clauses } = functionNode
   const name = getName(functionNode)
 
   const arity = getArity(functionNode)
 
-  const call = (...args) => {
+  const call = (...args: Value[]) => {
     for (const { pattern, body } of clauses) {
       const { didMatch, bindings } = unify(pattern, args)
       if (didMatch !== false) {
@@ -58,7 +67,7 @@ export function makeFunction (functionNode: TypedFunctionNode, parentEnv, visit)
 
   const toString = () => `λ: ${name}`
 
-  const pFunction = {
+  const pFunction: PeachFunction = {
     name,
     arity,
     call,
@@ -68,7 +77,7 @@ export function makeFunction (functionNode: TypedFunctionNode, parentEnv, visit)
   return pFunction
 }
 
-export function makeNativeFunction (name, jsFunction, argTypes, returnType) {
+export function makeNativeFunction (name: string, jsFunction: Function, argTypes: Type[], returnType: Type) {
   const exprType = makeFunctionType(argTypes, returnType)
 
   return {
@@ -80,10 +89,10 @@ export function makeNativeFunction (name, jsFunction, argTypes, returnType) {
   }
 }
 
-export function applyFunction (pFunction, args) {
+export function applyFunction (pFunction: PeachFunction, args: Value[]) {
   // the type checker catches this; sanity check only
   if (args.length > pFunction.arity) {
-    throw new PeachError(`Function ${pFunction.name} was called with too many arguments. It expected ${pFunction.maxArity} arguments, but it was called with ${args.length}: ${JSON.stringify(args)}`)
+    throw new PeachError(`Function ${pFunction.name} was called with too many arguments. It expected ${pFunction.arity} arguments, but it was called with ${args.length}: ${JSON.stringify(args)}`)
   }
 
   return (args.length >= pFunction.arity)
@@ -91,21 +100,22 @@ export function applyFunction (pFunction, args) {
     : curry(pFunction, args)
 }
 
-function getName (node) {
+// FIXME include boundName in BaseAstNode?
+function getName (node: any) {
   return node.boundName || ANONYMOUS
 }
 
 // FIXME the type checker should annotate the function node with types and/or arity
-function getArity (node) {
+function getArity (node: TypedFunctionNode) {
   return node.clauses[0].pattern.length
 }
 
 // (slow) tail call optimisation with a trampoline function
-function call (pFunction, args) {
+function call (pFunction: PeachFunction, args: Value[]) {
   return trampoline(pFunction.call, args)
 }
 
-function trampoline (fn, args) {
+function trampoline (fn: Function, args: any[]) {
   let continuation = fn.apply(null, args)
   while (typeof continuation === 'function') {
     continuation = continuation()
@@ -114,7 +124,7 @@ function trampoline (fn, args) {
   return continuation
 }
 
-function curry (pFunction, appliedArgs) {
+function curry (pFunction: PeachFunction, appliedArgs: Value[]) {
   return Object.assign({}, pFunction, {
     arity: pFunction.arity - appliedArgs.length,
     call: pFunction.call.bind(null, ...appliedArgs)

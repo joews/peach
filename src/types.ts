@@ -2,7 +2,7 @@
 export class Type {
   name: string
 
-  constructor(name) {
+  constructor (name: string) {
     this.name = name
   }
 }
@@ -10,13 +10,13 @@ export class Type {
 export class TypeOperator extends Type {
   typeArgs: Array<Type>
 
-  constructor (name, typeArgs = []) {
+  constructor (name: string, typeArgs: Type[] = []) {
     super(name)
     this.typeArgs = typeArgs
   }
 
   // polymorphic factory
-  static of (name, typeArgs) {
+  static of (name: string, typeArgs: Type[]) {
     return new TypeOperator(name, typeArgs)
   }
 
@@ -30,11 +30,11 @@ export const StringType = new TypeOperator('String')
 export const BooleanType = new TypeOperator('Boolean')
 
 export class FunctionType extends TypeOperator {
-  constructor (argType, returnType) {
+  constructor (argType: Type, returnType: Type) {
     super('->', [argType, returnType])
   }
 
-  static of (name, types) {
+  static of (name: string, types: Type[]) {
     const [argType, returnType] = types
     return new FunctionType(argType, returnType)
   }
@@ -69,11 +69,11 @@ export class FunctionType extends TypeOperator {
 }
 
 export class ArrayType extends TypeOperator {
-  constructor (argType) {
+  constructor (argType: Type) {
     super('Array', [argType])
   }
 
-  static of (name, types) {
+  static of (name: string, types: Type[]) {
     return new ArrayType(types[0])
   }
 
@@ -112,7 +112,7 @@ export class TypeVariable extends Type {
 }
 
 // Factory for curried function types that take any number of arguments
-export function makeFunctionType (argTypes, returnType) {
+export function makeFunctionType (argTypes: Type[], returnType: Type): Type {
   const [firstArgType, ...tailArgTypes] = argTypes
 
   if (tailArgTypes.length === 0) {

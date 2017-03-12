@@ -6,15 +6,15 @@ import { fixture } from './helpers'
 // snapshot tests for the parser
 //
 
-function testFixture (fixtureName) {
+function testFixture (fixtureName: string) {
   test(fixtureName, () => {
     expect(parse(fixture(fixtureName))).toMatchSnapshot()
   })
 }
 
-function testParse (peachCode) {
-  test(peachCode, () => {
-    expect(parse(peachCode)).toMatchSnapshot()
+function testParse (source: string) {
+  test(source, () => {
+    expect(parse(source)).toMatchSnapshot()
   })
 }
 

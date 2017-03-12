@@ -28,7 +28,7 @@ exports[`
 exports[`
   id = x => x
   ((pair (id 3)) (id true))
- 1`] = `"G"`;
+ 1`] = `"[Number*Boolean]"`;
 
 exports[`
   id = x => x
@@ -85,9 +85,9 @@ x => {
 
 exports[`((() => \`look ma no args\`)) 1`] = `"String"`;
 
-exports[`((addZero 1) 2) 1`] = `"D"`;
+exports[`((addZero 1) 2) 1`] = `"Boolean"`;
 
-exports[`((pair 1) 2) 1`] = `"F"`;
+exports[`((pair 1) 2) 1`] = `"[Number*Number]"`;
 
 exports[`([1|[2|t]] => t) 1`] = `"Array<Number> -> Array<Number>"`;
 
@@ -95,17 +95,17 @@ exports[`([1|[true|t]] => t) 1`] = `"Type error: type mismatch"`;
 
 exports[`([h|[true|t]] => [[h 1] t]) 1`] = `"Type error: type mismatch"`;
 
-exports[`([x|[y|t]] => [[x y] t]) 1`] = `"Array<K> -> Array<Array<K>>"`;
+exports[`([x|[y|t]] => [[x y] t]) 1`] = `"Array<G> -> Array<Array<G>>"`;
 
 exports[`(a => 1) 1`] = `"B -> Number"`;
 
-exports[`(addZero 1) 1`] = `"C"`;
+exports[`(addZero 1) 1`] = `"Number -> Boolean"`;
 
 exports[`(if (true) 1 else \`two\`) 1`] = `"Type error: type mismatch"`;
 
 exports[`(inc 1) 1`] = `"Number"`;
 
-exports[`(pair 1) 1`] = `"E"`;
+exports[`(pair 1) 1`] = `"C -> [Number*C]"`;
 
 exports[`(zero 0) 1`] = `"Boolean"`;
 
@@ -127,7 +127,7 @@ exports[`array-destructure.peach 1`] = `"Array<Number>"`;
 
 exports[`f => (f f) 1`] = `"Type error: recursive unification"`;
 
-exports[`f => g => arg => (g (f arg)) 1`] = `"(H -> I) -> (I -> J) -> H -> J"`;
+exports[`f => g => arg => (g (f arg)) 1`] = `"(D -> E) -> (E -> F) -> D -> F"`;
 
 exports[`fibonacci.peach 1`] = `"Array<Number>"`;
 

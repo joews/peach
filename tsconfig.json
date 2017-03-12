@@ -5,7 +5,8 @@
         "moduleResolution": "node",
         "outDir": "./dist",
         "target": "es2017",
-        "sourceMap": true
+        "sourceMap": true,
+        "noImplicitAny": true
     },
     "include": [
         "./src/**/*"

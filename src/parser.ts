@@ -8,6 +8,6 @@ const parser = generate(parserSource)
 
 export default function parse (source: string): Ast {
   const ast = parser.parse(source)
-  // console.log(JSON.stringify(ast))
+  // console.log(`TRACE parse: `, JSON.stringify(ast))
   return ast
 }

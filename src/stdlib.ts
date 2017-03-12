@@ -1,36 +1,46 @@
-import { makeNativeFunction, applyFunction } from './function'
+import { makeNativeFunction, applyFunction, PeachFunction } from './function'
 import {
   TypeVariable,
   ArrayType,
   NumberType,
   StringType,
   BooleanType,
-  makeFunctionType
+  makeFunctionType,
+  Type
 } from './types'
+
+import { Value } from './node-types'
+
+// TODO
+// Temporary type aliasas until I implement proper runtime value types
+type PNumber = number
+type PBoolean = boolean
+type PComparable = number | string | boolean
 
 // TODO idiomatic export
 export default {
   // operators
-  '+': binaryOp('+', (a, b) => a + b, NumberType, NumberType),
-  '-': binaryOp('-', (a, b) => a - b, NumberType, NumberType),
-  '*': binaryOp('*', (a, b) => a * b, NumberType, NumberType),
-  '/': binaryOp('/', (a, b) => a / b, NumberType, NumberType),
-  '%': binaryOp('%', (a, b) => a % b, NumberType, NumberType),
+  '+': binaryOp('+', (a: PNumber, b: PNumber) => a + b, NumberType, NumberType),
+  '-': binaryOp('-', (a: PNumber, b: PNumber) => a - b, NumberType, NumberType),
+  '*': binaryOp('*', (a: PNumber, b: PNumber) => a * b, NumberType, NumberType),
+  '/': binaryOp('/', (a: PNumber, b: PNumber) => a / b, NumberType, NumberType),
+  '%': binaryOp('%', (a: PNumber, b: PNumber) => a % b, NumberType, NumberType),
 
   // TODO "comparable" type
-  '>': binaryOp('>', (a, b) => a > b, NumberType, BooleanType),
-  '>=': binaryOp('>=', (a, b) => a >= b, NumberType, BooleanType),
-  '<': binaryOp('<', (a, b) => a < b, NumberType, BooleanType),
-  '<=': binaryOp('<=', (a, b) => a <= b, NumberType, BooleanType),
-  '==': binaryOp('==', (a, b) => a === b, anyType(), BooleanType),
+  '>': binaryOp('>', (a: PNumber, b: PNumber) => a > b, NumberType, BooleanType),
+  '>=': binaryOp('>=', (a: PNumber, b: PNumber) => a >= b, NumberType, BooleanType),
+  '<': binaryOp('<', (a: PNumber, b: PNumber) => a < b, NumberType, BooleanType),
+  '<=': binaryOp('<=', (a: PNumber, b: PNumber) => a <= b, NumberType, BooleanType),
+  '==': binaryOp('==', (a: PNumber, b: PNumber) => a === b, anyType(), BooleanType),
 
-  '!': makeNativeFunction('!', a => !a, [BooleanType], BooleanType),
-  '&&': binaryOp('&&', (a, b) => a && b, BooleanType, BooleanType),
-  '||': binaryOp('||', (a, b) => a || b, BooleanType, BooleanType),
+  '!': makeNativeFunction('!', (a: PBoolean) => !a, [BooleanType], BooleanType),
+  '&&': binaryOp('&&', (a: PBoolean, b: PBoolean) => a && b, BooleanType, BooleanType),
+  '||': binaryOp('||', (a: PBoolean, b: PBoolean) => a || b, BooleanType, BooleanType),
 
-  '<=>': binaryOp('<=>', (a, b) => {
-    if (a > b) return 1
-    if (a < b) return -1
+  // TODO comparable tpye
+  '<=>': binaryOp('<=>', (a: PComparable, b: PComparable) => {
+    if (a > b) { return 1 }
+    if (a < b) { return -1 }
     return 0
   }, NumberType, BooleanType),
 
@@ -43,13 +53,13 @@ export default {
   fold: fold(),
 
   // type conversion
-  str: makeNativeFunction('str', (x) => '' + x, [anyType], StringType),
+  str: makeNativeFunction('str', (x: any) => '' + x, [anyType], StringType),
 
   // utils
-  print: makeNativeFunction('print', (x) => '' + x, [anyType], StringType)
+  print: makeNativeFunction('print', (x: any) => '' + x, [anyType], StringType)
 }
 
-function binaryOp (name, fn, argType, returnType) {
+function binaryOp (name: string, fn: (a: any, b: any) => any, argType: Type, returnType: Type) {
   return makeNativeFunction(name, fn, [argType, argType], returnType)
 }
 
@@ -64,8 +74,13 @@ function arrayType (itemType = anyType()) {
 }
 
 // Utility
-function proxyArrayMethod (name) {
-  return (pFunction, list) => list[name](e => applyFunction(pFunction, [e]))
+
+// Because Peach Arrays are just JavaScript arrays for now, we can proxy certain
+// method directly to the runtime value.
+function proxyArrayMethod (name: string) {
+  const method: any = Array.prototype[name as any]
+  return (pFunction: PeachFunction, list: any[]) =>
+    method.call(list, (e: any) => applyFunction(pFunction, [e]))
 }
 
 //
@@ -110,7 +125,7 @@ function find () {
 function reverse () {
   const inputArrayType = arrayType()
   const returnType = inputArrayType
-  const fn = (list) => list.reverse()
+  const fn = (list: any[]) => list.reverse()
 
   return makeNativeFunction('reverse', fn, [inputArrayType], returnType)
 }
@@ -121,7 +136,7 @@ function fold () {
   const returnType = anyType()
   const iterateeType = makeFunctionType([itemType, returnType], returnType)
 
-  const fn = (pFunction, init, list) =>
+  const fn = (pFunction: PeachFunction, init: Value, list: Value[]) =>
     list.reduce((e, a) =>
       applyFunction(pFunction, [e, a]), init)
 
@@ -132,7 +147,7 @@ function fold () {
 function cons () {
   const headType = anyType()
   const tailType = arrayType(headType)
-  const fn = (item, list) => [item, ...list]
+  const fn = (item: Value, list: Value[]) => [item, ...list]
 
   return makeNativeFunction('cons', fn, [headType, ArrayType], tailType)
 }
