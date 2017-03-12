@@ -7,11 +7,12 @@ const { Recoverable } = require('repl')
 import { getRootEnv, getTypeEnv, RuntimeEnv, TypeEnv } from './env'
 import interpret from './interpreter'
 import typeCheck from './type-checker'
+import { Value } from './node-types'
 import { parse, PeachError } from '.'
 
 const { version } = require('../package.json')
 
-export default function startRepl (options, onExit) {
+export default function startRepl (options: any, onExit: (status: Number) => void): void {
   console.log(`🍑  peach v${version}`)
 
   // remember the environment from each command to pass to the next
@@ -20,9 +21,9 @@ export default function startRepl (options, onExit) {
   let lastEnv: RuntimeEnv = getRootEnv()
   let lastTypeEnv: TypeEnv = getTypeEnv(lastEnv)
 
-  function evalPeach (src, context, filename, callback) {
+  function evalPeach (source: string, context: any, filename: string, callback: any) {
     try {
-      const ast = parse(src)
+      const ast = parse(source)
 
       const [typed, nextTypeEnv] = typeCheck(ast, lastTypeEnv)
       const [result, nextEnv] = interpret(typed, lastEnv)
@@ -49,11 +50,11 @@ export default function startRepl (options, onExit) {
   server.on('exit', onExit)
 }
 
-function isRecoverableError (e) {
+function isRecoverableError (e: Error) {
   return e.message.endsWith('but end of input found.')
 }
 
-function getErrorMessage (e) {
+function getErrorMessage (e: Error): string | Error {
   // A runtime error (which will one day be impossible!) in a Peach program
   if (e instanceof PeachError) {
     return `❗  ${e.message}`
@@ -64,6 +65,6 @@ function getErrorMessage (e) {
   }
 }
 
-function getOutput (value) {
+function getOutput (value: Value): string {
   return value ? value.toString() : value
 }

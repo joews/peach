@@ -4,6 +4,7 @@ import typeCheck from '../type-checker'
 import { getRootEnv, getTypeEnv } from '../env'
 import { fixture } from './helpers'
 import { clone } from '../util'
+import { Type } from '../types'
 import { TypedNode, AstNode } from '../node-types'
 
 import {
@@ -14,23 +15,23 @@ import {
   BooleanType
 } from '../types'
 
-function testTypeCheck (code, env = getTypeEnv(getRootEnv())) {
-  test(code, () => {
-    const parsed = parse(code)
+function testTypeCheck (source: string, env = getTypeEnv(getRootEnv())) {
+  test(source, () => {
+    const parsed = parse(source)
     const [lastNode] = typeCheck(parsed, env)
     const type = lastNode.exprType.toString()
     expect(type).toMatchSnapshot()
   })
 };
 
-function testFails (code, env = getTypeEnv(getRootEnv())) {
-  test(code, () => {
-    const parsed = parse(code)
+function testFails (source: string, env = getTypeEnv(getRootEnv())) {
+  test(source, () => {
+    const parsed = parse(source)
     expect(() => typeCheck(parsed, env)).toThrowErrorMatchingSnapshot()
   })
 }
 
-function testFixture (fixtureName, env = getTypeEnv(getRootEnv())) {
+function testFixture (fixtureName: string, env = getTypeEnv(getRootEnv())) {
   test(fixtureName, () => {
     const parsed = parse(fixture(fixtureName))
     const [lastNode] = typeCheck(parsed, env)
@@ -86,7 +87,7 @@ testFails(`if (1) 1 else 2`)
 
 // the peach type checker works over nodes with an `exprType` property.
 // helper for creating nodes for synthetic type tests
-function typed (type): TypedNode {
+function typed (type: Type): TypedNode {
   return {
     exprType: type,
     type: 'Str',
@@ -96,11 +97,11 @@ function typed (type): TypedNode {
 
 // simulate a user-defined type
 class PairType extends TypeOperator {
-  constructor (a, b) {
+  constructor (a: Type, b: Type) {
     super('*', [a, b])
   }
 
-  static of (name, [a, b]) {
+  static of (name: string, [a, b]: Type[]) {
     return new PairType(a, b)
   }
 
@@ -109,9 +110,9 @@ class PairType extends TypeOperator {
   }
 }
 
-const A = typed(new TypeVariable())
-const B = typed(new TypeVariable())
-const AB = typed(new PairType(A, B))
+const A = new TypeVariable()
+const B = new TypeVariable()
+const AB = new PairType(A, B)
 
 const testEnv = () => ({
   // No unit type yet, so all functions take exactly one argument
@@ -121,14 +122,14 @@ const testEnv = () => ({
   // // Number -> Boolean
   zero: typed(new FunctionType(NumberType, BooleanType)),
 
-  add: typed(new FunctionType(typed(NumberType), typed(new FunctionType(typed(NumberType), typed(NumberType))))),
-  sub: typed(new FunctionType(typed(NumberType), typed(new FunctionType(typed(NumberType), typed(NumberType))))),
+  add: typed(new FunctionType(NumberType, new FunctionType(NumberType, NumberType))),
+  sub: typed(new FunctionType(NumberType, new FunctionType(NumberType, NumberType))),
 
   // Number -> Number -> Boolean
-  addZero: typed(new FunctionType(typed(NumberType), typed(new FunctionType(typed(NumberType), typed(BooleanType))))),
+  addZero: typed(new FunctionType(NumberType, new FunctionType(NumberType, BooleanType))),
 
   // A -> B -> A*B
-  pair: typed(new FunctionType(A, typed(new FunctionType(B, AB))))
+  pair: typed(new FunctionType(A, new FunctionType(B, AB)))
 })
 
 // testTypeCheck(`inc`, testEnv())

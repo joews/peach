@@ -1,6 +1,6 @@
 // with help from http://stackoverflow.com/a/32749533/2806996
 export default class PeachError extends Error {
-  constructor (message) {
+  constructor (message: string) {
     super(message)
     this.name = this.constructor.name
     this.message = message

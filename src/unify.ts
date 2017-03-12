@@ -1,13 +1,17 @@
 import PeachError from './errors'
 import { isArray, isEqual } from './array'
+import { zip } from './util'
+import { AstNode, AstLiteralNode, AstDestructuredArrayNode, Value, isAstLiteralNode } from './node-types'
 
-// FIXME union type - with didMatch: false, there are never bindings.
+// FIXME tagged union - with didMatch: false, there are never bindings.
+type binding = { [name: string]: Value }
+
 interface unification {
   didMatch: boolean,
-  bindings: object
+  bindings: binding
 }
 
-export default function unify (patterns, values) : unification {
+export default function unify (patterns: AstNode[], values: Value[]): unification {
   if (patterns.length !== values.length) {
     return didNotMatch
   }
@@ -25,24 +29,23 @@ export default function unify (patterns, values) : unification {
   return didMatch(bindings)
 }
 
-function unifyOne (pattern, value) {
-  // TODO value equality operator
-  if (isValue(pattern) && pattern.value === value) {
+function unifyOne (pattern: AstNode, value: Value): binding {
+  if (isAstLiteralNode(pattern) && pattern.value === value) {
     // the pattern matched, but there is nothing to bind
     return {}
   }
 
-  if (isName(pattern)) {
+  if (pattern.type === 'Name') {
     // the pattern matched; return a new binding
     return { [pattern.name]: value }
   }
 
   // TODO generic value equality
-  if (isArray(pattern) && isEqual(pattern.values, value)) {
+  if (pattern.type === 'Array' && isEqual(pattern.values, value)) {
     return {}
   }
 
-  if (isDestructuredArray(pattern)) {
+  if (pattern.type === 'DestructuredArray') {
     return destructure(pattern, value)
   }
 
@@ -51,14 +54,14 @@ function unifyOne (pattern, value) {
 }
 
 // TODO this will need to change when Array is a wrapped type
-function destructure ({ head, tail }, array) {
-  if (array.length === 0) {
+function destructure ({ head, tail }: AstDestructuredArrayNode, values: Value[]): binding {
+  if (values.length === 0) {
     throw new PeachError(`Empty arrays cannot be destructured because they don't have a head`)
   }
 
-  const boundHead = unifyOne(head, array[0])
+  const boundHead = unifyOne(head, values[0])
   if (boundHead !== null) {
-    const boundTail = unifyOne(tail, array.slice(1))
+    const boundTail = unifyOne(tail, values.slice(1))
     if (boundTail) {
       return Object.assign(boundHead, boundTail)
     }
@@ -67,33 +70,14 @@ function destructure ({ head, tail }, array) {
   return null
 }
 
-const didNotMatch : unification = {
+const didNotMatch: unification = {
   didMatch: false,
   bindings: {}
 }
 
-function didMatch (bindings) : unification {
+function didMatch (bindings: binding): unification {
   return {
     didMatch: true,
     bindings
   }
 }
-
-// TODO these belong with type definitions
-function isName ({ type }) {
-  return type === 'Name'
-}
-
-function isValue ({ type }) {
-  return ['Bool', 'Str', 'Numeral'].includes(type)
-}
-
-function isDestructuredArray ({ type }) {
-  return type === 'DestructuredArray'
-}
-
-// TODO stdlib
-function zip (arrayA, arrayB) {
-  return arrayA.map((e, i) => [e, arrayB[i]])
-}
-

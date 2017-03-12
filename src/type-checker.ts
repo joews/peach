@@ -76,7 +76,7 @@ function visit (node: AstNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckRe
   }
 }
 
-function visitProgram (node: AstProgramNode, env, nonGeneric): TypeCheckResult<TypedProgramNode> {
+function visitProgram (node: AstProgramNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedProgramNode> {
   const [expressions, finalEnv] = visitAll(node.expressions, env, nonGeneric)
   const programType = typeOf(last(expressions))
 
@@ -84,16 +84,18 @@ function visitProgram (node: AstProgramNode, env, nonGeneric): TypeCheckResult<T
   return [typedNode, finalEnv]
 }
 
-function visitDef (node: AstDefNode, env, nonGeneric): TypeCheckResult<TypedDefNode> {
+function visitDef (node: AstDefNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedDefNode> {
   if (env.hasOwnProperty(node.name)) {
     throw new PeachError(`${node.name} has already been defined`)
   }
 
   // allow for recursive binding by binding ahead of evaluating the child
-  // analogous to Lisp's letrec, but in the enclosing scope.
+  // analogous to Lisp's letrec, but in the enclosing scope. We don't know
+  // the value or concrete type yet.
   // TODO immutable env
   const t = new TypeVariable()
-  env[node.name] = { ...node, exprType: t }
+  const typedStubNode: TypedDefNode = { ...node, value: null, exprType: t }
+  env[node.name] = typedStubNode
 
   // if we are defining a function, mark the new identifier as
   //  non-generic inside the evaluation of the body.
@@ -108,7 +110,7 @@ function visitDef (node: AstDefNode, env, nonGeneric): TypeCheckResult<TypedDefN
   return [typedNode, env]
 }
 
-function visitName (node: AstNameNode, env, nonGeneric): TypeCheckResult<TypedNameNode> {
+function visitName (node: AstNameNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedNameNode> {
   if (!(node.name in env)) {
     throw new PeachError(`${node.name} is not defined`)
   }
@@ -120,19 +122,19 @@ function visitName (node: AstNameNode, env, nonGeneric): TypeCheckResult<TypedNa
   return [typedNode, env]
 }
 
-function visitNumeral (node: AstNumeralNode, env): TypeCheckResult<TypedNumeralNode> {
+function visitNumeral (node: AstNumeralNode, env: TypeEnv): TypeCheckResult<TypedNumeralNode> {
   return [{...node, exprType: NumberType }, env]
 }
 
-function visitBool (node: AstBooleanNode, env): TypeCheckResult<TypedBooleanNode> {
+function visitBool (node: AstBooleanNode, env: TypeEnv): TypeCheckResult<TypedBooleanNode> {
   return [{ ...node, exprType: BooleanType }, env]
 }
 
-function visitStr (node: AstStringNode, env): TypeCheckResult<TypedStringNode> {
+function visitStr (node: AstStringNode, env: TypeEnv): TypeCheckResult<TypedStringNode> {
   return [{ ...node, exprType: StringType }, env]
 }
 
-function visitCall (node: AstCallNode, env, nonGeneric): TypeCheckResult<TypedCallNode> {
+function visitCall (node: AstCallNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedCallNode> {
   const [fn] = visit(node.fn, env, nonGeneric)
   const args: TypedNode[] = node.args.map((arg) => visit(arg, env, nonGeneric)[0])
 
@@ -145,13 +147,13 @@ function visitCall (node: AstCallNode, env, nonGeneric): TypeCheckResult<TypedCa
   return [typedNode, env]
 }
 
-function visitArray (node: AstArrayNode, env, nonGeneric): TypeCheckResult<TypedArrayNode> {
-  let itemType
-  let typedValues
+function visitArray (node: AstArrayNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedArrayNode> {
+  let itemType: Type
+  let typedValues: TypedNode[]
 
   if (node.values.length > 0) {
     typedValues = node.values.map((value) => visit(value, env, nonGeneric)[0])
-    const types = typedValues.map(value => value.exprType)
+    const types = typesOf(typedValues)
 
     // arrays are homogenous: all items must have the same type
     unifyAll(types)
@@ -167,7 +169,7 @@ function visitArray (node: AstArrayNode, env, nonGeneric): TypeCheckResult<Typed
   return [typedNode, env]
 }
 
-function visitDestructuredArray (node: AstDestructuredArrayNode, env, nonGeneric): TypeCheckResult<TypedDestructuredArrayNode> {
+function visitDestructuredArray (node: AstDestructuredArrayNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedDestructuredArrayNode> {
   const { head, tail } = node
 
   const boundHeadType = new TypeVariable()
@@ -202,7 +204,7 @@ function visitDestructuredArray (node: AstDestructuredArrayNode, env, nonGeneric
   return [typedNode, env]
 }
 
-function visitFn (node: AstFunctionNode, parentEnv, outerNonGeneric): TypeCheckResult<TypedFunctionNode> {
+function visitFn (node: AstFunctionNode, parentEnv: TypeEnv, outerNonGeneric: Set<Type>): TypeCheckResult<TypedFunctionNode> {
   // TODO clauses must be exhaustive - functions must accept any input of the right types
   const clauses: TypedFunctionClauseNode[] = node.clauses.map((clauseNode) => {
     const nonGeneric = new Set([...outerNonGeneric])
@@ -242,7 +244,7 @@ function visitFn (node: AstFunctionNode, parentEnv, outerNonGeneric): TypeCheckR
   return [typedNode, parentEnv]
 }
 
-function visitIf (node: AstIfNode, env, nonGeneric): TypeCheckResult<TypedIfNode> {
+function visitIf (node: AstIfNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedIfNode> {
   const [condition] = visit(node.condition, env, nonGeneric)
   const [ifBranch] = visit(node.ifBranch, env, nonGeneric)
   const [elseBranch] = visit(node.elseBranch, env, nonGeneric)
@@ -259,7 +261,7 @@ function typeOf (node: TypedNode): Type {
 }
 
 // return an array of types for the given array of typed nodes
-function typesOf (typedNodes) {
+function typesOf (typedNodes: TypedNode[]) {
   return typedNodes.map(node => node.exprType)
 }
 
@@ -270,10 +272,10 @@ function typesOf (typedNodes) {
 // Return a new copy of a type expression
 // * generic variables duplicated
 // * non-generic variables shared
-function fresh (type, nonGeneric) {
+function fresh (type: Type, nonGeneric: Set<Type>) {
   const mappings = new Map()
 
-  const f = (t) => {
+  const f = (t: Type): Type => {
     const pruned = prune(t)
 
     if (pruned instanceof TypeVariable) {
@@ -299,7 +301,7 @@ function fresh (type, nonGeneric) {
 }
 
 // attempt to unify all elements of `list` to the same type
-function unifyAll (typeList) {
+function unifyAll (typeList: Type[]) {
   prune(typeList[0]) // ???
   typeList.forEach((type, i) => {
     if (i > 0) {
@@ -351,18 +353,17 @@ function prune (t: Type): Type {
 }
 
 // Returns true if `type` does not occur in `nonGeneric`
-function isGeneric (typeVar, nonGeneric) {
+function isGeneric (typeVar: Type, nonGeneric: Set<Type>) {
   return !occursIn(typeVar, nonGeneric)
 }
 
 // Return true if typeVar appears in any of types
-// types: Set
-function occursIn (typeVar, types) {
+function occursIn (typeVar: Type, types: Iterable<Type>): boolean {
   return [...types].some(type => occursInType(typeVar, type))
 }
 
 // Returns true if the pruned `typeVar` occurs in the type expression `type`.
-function occursInType (typeVar, type) {
+function occursInType (typeVar: Type, type: Type) {
   const prunedType = prune(type)
   if (typeVar === prunedType) {
     return true

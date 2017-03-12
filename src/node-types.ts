@@ -157,6 +157,19 @@ export interface TypedIfNode extends AstIfNode, Typed {
 }
 
 //
+// Nodes with shared traits
+//
+export type AstLiteralNode = AstStringNode | AstBooleanNode | AstNumeralNode
+export type TypedLiteralNode = TypedStringNode | TypedBooleanNode | TypedNumeralNode
+
+//
+// Guard functions
+//
+export function isAstLiteralNode (node: AstNode): node is AstLiteralNode {
+  return ['Bool', 'Str', 'Numeral'].includes(node.type)
+}
+
+//
 // Runtime values
 // TODO
 //

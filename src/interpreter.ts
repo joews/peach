@@ -16,17 +16,18 @@ export default function interpret (ast: TypedAst, rootEnv: RuntimeEnv = getRootE
   return [result, env]
 }
 
-type Visitor = (node: TypedNode, env: RuntimeEnv) => InterpreterResult
+export type Visitor = (node: TypedNode, env: RuntimeEnv) => InterpreterResult
 
 // Visit each of `nodes` in order, returning the result
 // and environment of the last node.
-function visitSerial (nodes, rootEnv) {
+function visitSerial (nodes: TypedNode[], rootEnv: RuntimeEnv): InterpreterResult {
+  const initialState: [TypedNode, RuntimeEnv] = [null, rootEnv]
   return nodes.reduce(([, env], node) => (
     visit(node, env)
-  ), [null, rootEnv])
+  ), initialState)
 }
 
-function visitUnknown (node, env): InterpreterResult {
+function visitUnknown (node: TypedNode, env: RuntimeEnv): InterpreterResult {
   console.log(JSON.stringify(node, null, 2))
   throw new PeachError(`unknown node type: ${node.type}`)
 }
@@ -60,11 +61,11 @@ function visit (node: TypedNode, env: RuntimeEnv): InterpreterResult {
   }
 }
 
-function visitProgram (node: TypedProgramNode, env): InterpreterResult {
+function visitProgram (node: TypedProgramNode, env: RuntimeEnv): InterpreterResult {
   return visitSerial(node.expressions, env)
 }
 
-function visitDef ({ name, value }: TypedDefNode, env): InterpreterResult {
+function visitDef ({ name, value }: TypedDefNode, env: RuntimeEnv): InterpreterResult {
   if (env.hasOwnProperty(name)) {
     throw new PeachError(`${name} has already been defined`)
   }
@@ -81,7 +82,7 @@ function visitDef ({ name, value }: TypedDefNode, env): InterpreterResult {
   return [result, env]
 }
 
-function visitName ({ name }: TypedNameNode, env): InterpreterResult {
+function visitName ({ name }: TypedNameNode, env: RuntimeEnv): InterpreterResult {
   if (!(name in env)) {
     throw new PeachError(`${name} is not defined`)
   }
@@ -89,35 +90,35 @@ function visitName ({ name }: TypedNameNode, env): InterpreterResult {
   return [env[name], env]
 }
 
-function visitNumeral ({ value }: TypedNumeralNode, env): InterpreterResult {
+function visitNumeral ({ value }: TypedNumeralNode, env: RuntimeEnv): InterpreterResult {
   return [value, env]
 }
 
-function visitBool ({ value }: TypedBooleanNode, env): InterpreterResult {
+function visitBool ({ value }: TypedBooleanNode, env: RuntimeEnv): InterpreterResult {
   return [value, env]
 }
 
-function visitStr ({ value }: TypedStringNode, env): InterpreterResult {
+function visitStr ({ value }: TypedStringNode, env: RuntimeEnv): InterpreterResult {
   return [value, env]
 }
 
-function visitCall ({ fn, args }: TypedCallNode, env): InterpreterResult {
+function visitCall ({ fn, args }: TypedCallNode, env: RuntimeEnv): InterpreterResult {
   const [fnResult] = visit(fn, env)
   const argResults = args.map((arg) => visit(arg, env)[0])
   return [applyFunction(fnResult, argResults), env]
 }
 
-function visitArray ({ values }: TypedArrayNode, env): InterpreterResult {
+function visitArray ({ values }: TypedArrayNode, env: RuntimeEnv): InterpreterResult {
   const results = values.map((value) => visit(value, env)[0])
   return [results, env]
 }
 
-function visitFn (node: TypedFunctionNode, env): InterpreterResult {
+function visitFn (node: TypedFunctionNode, env: RuntimeEnv): InterpreterResult {
   const fn = makeFunction(node, env, visit)
   return [fn, env]
 }
 
-function visitIf ({ condition, ifBranch, elseBranch }: TypedIfNode, env): InterpreterResult {
+function visitIf ({ condition, ifBranch, elseBranch }: TypedIfNode, env: RuntimeEnv): InterpreterResult {
   const [testResult] = visit(condition, env)
   const branch = (testResult) ? ifBranch : elseBranch
 
