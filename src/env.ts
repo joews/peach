@@ -7,7 +7,7 @@ export function getRootEnv (): RuntimeEnv {
   return clone(stdlib)
 }
 
-export function getTypeEnv (valueEnv: RuntimeEnv) : TypeEnv {
+export function getTypeEnv (valueEnv: RuntimeEnv): TypeEnv {
   return Object.keys(valueEnv).reduce((env, name) => {
     env[name] = extend(valueEnv[name], {
       exprType: valueEnv[name].exprType
@@ -16,7 +16,7 @@ export function getTypeEnv (valueEnv: RuntimeEnv) : TypeEnv {
   }, {})
 }
 
-export type TypeEnv = { [name: string]: TypedNode<AstNode> }
+export type TypeEnv = { [name: string]: TypedNode }
 
 // TODO
 export type RuntimeEnv = { [name: string]: ValueNode }

@@ -4,9 +4,9 @@ import { extend, clone } from './util'
 import PeachError from './errors'
 import { getRootEnv, RuntimeEnv } from './env'
 import {
-  Value, Ast, TypedAst, AstNode, AstProgramNode, AstDefNode, AstNameNode,
-  AstNumeralNode, AstBooleanNode, AstStringNode, AstCallNode, AstArrayNode,
-  AstDestructuredArrayNode, AstFunctionNode, AstIfNode,
+  Value, TypedAst, TypedNode, TypedProgramNode, TypedDefNode, TypedNameNode,
+  TypedNumeralNode, TypedBooleanNode, TypedStringNode, TypedCallNode, TypedArrayNode,
+  TypedDestructuredArrayNode, TypedFunctionNode, TypedIfNode,
   isAstNameNode
 } from './node-types'
 
@@ -17,7 +17,7 @@ export default function interpret (ast: TypedAst, rootEnv: RuntimeEnv = getRootE
   return [result, env]
 }
 
-type Visitor = (node: AstNode, env: RuntimeEnv) => InterpreterResult
+type Visitor = (node: TypedNode, env: RuntimeEnv) => InterpreterResult
 
 // Visit each of `nodes` in order, returning the result
 // and environment of the last node.
@@ -32,18 +32,18 @@ function visitUnknown (node, env): InterpreterResult {
   throw new PeachError(`unknown node type: ${node.type}`)
 }
 
-function visit (node: AstNode, env: RuntimeEnv) {
+function visit (node: TypedNode, env: RuntimeEnv) {
   const visitor = visitors[node.type] || visitUnknown
-
+  // console.log(`TRACE interpreter: ${node.type} of ${node.exprType}`)
   return visitor(node, env)
 }
 
 const visitors: { [nodeType: string]: Visitor } = {
-  Program (node: AstProgramNode, env) {
+  Program (node: TypedProgramNode, env) {
     return visitSerial(node.expressions, env)
   },
 
-  Def ({ name, value }: AstDefNode, env) {
+  Def ({ name, value }: TypedDefNode, env) {
     if (env.hasOwnProperty(name)) {
       throw new PeachError(`${name} has already been defined`)
     }
@@ -60,7 +60,7 @@ const visitors: { [nodeType: string]: Visitor } = {
     return [result, env]
   },
 
-  Name ({ name }: AstNameNode, env) {
+  Name ({ name }: TypedNameNode, env) {
     if (!(name in env)) {
       throw new PeachError(`${name} is not defined`)
     }
@@ -68,35 +68,35 @@ const visitors: { [nodeType: string]: Visitor } = {
     return [env[name], env]
   },
 
-  Numeral ({ value }: AstNumeralNode, env) {
+  Numeral ({ value }: TypedNumeralNode, env) {
     return [value, env]
   },
 
-  Bool ({ value }: AstBooleanNode, env) {
+  Bool ({ value }: TypedBooleanNode, env) {
     return [value, env]
   },
 
-  Str ({ value }: AstStringNode, env) {
+  Str ({ value }: TypedStringNode, env) {
     return [value, env]
   },
 
-  Call ({ fn, args }: AstCallNode, env) {
+  Call ({ fn, args }: TypedCallNode, env) {
     const [fnResult] = visit(fn, env)
     const argResults = args.map((arg) => visit(arg, env)[0])
     return [applyFunction(fnResult, argResults), env]
   },
 
-  Array ({ values }: AstArrayNode, env) {
+  Array ({ values }: TypedArrayNode, env) {
     const results = values.map((value) => visit(value, env)[0])
     return [results, env]
   },
 
-  Fn (node: AstFunctionNode, env) {
+  Fn (node: TypedFunctionNode, env) {
     const fn = makeFunction(node, env, visit)
     return [fn, env]
   },
 
-  If ({ condition, ifBranch, elseBranch }: AstIfNode, env) {
+  If ({ condition, ifBranch, elseBranch }: TypedIfNode, env) {
     const [testResult] = visit(condition, env)
     const branch = (testResult) ? ifBranch : elseBranch
 

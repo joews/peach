@@ -31,7 +31,6 @@ function testFails (code, env = getTypeEnv(getRootEnv())) {
 }
 
 function testFixture (fixtureName, env = getTypeEnv(getRootEnv())) {
-  // assert that the no-op analyser makes no changes
   test(fixtureName, () => {
     const parsed = parse(fixture(fixtureName))
     const [lastNode] = typeCheck(parsed, env)
@@ -87,7 +86,7 @@ testFails(`if (1) 1 else 2`)
 
 // the peach type checker works over nodes with an `exprType` property.
 // helper for creating nodes for synthetic type tests
-function typed (type): TypedNode<AstNode> {
+function typed (type): TypedNode {
   return {
     exprType: type,
     type: 'Str'
