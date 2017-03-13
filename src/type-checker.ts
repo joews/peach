@@ -8,7 +8,8 @@ import {
   AstDestructuredArrayNode, AstFunctionNode, AstIfNode,
   TypedAst, TypedNode, TypedProgramNode, TypedDefNode, TypedNameNode,
   TypedNumeralNode, TypedBooleanNode, TypedStringNode, TypedCallNode, TypedArrayNode,
-  TypedDestructuredArrayNode, TypedFunctionNode, TypedFunctionClauseNode, TypedIfNode
+  TypedDestructuredArrayNode, TypedFunctionNode, TypedFunctionClauseNode, TypedIfNode,
+  TypedDefPreValueNode
 } from './node-types'
 
 import {
@@ -89,12 +90,17 @@ function visitDef (node: AstDefNode, env: TypeEnv, nonGeneric: Set<Type>): TypeC
     throw new PeachError(`${node.name} has already been defined`)
   }
 
-  // allow for recursive binding by binding ahead of evaluating the child
-  // analogous to Lisp's letrec, but in the enclosing scope. We don't know
-  // the value or concrete type yet.
-  // TODO immutable env
+  // Allow for recursive binding by binding ahead of evaluating the child
+  //  analogous to Lisp's letrec, but in the enclosing scope. We don't know
+  //  the value or concrete type yet.
+  // The binding must be created before visiting the value (in case the value
+  //  is a recursive function). We can't create a TypedEnv value for the def
+  //  value without visiting it, so bind a temporary value with a new TypeVariable.
+  //  Once the value is visited, unify the placeholder type and the concrete value
+  //  type. The TypeEnv only really cares about the type of its values so we can
+  //  continue to use the typed stub.
   const t = new TypeVariable()
-  const typedStubNode: TypedDefNode = { ...node, value: null, exprType: t }
+  const typedStubNode: TypedDefPreValueNode = { type: 'DefPreValue', exprType: t }
   env[node.name] = typedStubNode
 
   // if we are defining a function, mark the new identifier as
@@ -294,6 +300,8 @@ function fresh (type: Type, nonGeneric: Set<Type>) {
 
       // FIXME find out how to do this with type safety, given type erasure.
       return (pruned.constructor as any).of(pruned.name, freshTypeArgs)
+    } else {
+      return t
     }
   }
 

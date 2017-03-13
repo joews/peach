@@ -94,7 +94,7 @@ export class TypeVariable extends Type {
   instance: Type
 
   constructor () {
-    super(null)
+    super('')
     this.id = TypeVariable.nextId ++
   }
 
