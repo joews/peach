@@ -9,7 +9,7 @@ export type TypedAst = TypedProgramNode
 
 // Ast*: parser output. Typed raw AST nodes.
 export interface AstBaseNode {
-  type: string
+  kind: string
 }
 
 export type AstNode
@@ -44,11 +44,11 @@ export type TypedNode
   | TypedDefPreValueNode
 
 export interface Typed {
-  exprType: Type
+  type: Type
 }
 
 export interface AstProgramNode {
-  type: 'Program',
+  kind: 'Program',
   expressions: AstNode[]
 }
 
@@ -57,7 +57,7 @@ export interface TypedProgramNode extends AstProgramNode, Typed {
 }
 
 export interface AstDefNode {
-  type: 'Def',
+  kind: 'Def',
   name: string,
   value: AstNode
 }
@@ -67,35 +67,35 @@ export interface TypedDefNode extends AstDefNode, Typed {
 }
 
 export interface AstNameNode {
-  type: 'Name',
+  kind: 'Name',
   name: string
 }
 
 export interface TypedNameNode extends AstNameNode, Typed { }
 
 export interface AstNumeralNode {
-  type: 'Numeral',
+  kind: 'Numeral',
   value: number
 }
 
 export interface TypedNumeralNode extends AstNumeralNode, Typed { }
 
 export interface AstBooleanNode {
-  type: 'Bool',
+  kind: 'Bool',
   value: boolean
 }
 
 export interface TypedBooleanNode extends AstBooleanNode, Typed { }
 
 export interface AstStringNode {
-  type: 'Str',
+  kind: 'Str',
   value: string
 }
 
 export interface TypedStringNode extends AstStringNode, Typed { }
 
 export interface AstCallNode {
-  type: 'Call',
+  kind: 'Call',
   fn: AstNode,
   args: AstNode[]
 }
@@ -106,7 +106,7 @@ export interface TypedCallNode extends AstCallNode, Typed {
 }
 
 export interface AstArrayNode {
-  type: 'Array',
+  kind: 'Array',
   values: AstNode[]
 }
 
@@ -115,7 +115,7 @@ export interface TypedArrayNode extends AstArrayNode, Typed {
 }
 
 export interface AstDestructuredArrayNode {
-  type: 'DestructuredArray',
+  kind: 'DestructuredArray',
   head: AstNode,
   tail: AstNode
 }
@@ -126,7 +126,7 @@ export interface TypedDestructuredArrayNode extends AstDestructuredArrayNode, Ty
 }
 
 export interface AstFunctionNode {
-  type: 'Fn',
+  kind: 'Fn',
   clauses: AstFunctionClauseNode[]
 }
 
@@ -135,7 +135,7 @@ export interface TypedFunctionNode extends AstFunctionNode, Typed {
 }
 
 export interface AstFunctionClauseNode {
-  type: 'FunctionClause',
+  kind: 'FunctionClause',
   pattern: AstNode[],
   body: AstNode[]
 }
@@ -146,7 +146,7 @@ export interface TypedFunctionClauseNode extends AstFunctionClauseNode, Typed {
 }
 
 export interface AstIfNode {
-  type: 'If',
+  kind: 'If',
   condition: AstNode,
   ifBranch: AstNode,
   elseBranch: AstNode
@@ -167,7 +167,7 @@ export interface TypedIfNode extends AstIfNode, Typed {
 // We only need the Typed variant, but the Ast*Node is required to maintain
 // the AstNode -> TypedNode mapping.
 export interface AstDefPreValueNode {
-  type: 'DefPreValue'
+  kind: 'DefPreValue'
 }
 
 export interface TypedDefPreValueNode extends Typed, AstDefPreValueNode { }
@@ -182,7 +182,7 @@ export type TypedLiteralNode = TypedStringNode | TypedBooleanNode | TypedNumeral
 // Guard functions
 //
 export function isAstLiteralNode (node: AstNode): node is AstLiteralNode {
-  return ['Bool', 'Str', 'Numeral'].includes(node.type)
+  return ['Bool', 'Str', 'Numeral'].includes(node.kind)
 }
 
 //
@@ -192,7 +192,7 @@ export function isAstLiteralNode (node: AstNode): node is AstLiteralNode {
 export type Value = any
 
 export interface ValueNode {
-  exprType: Type,
+  type: Type,
   node: AstNode,
   value: Value
 }

@@ -29,13 +29,13 @@ function visitSerial (nodes: TypedNode[], rootEnv: RuntimeEnv): InterpreterResul
 
 function visitUnknown (node: TypedNode, env: RuntimeEnv): InterpreterResult {
   console.log(JSON.stringify(node, null, 2))
-  throw new PeachError(`unknown node type: ${node.type}`)
+  throw new PeachError(`unknown node type: ${node.kind}`)
 }
 
 function visit (node: TypedNode, env: RuntimeEnv): InterpreterResult {
   // console.log(`TRACE interpreter: ${node.type}\n${JSON.stringify(node)}`)
 
-  switch (node.type) {
+  switch (node.kind) {
     case 'Program':
       return visitProgram(node, env)
     case 'Def':
@@ -57,7 +57,7 @@ function visit (node: TypedNode, env: RuntimeEnv): InterpreterResult {
     case 'If':
       return visitIf(node, env)
     default:
-      throw new Error(`Uncrecognised AST node type: ${node.type}`)
+      throw new Error(`Uncrecognised AST node kind: ${node.kind}`)
   }
 }
 

@@ -46,17 +46,17 @@ function unifyOne (pattern: AstNode, value: Value): UnifyResult {
     return didMatch({})
   }
 
-  if (pattern.type === 'Name') {
+  if (pattern.kind === 'Name') {
     // the pattern matched; return a new binding
     return didMatch({ [pattern.name]: value })
   }
 
   // TODO generic value equality
-  if (pattern.type === 'Array' && isEqual(pattern.values, value)) {
+  if (pattern.kind === 'Array' && isEqual(pattern.values, value)) {
     return didMatch({})
   }
 
-  if (pattern.type === 'DestructuredArray') {
+  if (pattern.kind === 'DestructuredArray') {
     return destructure(pattern, value)
   }
 
