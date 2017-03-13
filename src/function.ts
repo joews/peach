@@ -27,8 +27,9 @@ export function makeFunction (functionNode: TypedFunctionNode, parentEnv: Runtim
 
   const call = (...args: Value[]) => {
     for (const { pattern, body } of clauses) {
-      const { didMatch, bindings } = unify(pattern, args)
-      if (didMatch !== false) {
+      const unifyResult = unify(pattern, args)
+      if (unifyResult.didMatch) {
+        const { bindings } = unifyResult
         const env = create(parentEnv, bindings)
 
         // For now only the last node can be a tail-recursive function call.

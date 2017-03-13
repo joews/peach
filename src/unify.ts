@@ -3,15 +3,26 @@ import { isArray, isEqual } from './array'
 import { zip } from './util'
 import { AstNode, AstLiteralNode, AstDestructuredArrayNode, Value, isAstLiteralNode } from './node-types'
 
-// FIXME tagged union - with didMatch: false, there are never bindings (hence binding | null return types)
-type binding = { [name: string]: Value }
-
-interface unification {
-  didMatch: boolean,
-  bindings: binding
+interface Binding {
+  [name: string]: Value
 }
 
-export default function unify (patterns: AstNode[], values: Value[]): unification {
+interface DidUnify {
+  didMatch: true,
+  bindings: {
+    [name: string]: Value
+  }
+}
+
+interface DidNotUnify {
+  didMatch: false
+}
+
+type UnifyResult
+  = DidUnify
+  | DidNotUnify
+
+export default function unify (patterns: AstNode[], values: Value[]): UnifyResult {
   if (patterns.length !== values.length) {
     return didNotMatch
   }
@@ -19,8 +30,8 @@ export default function unify (patterns: AstNode[], values: Value[]): unificatio
   const bindings = {}
   for (const [pattern, value] of zip(patterns, values)) {
     const attemptBind = unifyOne(pattern, value)
-    if (attemptBind !== null) {
-      Object.assign(bindings, attemptBind)
+    if (attemptBind.didMatch == true) {
+      Object.assign(bindings, attemptBind.bindings)
     } else {
       return didNotMatch
     }
@@ -29,53 +40,51 @@ export default function unify (patterns: AstNode[], values: Value[]): unificatio
   return didMatch(bindings)
 }
 
-function unifyOne (pattern: AstNode, value: Value): binding | null {
+function unifyOne (pattern: AstNode, value: Value): UnifyResult {
   if (isAstLiteralNode(pattern) && pattern.value === value) {
     // the pattern matched, but there is nothing to bind
-    return {}
+    return didMatch({})
   }
 
   if (pattern.type === 'Name') {
     // the pattern matched; return a new binding
-    return { [pattern.name]: value }
+    return didMatch({ [pattern.name]: value })
   }
 
   // TODO generic value equality
   if (pattern.type === 'Array' && isEqual(pattern.values, value)) {
-    return {}
+    return didMatch({})
   }
 
   if (pattern.type === 'DestructuredArray') {
     return destructure(pattern, value)
   }
 
-  // no match
-  return null
+  return didNotMatch
 }
 
 // TODO this will need to change when Array is a wrapped type
-function destructure ({ head, tail }: AstDestructuredArrayNode, values: Value[]): binding | null {
+function destructure ({ head, tail }: AstDestructuredArrayNode, values: Value[]): UnifyResult {
   if (values.length === 0) {
     throw new PeachError(`Empty arrays cannot be destructured because they don't have a head`)
   }
 
   const boundHead = unifyOne(head, values[0])
-  if (boundHead !== null) {
+  if (boundHead.didMatch) {
     const boundTail = unifyOne(tail, values.slice(1))
-    if (boundTail) {
-      return Object.assign(boundHead, boundTail)
+    if (boundTail.didMatch) {
+      return didMatch(Object.assign(boundHead.bindings, boundTail.bindings))
     }
   }
 
-  return null
+  return didNotMatch
 }
 
-const didNotMatch: unification = {
-  didMatch: false,
-  bindings: {}
+const didNotMatch: DidNotUnify = {
+  didMatch: false
 }
 
-function didMatch (bindings: binding): unification {
+function didMatch (bindings: Binding): DidUnify {
   return {
     didMatch: true,
     bindings

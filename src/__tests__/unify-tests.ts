@@ -26,19 +26,19 @@ describe('unify', () => {
   it('cannot unify a loosely equal value', () => {
     const patterns: AstNumeralNode[] = [{ type: 'Numeral', value: 0 }]
     const values = [false]
-    expect(unify(patterns, values)).toEqual({ didMatch: false, bindings: {} })
+    expect(unify(patterns, values)).toEqual({ didMatch: false })
   })
 
   it('cannot unify when the number of patterns and values differs', () => {
     const patterns: AstNumeralNode[] = [{ type: 'Numeral', value: 1 }, { type: 'Numeral', value: 2 }]
     const values = [1]
-    expect(unify(patterns, values)).toEqual({ didMatch: false, bindings: {} })
+    expect(unify(patterns, values)).toEqual({ didMatch: false })
   })
 
   it('cannot unify when some but not all patterns match', () => {
     const patterns: AstNumeralNode[] = [{ type: 'Numeral', value: 1 }, { type: 'Numeral', value: 2 }]
     const values = [1, 3]
-    expect(unify(patterns, values)).toEqual({ didMatch: false, bindings: {} })
+    expect(unify(patterns, values)).toEqual({ didMatch: false })
   })
 
   it('can unify a variable', () => {
