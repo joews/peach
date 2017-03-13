@@ -4,7 +4,7 @@ start
 // a program is a list of newline-delimted expressions
 program = head:expression tail:(eol e:expression { return e })* {
   return {
-    type: "Program",
+    kind: "Program",
     expressions: [head, ...tail]
   }
 }
@@ -28,7 +28,7 @@ expression_list =
 
 def = name_expr:name __ "=" __ value:expression {
   return {
-    type: "Def",
+    kind: "Def",
     name: name_expr.name,
     value
   }
@@ -36,7 +36,7 @@ def = name_expr:name __ "=" __ value:expression {
 
 fn = clauses:clause_list_optional_parens {
   return {
-    type: "Fn",
+    kind: "Fn",
     clauses
   }
 }
@@ -76,7 +76,7 @@ destructure_tail = name / destructured_vector
 
 destructured_vector = ls head:destructure_head _ "|" tail:destructure_tail _ rs {
   return {
-    type: "DestructuredArray",
+    kind: "DestructuredArray",
     head,
     tail
   }
@@ -84,7 +84,7 @@ destructured_vector = ls head:destructure_head _ "|" tail:destructure_tail _ rs 
 
 if = "if" _ lp condition:expression rp __ ifBranch:expression __ "else" __ elseBranch:expression {
   return {
-    type: "If",
+    kind: "If",
     condition,
     ifBranch,
     elseBranch
@@ -94,7 +94,7 @@ if = "if" _ lp condition:expression rp __ ifBranch:expression __ "else" __ elseB
 
 name = value:name_value {
   return {
-    type: "Name",
+    kind: "Name",
     name: value
   }
 }
@@ -109,14 +109,14 @@ literal = numeral / boolean / string
 
 numeral = digits:[0-9]+ {
   return {
-    type: "Numeral",
+    kind: "Numeral",
     value: parseInt(digits.join(""), 10)
   };
 }
 
 boolean = value:boolean_value {
   return {
-    type: "Bool",
+    kind: "Bool",
     value
   }
 }
@@ -127,7 +127,7 @@ boolean_value
 
 string = "`" tokens:string_token* "`" {
   return {
-    type: "Str",
+    kind: "Str",
     value: tokens.join("")
   }
 }
@@ -152,7 +152,7 @@ escape_sequence
 call = lp values:expression_list rp {
   const [fn, ...args] = values
   return {
-    type: "Call",
+    kind: "Call",
     fn,
     args
   }
@@ -162,14 +162,14 @@ vector = empty_vector / non_empty_vector
 
 empty_vector = ls rs {
   return {
-    type: "Array",
+    kind: "Array",
     values: []
   }
 }
 
 non_empty_vector = ls values:expression_list rs {
   return {
-    type: "Array",
+    kind: "Array",
     values
   }
 }

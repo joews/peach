@@ -19,7 +19,7 @@ function testTypeCheck (source: string, env = getTypeEnv(getRootEnv())) {
   test(source, () => {
     const parsed = parse(source)
     const [lastNode] = typeCheck(parsed, env)
-    const type = lastNode.exprType.toString()
+    const type = lastNode.type.toString()
     expect(type).toMatchSnapshot()
   })
 };
@@ -35,7 +35,7 @@ function testFixture (fixtureName: string, env = getTypeEnv(getRootEnv())) {
   test(fixtureName, () => {
     const parsed = parse(fixture(fixtureName))
     const [lastNode] = typeCheck(parsed, env)
-    const type = lastNode.exprType.toString()
+    const type = lastNode.type.toString()
     expect(type).toMatchSnapshot()
   })
 };
@@ -85,12 +85,12 @@ testFails(`if (1) 1 else 2`)
 // http://smallshire.org.uk/sufficientlysmall/2010/04/11/a-hindley-milner-type-inference-implementation-in-python/
 // (adapted because Peach doesn't have `let` yet; use `def` and test in the enclosing environment)
 
-// the peach type checker works over nodes with an `exprType` property.
+// the peach type checker works over nodes with an `type` property.
 // helper for creating nodes for synthetic type tests
 function typed (type: Type): TypedNode {
   return {
-    exprType: type,
-    type: 'Str',
+    type: type,
+    kind: 'Str',
     value: 'dummy'
   }
 }

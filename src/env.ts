@@ -12,7 +12,7 @@ export function getTypeEnv (valueEnv: RuntimeEnv): TypeEnv {
 
   return Object.keys(valueEnv).reduce((env, name) => {
     env[name] = extend(valueEnv[name], {
-      exprType: valueEnv[name].exprType
+      type: valueEnv[name].type
     })
     return env
   }, initialState)

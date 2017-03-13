@@ -49,7 +49,7 @@ function visitAll (nodes: AstNode[], rootEnv: TypeEnv, nonGeneric: Set<any>): [T
 function visit (node: AstNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedNode> {
   // console.log(`TRACE typecheck: ${node.type}\n${JSON.stringify(node)}`)
 
-  switch (node.type) {
+  switch (node.kind) {
     case 'Program':
       return visitProgram(node, env, nonGeneric)
     case 'Def':
@@ -73,7 +73,7 @@ function visit (node: AstNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckRe
     case 'If':
       return visitIf(node, env, nonGeneric)
     default:
-      throw new Error(`Uncrecognised AST node type: ${node.type}`)
+      throw new Error(`Uncrecognised AST node type: ${node.kind}`)
   }
 }
 
@@ -81,7 +81,7 @@ function visitProgram (node: AstProgramNode, env: TypeEnv, nonGeneric: Set<Type>
   const [expressions, finalEnv] = visitAll(node.expressions, env, nonGeneric)
   const programType = typeOf(last(expressions))
 
-  const typedNode = { ...node, expressions, exprType: programType }
+  const typedNode = { ...node, expressions, type: programType }
   return [typedNode, finalEnv]
 }
 
@@ -100,19 +100,19 @@ function visitDef (node: AstDefNode, env: TypeEnv, nonGeneric: Set<Type>): TypeC
   //  type. The TypeEnv only really cares about the type of its values so we can
   //  continue to use the typed stub.
   const t = new TypeVariable()
-  const typedStubNode: TypedDefPreValueNode = { type: 'DefPreValue', exprType: t }
+  const typedStubNode: TypedDefPreValueNode = { kind: 'DefPreValue', type: t }
   env[node.name] = typedStubNode
 
   // if we are defining a function, mark the new identifier as
   //  non-generic inside the evaluation of the body.
-  const innerNonGeneric = (node.value.type === 'Fn')
+  const innerNonGeneric = (node.value.kind === 'Fn')
     ? new Set([...nonGeneric, t])
     : nonGeneric
 
   const [value] = visit(node.value, env, innerNonGeneric)
   unify(typeOf(value), t)
 
-  const typedNode = { ...node, value, exprType: t }
+  const typedNode = { ...node, value, type: t }
   return [typedNode, env]
 }
 
@@ -124,20 +124,20 @@ function visitName (node: AstNameNode, env: TypeEnv, nonGeneric: Set<Type>): Typ
   const envType = typeOf(env[node.name])
   const freshType = fresh(envType, nonGeneric)
 
-  const typedNode = { ...node, exprType: freshType }
+  const typedNode = { ...node, type: freshType }
   return [typedNode, env]
 }
 
 function visitNumeral (node: AstNumeralNode, env: TypeEnv): TypeCheckResult<TypedNumeralNode> {
-  return [{...node, exprType: NumberType }, env]
+  return [{...node, type: NumberType }, env]
 }
 
 function visitBool (node: AstBooleanNode, env: TypeEnv): TypeCheckResult<TypedBooleanNode> {
-  return [{ ...node, exprType: BooleanType }, env]
+  return [{ ...node, type: BooleanType }, env]
 }
 
 function visitStr (node: AstStringNode, env: TypeEnv): TypeCheckResult<TypedStringNode> {
-  return [{ ...node, exprType: StringType }, env]
+  return [{ ...node, type: StringType }, env]
 }
 
 function visitCall (node: AstCallNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedCallNode> {
@@ -149,7 +149,7 @@ function visitCall (node: AstCallNode, env: TypeEnv, nonGeneric: Set<Type>): Typ
 
   unify(callFunctionType, typeOf(fn))
 
-  const typedNode = { ...node, fn: fn as TypedFunctionNode, args, exprType: returnType }
+  const typedNode = { ...node, fn: fn as TypedFunctionNode, args, type: returnType }
   return [typedNode, env]
 }
 
@@ -170,7 +170,7 @@ function visitArray (node: AstArrayNode, env: TypeEnv, nonGeneric: Set<Type>): T
   }
 
   const arrayType = new ArrayType(itemType)
-  const typedNode = { ...node, values: typedValues, exprType: arrayType }
+  const typedNode = { ...node, values: typedValues, type: arrayType }
 
   return [typedNode, env]
 }
@@ -182,14 +182,14 @@ function visitDestructuredArray (node: AstDestructuredArrayNode, env: TypeEnv, n
   const boundTailType = new ArrayType(new TypeVariable())
 
   // TODO immutable env
-  if (head.type === 'Name') {
-    const typedHead: TypedNameNode = { ...head, exprType: boundHeadType }
+  if (head.kind === 'Name') {
+    const typedHead: TypedNameNode = { ...head, type: boundHeadType }
     env[head.name] = typedHead
     nonGeneric.add(boundHeadType)
   }
 
-  if (tail.type === 'Name') {
-    const typedTail: TypedNameNode = { ...tail, exprType: boundTailType }
+  if (tail.kind === 'Name') {
+    const typedTail: TypedNameNode = { ...tail, type: boundTailType }
     env[tail.name] = typedTail
     nonGeneric.add(boundTailType)
   }
@@ -206,7 +206,7 @@ function visitDestructuredArray (node: AstDestructuredArrayNode, env: TypeEnv, n
   unify(headType, boundHeadType)
   unify(tailType, boundTailType)
 
-  const typedNode = { ...node, head: typedHead, tail: typedTail, exprType: tailType }
+  const typedNode = { ...node, head: typedHead, tail: typedTail, type: tailType }
   return [typedNode, env]
 }
 
@@ -221,9 +221,9 @@ function visitFn (node: AstFunctionNode, parentEnv: TypeEnv, outerNonGeneric: Se
       // If this is a `Name` arg, define it in the function's arguments environment.
       // if it's a destructured array we need to recursively define any named children,
       // so visiting the node will define its names.
-      if (argNode.type === 'Name') {
+      if (argNode.kind === 'Name') {
         const argType = new TypeVariable()
-        const typedArgNode: TypedNameNode = { ...argNode, exprType: argType }
+        const typedArgNode: TypedNameNode = { ...argNode, type: argType }
 
         env[argNode.name] = typedArgNode
         nonGeneric.add(argType)
@@ -240,13 +240,13 @@ function visitFn (node: AstFunctionNode, parentEnv: TypeEnv, outerNonGeneric: Se
     const patternTypes = pattern.map(typeOf)
 
     const clauseType: Type = makeFunctionType(patternTypes, returnType)
-    return { ...clauseNode, pattern, body, exprType: clauseType }
+    return { ...clauseNode, pattern, body, type: clauseType }
   })
 
   // all clauses must have tbe same type
   unifyAll(typesOf(clauses))
 
-  const typedNode = { ...node, clauses, exprType: typeOf(clauses[0])}
+  const typedNode = { ...node, clauses, type: typeOf(clauses[0])}
   return [typedNode, parentEnv]
 }
 
@@ -258,17 +258,17 @@ function visitIf (node: AstIfNode, env: TypeEnv, nonGeneric: Set<Type>): TypeChe
   unify(typeOf(condition), BooleanType)
   unify(typeOf(ifBranch), typeOf(elseBranch))
 
-  const typedNode = { ...node, condition, ifBranch, elseBranch, exprType: typeOf(ifBranch) }
+  const typedNode = { ...node, condition, ifBranch, elseBranch, type: typeOf(ifBranch) }
   return [typedNode, env]
 }
 
 function typeOf (node: TypedNode): Type {
-  return node.exprType
+  return node.type
 }
 
 // return an array of types for the given array of typed nodes
 function typesOf (typedNodes: TypedNode[]) {
-  return typedNodes.map(node => node.exprType)
+  return typedNodes.map(node => node.type)
 }
 
 //
@@ -318,11 +318,11 @@ function unifyAll (typeList: Type[]) {
   })
 }
 
-// makes type1 and exprType the same, or throws
+// makes type1 and type the same, or throws
 // if one side is a variable, set a's instance to be b (variable or operator)
-function unify (type1: Type, exprType: Type): void {
+function unify (type1: Type, type: Type): void {
   const a = prune(type1)
-  const b = prune(exprType)
+  const b = prune(type)
 
   if (a instanceof TypeVariable) {
     if (a !== b) {

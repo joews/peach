@@ -31,7 +31,7 @@ export default function startRepl (options: any, onExit: (status: Number) => voi
       lastEnv = nextEnv
       lastTypeEnv = nextTypeEnv
 
-      const typedResult = `${result}: ${typed.exprType}`
+      const typedResult = `${result}: ${typed.type}`
       return callback(null, typedResult)
     } catch (e) {
       if (isRecoverableError(e)) {

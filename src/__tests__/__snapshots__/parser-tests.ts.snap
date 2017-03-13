@@ -8,29 +8,29 @@ Object {
         Object {
           "body": Array [
             Object {
-              "type": "Numeral",
+              "kind": "Numeral",
               "value": 1,
             },
           ],
           "pattern": Array [
             Object {
               "head": Object {
-                "type": "Bool",
+                "kind": "Bool",
                 "value": true,
               },
+              "kind": "DestructuredArray",
               "tail": Object {
+                "kind": "Name",
                 "name": "tail",
-                "type": "Name",
               },
-              "type": "DestructuredArray",
             },
           ],
         },
       ],
-      "type": "Fn",
+      "kind": "Fn",
     },
   ],
-  "type": "Program",
+  "kind": "Program",
 }
 `;
 
@@ -42,22 +42,22 @@ Object {
         Object {
           "body": Array [
             Object {
-              "type": "Numeral",
+              "kind": "Numeral",
               "value": 1,
             },
           ],
           "pattern": Array [
             Object {
-              "type": "Bool",
+              "kind": "Bool",
               "value": true,
             },
           ],
         },
       ],
-      "type": "Fn",
+      "kind": "Fn",
     },
   ],
-  "type": "Program",
+  "kind": "Program",
 }
 `;
 
@@ -65,20 +65,20 @@ exports[`fibonacci.peach 1`] = `
 Object {
   "expressions": Array [
     Object {
+      "kind": "Def",
       "name": "fib",
-      "type": "Def",
       "value": Object {
         "clauses": Array [
           Object {
             "body": Array [
               Object {
-                "type": "Numeral",
+                "kind": "Numeral",
                 "value": 1,
               },
             ],
             "pattern": Array [
               Object {
-                "type": "Numeral",
+                "kind": "Numeral",
                 "value": 0,
               },
             ],
@@ -86,13 +86,13 @@ Object {
           Object {
             "body": Array [
               Object {
-                "type": "Numeral",
+                "kind": "Numeral",
                 "value": 1,
               },
             ],
             "pattern": Array [
               Object {
-                "type": "Numeral",
+                "kind": "Numeral",
                 "value": 1,
               },
             ],
@@ -106,136 +106,136 @@ Object {
                       Object {
                         "args": Array [
                           Object {
+                            "kind": "Name",
                             "name": "x",
-                            "type": "Name",
                           },
                           Object {
-                            "type": "Numeral",
+                            "kind": "Numeral",
                             "value": 1,
                           },
                         ],
                         "fn": Object {
+                          "kind": "Name",
                           "name": "-",
-                          "type": "Name",
                         },
-                        "type": "Call",
+                        "kind": "Call",
                       },
                     ],
                     "fn": Object {
+                      "kind": "Name",
                       "name": "fib",
-                      "type": "Name",
                     },
-                    "type": "Call",
+                    "kind": "Call",
                   },
                   Object {
                     "args": Array [
                       Object {
                         "args": Array [
                           Object {
+                            "kind": "Name",
                             "name": "x",
-                            "type": "Name",
                           },
                           Object {
-                            "type": "Numeral",
+                            "kind": "Numeral",
                             "value": 2,
                           },
                         ],
                         "fn": Object {
+                          "kind": "Name",
                           "name": "-",
-                          "type": "Name",
                         },
-                        "type": "Call",
+                        "kind": "Call",
                       },
                     ],
                     "fn": Object {
+                      "kind": "Name",
                       "name": "fib",
-                      "type": "Name",
                     },
-                    "type": "Call",
+                    "kind": "Call",
                   },
                 ],
                 "fn": Object {
+                  "kind": "Name",
                   "name": "+",
-                  "type": "Name",
                 },
-                "type": "Call",
+                "kind": "Call",
               },
             ],
             "pattern": Array [
               Object {
+                "kind": "Name",
                 "name": "x",
-                "type": "Name",
               },
             ],
           },
         ],
-        "type": "Fn",
+        "kind": "Fn",
       },
     },
     Object {
       "args": Array [
         Object {
+          "kind": "Name",
           "name": "fib",
-          "type": "Name",
         },
         Object {
-          "type": "Array",
+          "kind": "Array",
           "values": Array [
             Object {
-              "type": "Numeral",
+              "kind": "Numeral",
               "value": 0,
             },
             Object {
-              "type": "Numeral",
+              "kind": "Numeral",
               "value": 1,
             },
             Object {
-              "type": "Numeral",
+              "kind": "Numeral",
               "value": 2,
             },
             Object {
-              "type": "Numeral",
+              "kind": "Numeral",
               "value": 3,
             },
             Object {
-              "type": "Numeral",
+              "kind": "Numeral",
               "value": 4,
             },
             Object {
-              "type": "Numeral",
+              "kind": "Numeral",
               "value": 5,
             },
             Object {
-              "type": "Numeral",
+              "kind": "Numeral",
               "value": 6,
             },
             Object {
-              "type": "Numeral",
+              "kind": "Numeral",
               "value": 7,
             },
             Object {
-              "type": "Numeral",
+              "kind": "Numeral",
               "value": 8,
             },
             Object {
-              "type": "Numeral",
+              "kind": "Numeral",
               "value": 9,
             },
             Object {
-              "type": "Numeral",
+              "kind": "Numeral",
               "value": 10,
             },
           ],
         },
       ],
       "fn": Object {
+        "kind": "Name",
         "name": "map",
-        "type": "Name",
       },
-      "type": "Call",
+      "kind": "Call",
     },
   ],
-  "type": "Program",
+  "kind": "Program",
 }
 `;
 
@@ -243,47 +243,47 @@ exports[`str.peach 1`] = `
 Object {
   "expressions": Array [
     Object {
-      "type": "Array",
+      "kind": "Array",
       "values": Array [
         Object {
-          "type": "Str",
+          "kind": "Str",
           "value": "str.peach before escape\\\\\`and after!",
         },
         Object {
-          "type": "Str",
+          "kind": "Str",
           "value": "hey 🌟",
         },
         Object {
-          "type": "Str",
+          "kind": "Str",
           "value": "multi
       line
   string",
         },
         Object {
-          "type": "Str",
+          "kind": "Str",
           "value": "such\\\\\\\\\\\\\\\\\\\\\`escape",
         },
         Object {
-          "type": "Str",
+          "kind": "Str",
           "value": "with	tab",
         },
         Object {
-          "type": "Str",
+          "kind": "Str",
           "value": "new
 line",
         },
         Object {
-          "type": "Str",
+          "kind": "Str",
           "value": "back\\\\slash",
         },
         Object {
-          "type": "Str",
+          "kind": "Str",
           "value": "back\\\\\\\\to\\\\back",
         },
       ],
     },
   ],
-  "type": "Program",
+  "kind": "Program",
 }
 `;
 
@@ -291,24 +291,24 @@ exports[`tail-recursion.peach 1`] = `
 Object {
   "expressions": Array [
     Object {
+      "kind": "Def",
       "name": "factorial",
-      "type": "Def",
       "value": Object {
         "clauses": Array [
           Object {
             "body": Array [
               Object {
+                "kind": "Name",
                 "name": "n",
-                "type": "Name",
               },
             ],
             "pattern": Array [
               Object {
+                "kind": "Name",
                 "name": "n",
-                "type": "Name",
               },
               Object {
-                "type": "Numeral",
+                "kind": "Numeral",
                 "value": 1,
               },
             ],
@@ -320,63 +320,63 @@ Object {
                   Object {
                     "args": Array [
                       Object {
+                        "kind": "Name",
                         "name": "n",
-                        "type": "Name",
                       },
                       Object {
+                        "kind": "Name",
                         "name": "x",
-                        "type": "Name",
                       },
                     ],
                     "fn": Object {
+                      "kind": "Name",
                       "name": "*",
-                      "type": "Name",
                     },
-                    "type": "Call",
+                    "kind": "Call",
                   },
                   Object {
                     "args": Array [
                       Object {
+                        "kind": "Name",
                         "name": "x",
-                        "type": "Name",
                       },
                       Object {
-                        "type": "Numeral",
+                        "kind": "Numeral",
                         "value": 1,
                       },
                     ],
                     "fn": Object {
+                      "kind": "Name",
                       "name": "-",
-                      "type": "Name",
                     },
-                    "type": "Call",
+                    "kind": "Call",
                   },
                 ],
                 "fn": Object {
+                  "kind": "Name",
                   "name": "factorial",
-                  "type": "Name",
                 },
-                "type": "Call",
+                "kind": "Call",
               },
             ],
             "pattern": Array [
               Object {
+                "kind": "Name",
                 "name": "n",
-                "type": "Name",
               },
               Object {
+                "kind": "Name",
                 "name": "x",
-                "type": "Name",
               },
             ],
           },
         ],
-        "type": "Fn",
+        "kind": "Fn",
       },
     },
     Object {
+      "kind": "Def",
       "name": "f",
-      "type": "Def",
       "value": Object {
         "clauses": Array [
           Object {
@@ -384,46 +384,46 @@ Object {
               Object {
                 "args": Array [
                   Object {
-                    "type": "Numeral",
+                    "kind": "Numeral",
                     "value": 1,
                   },
                   Object {
+                    "kind": "Name",
                     "name": "n",
-                    "type": "Name",
                   },
                 ],
                 "fn": Object {
+                  "kind": "Name",
                   "name": "factorial",
-                  "type": "Name",
                 },
-                "type": "Call",
+                "kind": "Call",
               },
             ],
             "pattern": Array [
               Object {
+                "kind": "Name",
                 "name": "n",
-                "type": "Name",
               },
             ],
           },
         ],
-        "type": "Fn",
+        "kind": "Fn",
       },
     },
     Object {
       "args": Array [
         Object {
-          "type": "Numeral",
+          "kind": "Numeral",
           "value": 32768,
         },
       ],
       "fn": Object {
+        "kind": "Name",
         "name": "f",
-        "type": "Name",
       },
-      "type": "Call",
+      "kind": "Call",
     },
   ],
-  "type": "Program",
+  "kind": "Program",
 }
 `;

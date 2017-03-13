@@ -44,7 +44,7 @@ export function makeFunction (functionNode: TypedFunctionNode, parentEnv: Runtim
         //  check if it's a tail call. If so return a thunk so we can use the trampoline
         //  pattern to avoid call stack overflow. As above - this test needs refining
         // to include any terminal expression in a function.
-        if (lastNode.type === 'Call') {
+        if (lastNode.kind === 'Call') {
           const resolvedFunction = visit(lastNode.fn, env)[0]
           if (resolvedFunction === pFunction) {
             // evaluate the re-entrant args without recursing to `visit(lastNode)`
@@ -79,13 +79,13 @@ export function makeFunction (functionNode: TypedFunctionNode, parentEnv: Runtim
 }
 
 export function makeNativeFunction (name: string, jsFunction: Function, argTypes: Type[], returnType: Type) {
-  const exprType = makeFunctionType(argTypes, returnType)
+  const type = makeFunctionType(argTypes, returnType)
 
   return {
     name,
     arity: argTypes.length,
     call: jsFunction,
-    exprType,
+    type,
     toString: () => `built-in ${name}`
   }
 }
