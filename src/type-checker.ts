@@ -3,11 +3,11 @@ import PeachError from './errors'
 import { TypeEnv } from './env'
 
 import {
-  Ast, AstNode, AstProgramNode, AstDefNode, AstNameNode,
-  AstNumeralNode, AstBooleanNode, AstStringNode, AstCallNode, AstArrayNode,
+  Ast, AstNode, AstProgramNode, AstDefNode, AstIdentifierNode,
+  AstNumberNode, AstBooleanNode, AstStringNode, AstCallNode, AstArrayNode,
   AstDestructuredArrayNode, AstFunctionNode, AstIfNode,
-  TypedAst, TypedNode, TypedProgramNode, TypedDefNode, TypedNameNode,
-  TypedNumeralNode, TypedBooleanNode, TypedStringNode, TypedCallNode, TypedArrayNode,
+  TypedAst, TypedNode, TypedProgramNode, TypedDefNode, TypedIdentifierNode,
+  TypedNumberNode, TypedBooleanNode, TypedStringNode, TypedCallNode, TypedArrayNode,
   TypedDestructuredArrayNode, TypedFunctionNode, TypedFunctionClauseNode, TypedIfNode,
   TypedDefPreValueNode
 } from './node-types'
@@ -54,13 +54,13 @@ function visit (node: AstNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckRe
       return visitProgram(node, env, nonGeneric)
     case 'Def':
       return visitDef(node, env, nonGeneric)
-    case 'Name':
+    case 'Identifier':
       return visitName(node, env, nonGeneric)
-    case 'Numeral':
+    case 'Number':
       return visitNumeral(node, env)
-    case 'Bool':
+    case 'Boolean':
       return visitBool(node, env)
-    case 'Str':
+    case 'String':
       return visitStr(node, env)
     case 'Call':
       return visitCall(node, env, nonGeneric)
@@ -68,7 +68,7 @@ function visit (node: AstNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckRe
       return visitArray(node, env, nonGeneric)
     case 'DestructuredArray':
       return visitDestructuredArray(node, env, nonGeneric)
-    case 'Fn':
+    case 'Function':
       return visitFn(node, env, nonGeneric)
     case 'If':
       return visitIf(node, env, nonGeneric)
@@ -105,7 +105,7 @@ function visitDef (node: AstDefNode, env: TypeEnv, nonGeneric: Set<Type>): TypeC
 
   // if we are defining a function, mark the new identifier as
   //  non-generic inside the evaluation of the body.
-  const innerNonGeneric = (node.value.kind === 'Fn')
+  const innerNonGeneric = (node.value.kind === 'Function')
     ? new Set([...nonGeneric, t])
     : nonGeneric
 
@@ -116,7 +116,7 @@ function visitDef (node: AstDefNode, env: TypeEnv, nonGeneric: Set<Type>): TypeC
   return [typedNode, env]
 }
 
-function visitName (node: AstNameNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedNameNode> {
+function visitName (node: AstIdentifierNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedIdentifierNode> {
   if (!(node.name in env)) {
     throw new PeachError(`${node.name} is not defined`)
   }
@@ -128,7 +128,7 @@ function visitName (node: AstNameNode, env: TypeEnv, nonGeneric: Set<Type>): Typ
   return [typedNode, env]
 }
 
-function visitNumeral (node: AstNumeralNode, env: TypeEnv): TypeCheckResult<TypedNumeralNode> {
+function visitNumeral (node: AstNumberNode, env: TypeEnv): TypeCheckResult<TypedNumberNode> {
   return [{...node, type: NumberType }, env]
 }
 
@@ -182,14 +182,14 @@ function visitDestructuredArray (node: AstDestructuredArrayNode, env: TypeEnv, n
   const boundTailType = new ArrayType(new TypeVariable())
 
   // TODO immutable env
-  if (head.kind === 'Name') {
-    const typedHead: TypedNameNode = { ...head, type: boundHeadType }
+  if (head.kind === 'Identifier') {
+    const typedHead: TypedIdentifierNode = { ...head, type: boundHeadType }
     env[head.name] = typedHead
     nonGeneric.add(boundHeadType)
   }
 
-  if (tail.kind === 'Name') {
-    const typedTail: TypedNameNode = { ...tail, type: boundTailType }
+  if (tail.kind === 'Identifier') {
+    const typedTail: TypedIdentifierNode = { ...tail, type: boundTailType }
     env[tail.name] = typedTail
     nonGeneric.add(boundTailType)
   }
@@ -221,9 +221,9 @@ function visitFn (node: AstFunctionNode, parentEnv: TypeEnv, outerNonGeneric: Se
       // If this is a `Name` arg, define it in the function's arguments environment.
       // if it's a destructured array we need to recursively define any named children,
       // so visiting the node will define its names.
-      if (argNode.kind === 'Name') {
+      if (argNode.kind === 'Identifier') {
         const argType = new TypeVariable()
-        const typedArgNode: TypedNameNode = { ...argNode, type: argType }
+        const typedArgNode: TypedIdentifierNode = { ...argNode, type: argType }
 
         env[argNode.name] = typedArgNode
         nonGeneric.add(argType)

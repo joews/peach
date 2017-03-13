@@ -8,26 +8,26 @@ Object {
         Object {
           "body": Array [
             Object {
-              "kind": "Numeral",
+              "kind": "Number",
               "value": 1,
             },
           ],
           "pattern": Array [
             Object {
               "head": Object {
-                "kind": "Bool",
+                "kind": "Boolean",
                 "value": true,
               },
               "kind": "DestructuredArray",
               "tail": Object {
-                "kind": "Name",
+                "kind": "Identifier",
                 "name": "tail",
               },
             },
           ],
         },
       ],
-      "kind": "Fn",
+      "kind": "Function",
     },
   ],
   "kind": "Program",
@@ -42,19 +42,19 @@ Object {
         Object {
           "body": Array [
             Object {
-              "kind": "Numeral",
+              "kind": "Number",
               "value": 1,
             },
           ],
           "pattern": Array [
             Object {
-              "kind": "Bool",
+              "kind": "Boolean",
               "value": true,
             },
           ],
         },
       ],
-      "kind": "Fn",
+      "kind": "Function",
     },
   ],
   "kind": "Program",
@@ -72,13 +72,13 @@ Object {
           Object {
             "body": Array [
               Object {
-                "kind": "Numeral",
+                "kind": "Number",
                 "value": 1,
               },
             ],
             "pattern": Array [
               Object {
-                "kind": "Numeral",
+                "kind": "Number",
                 "value": 0,
               },
             ],
@@ -86,13 +86,13 @@ Object {
           Object {
             "body": Array [
               Object {
-                "kind": "Numeral",
+                "kind": "Number",
                 "value": 1,
               },
             ],
             "pattern": Array [
               Object {
-                "kind": "Numeral",
+                "kind": "Number",
                 "value": 1,
               },
             ],
@@ -106,23 +106,23 @@ Object {
                       Object {
                         "args": Array [
                           Object {
-                            "kind": "Name",
+                            "kind": "Identifier",
                             "name": "x",
                           },
                           Object {
-                            "kind": "Numeral",
+                            "kind": "Number",
                             "value": 1,
                           },
                         ],
                         "fn": Object {
-                          "kind": "Name",
+                          "kind": "Identifier",
                           "name": "-",
                         },
                         "kind": "Call",
                       },
                     ],
                     "fn": Object {
-                      "kind": "Name",
+                      "kind": "Identifier",
                       "name": "fib",
                     },
                     "kind": "Call",
@@ -132,30 +132,30 @@ Object {
                       Object {
                         "args": Array [
                           Object {
-                            "kind": "Name",
+                            "kind": "Identifier",
                             "name": "x",
                           },
                           Object {
-                            "kind": "Numeral",
+                            "kind": "Number",
                             "value": 2,
                           },
                         ],
                         "fn": Object {
-                          "kind": "Name",
+                          "kind": "Identifier",
                           "name": "-",
                         },
                         "kind": "Call",
                       },
                     ],
                     "fn": Object {
-                      "kind": "Name",
+                      "kind": "Identifier",
                       "name": "fib",
                     },
                     "kind": "Call",
                   },
                 ],
                 "fn": Object {
-                  "kind": "Name",
+                  "kind": "Identifier",
                   "name": "+",
                 },
                 "kind": "Call",
@@ -163,73 +163,73 @@ Object {
             ],
             "pattern": Array [
               Object {
-                "kind": "Name",
+                "kind": "Identifier",
                 "name": "x",
               },
             ],
           },
         ],
-        "kind": "Fn",
+        "kind": "Function",
       },
     },
     Object {
       "args": Array [
         Object {
-          "kind": "Name",
+          "kind": "Identifier",
           "name": "fib",
         },
         Object {
           "kind": "Array",
           "values": Array [
             Object {
-              "kind": "Numeral",
+              "kind": "Number",
               "value": 0,
             },
             Object {
-              "kind": "Numeral",
+              "kind": "Number",
               "value": 1,
             },
             Object {
-              "kind": "Numeral",
+              "kind": "Number",
               "value": 2,
             },
             Object {
-              "kind": "Numeral",
+              "kind": "Number",
               "value": 3,
             },
             Object {
-              "kind": "Numeral",
+              "kind": "Number",
               "value": 4,
             },
             Object {
-              "kind": "Numeral",
+              "kind": "Number",
               "value": 5,
             },
             Object {
-              "kind": "Numeral",
+              "kind": "Number",
               "value": 6,
             },
             Object {
-              "kind": "Numeral",
+              "kind": "Number",
               "value": 7,
             },
             Object {
-              "kind": "Numeral",
+              "kind": "Number",
               "value": 8,
             },
             Object {
-              "kind": "Numeral",
+              "kind": "Number",
               "value": 9,
             },
             Object {
-              "kind": "Numeral",
+              "kind": "Number",
               "value": 10,
             },
           ],
         },
       ],
       "fn": Object {
-        "kind": "Name",
+        "kind": "Identifier",
         "name": "map",
       },
       "kind": "Call",
@@ -246,38 +246,38 @@ Object {
       "kind": "Array",
       "values": Array [
         Object {
-          "kind": "Str",
+          "kind": "String",
           "value": "str.peach before escape\\\\\`and after!",
         },
         Object {
-          "kind": "Str",
+          "kind": "String",
           "value": "hey 🌟",
         },
         Object {
-          "kind": "Str",
+          "kind": "String",
           "value": "multi
       line
   string",
         },
         Object {
-          "kind": "Str",
+          "kind": "String",
           "value": "such\\\\\\\\\\\\\\\\\\\\\`escape",
         },
         Object {
-          "kind": "Str",
+          "kind": "String",
           "value": "with	tab",
         },
         Object {
-          "kind": "Str",
+          "kind": "String",
           "value": "new
 line",
         },
         Object {
-          "kind": "Str",
+          "kind": "String",
           "value": "back\\\\slash",
         },
         Object {
-          "kind": "Str",
+          "kind": "String",
           "value": "back\\\\\\\\to\\\\back",
         },
       ],
@@ -298,17 +298,17 @@ Object {
           Object {
             "body": Array [
               Object {
-                "kind": "Name",
+                "kind": "Identifier",
                 "name": "n",
               },
             ],
             "pattern": Array [
               Object {
-                "kind": "Name",
+                "kind": "Identifier",
                 "name": "n",
               },
               Object {
-                "kind": "Numeral",
+                "kind": "Number",
                 "value": 1,
               },
             ],
@@ -320,16 +320,16 @@ Object {
                   Object {
                     "args": Array [
                       Object {
-                        "kind": "Name",
+                        "kind": "Identifier",
                         "name": "n",
                       },
                       Object {
-                        "kind": "Name",
+                        "kind": "Identifier",
                         "name": "x",
                       },
                     ],
                     "fn": Object {
-                      "kind": "Name",
+                      "kind": "Identifier",
                       "name": "*",
                     },
                     "kind": "Call",
@@ -337,23 +337,23 @@ Object {
                   Object {
                     "args": Array [
                       Object {
-                        "kind": "Name",
+                        "kind": "Identifier",
                         "name": "x",
                       },
                       Object {
-                        "kind": "Numeral",
+                        "kind": "Number",
                         "value": 1,
                       },
                     ],
                     "fn": Object {
-                      "kind": "Name",
+                      "kind": "Identifier",
                       "name": "-",
                     },
                     "kind": "Call",
                   },
                 ],
                 "fn": Object {
-                  "kind": "Name",
+                  "kind": "Identifier",
                   "name": "factorial",
                 },
                 "kind": "Call",
@@ -361,17 +361,17 @@ Object {
             ],
             "pattern": Array [
               Object {
-                "kind": "Name",
+                "kind": "Identifier",
                 "name": "n",
               },
               Object {
-                "kind": "Name",
+                "kind": "Identifier",
                 "name": "x",
               },
             ],
           },
         ],
-        "kind": "Fn",
+        "kind": "Function",
       },
     },
     Object {
@@ -384,16 +384,16 @@ Object {
               Object {
                 "args": Array [
                   Object {
-                    "kind": "Numeral",
+                    "kind": "Number",
                     "value": 1,
                   },
                   Object {
-                    "kind": "Name",
+                    "kind": "Identifier",
                     "name": "n",
                   },
                 ],
                 "fn": Object {
-                  "kind": "Name",
+                  "kind": "Identifier",
                   "name": "factorial",
                 },
                 "kind": "Call",
@@ -401,24 +401,24 @@ Object {
             ],
             "pattern": Array [
               Object {
-                "kind": "Name",
+                "kind": "Identifier",
                 "name": "n",
               },
             ],
           },
         ],
-        "kind": "Fn",
+        "kind": "Function",
       },
     },
     Object {
       "args": Array [
         Object {
-          "kind": "Numeral",
+          "kind": "Number",
           "value": 32768,
         },
       ],
       "fn": Object {
-        "kind": "Name",
+        "kind": "Identifier",
         "name": "f",
       },
       "kind": "Call",

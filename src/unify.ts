@@ -46,7 +46,7 @@ function unifyOne (pattern: AstNode, value: Value): UnifyResult {
     return didMatch({})
   }
 
-  if (pattern.kind === 'Name') {
+  if (pattern.kind === 'Identifier') {
     // the pattern matched; return a new binding
     return didMatch({ [pattern.name]: value })
   }

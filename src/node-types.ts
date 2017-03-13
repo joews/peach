@@ -15,8 +15,8 @@ export interface AstBaseNode {
 export type AstNode
   = AstProgramNode
   | AstDefNode
-  | AstNameNode
-  | AstNumeralNode
+  | AstIdentifierNode
+  | AstNumberNode
   | AstBooleanNode
   | AstStringNode
   | AstCallNode
@@ -31,8 +31,8 @@ export type AstNode
 export type TypedNode
   = TypedProgramNode
   | TypedDefNode
-  | TypedNameNode
-  | TypedNumeralNode
+  | TypedIdentifierNode
+  | TypedNumberNode
   | TypedBooleanNode
   | TypedStringNode
   | TypedCallNode
@@ -66,29 +66,29 @@ export interface TypedDefNode extends AstDefNode, Typed {
   value: TypedNode
 }
 
-export interface AstNameNode {
-  kind: 'Name',
+export interface AstIdentifierNode {
+  kind: 'Identifier',
   name: string
 }
 
-export interface TypedNameNode extends AstNameNode, Typed { }
+export interface TypedIdentifierNode extends AstIdentifierNode, Typed { }
 
-export interface AstNumeralNode {
-  kind: 'Numeral',
+export interface AstNumberNode {
+  kind: 'Number',
   value: number
 }
 
-export interface TypedNumeralNode extends AstNumeralNode, Typed { }
+export interface TypedNumberNode extends AstNumberNode, Typed { }
 
 export interface AstBooleanNode {
-  kind: 'Bool',
+  kind: 'Boolean',
   value: boolean
 }
 
 export interface TypedBooleanNode extends AstBooleanNode, Typed { }
 
 export interface AstStringNode {
-  kind: 'Str',
+  kind: 'String',
   value: string
 }
 
@@ -126,7 +126,7 @@ export interface TypedDestructuredArrayNode extends AstDestructuredArrayNode, Ty
 }
 
 export interface AstFunctionNode {
-  kind: 'Fn',
+  kind: 'Function',
   clauses: AstFunctionClauseNode[]
 }
 
@@ -175,14 +175,14 @@ export interface TypedDefPreValueNode extends Typed, AstDefPreValueNode { }
 //
 // Nodes with shared traits
 //
-export type AstLiteralNode = AstStringNode | AstBooleanNode | AstNumeralNode
-export type TypedLiteralNode = TypedStringNode | TypedBooleanNode | TypedNumeralNode
+export type AstLiteralNode = AstStringNode | AstBooleanNode | AstNumberNode
+export type TypedLiteralNode = TypedStringNode | TypedBooleanNode | TypedNumberNode
 
 //
 // Guard functions
 //
 export function isAstLiteralNode (node: AstNode): node is AstLiteralNode {
-  return ['Bool', 'Str', 'Numeral'].includes(node.kind)
+  return ['Boolean', 'String', 'Number'].includes(node.kind)
 }
 
 //
