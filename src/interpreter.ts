@@ -4,8 +4,8 @@ import { extend, clone } from './util'
 import PeachError from './errors'
 import { getRootEnv, RuntimeEnv } from './env'
 import {
-  Value, TypedAst, TypedNode, TypedProgramNode, TypedDefNode, TypedNameNode,
-  TypedNumeralNode, TypedBooleanNode, TypedStringNode, TypedCallNode, TypedArrayNode,
+  Value, TypedAst, TypedNode, TypedProgramNode, TypedDefNode, TypedIdentifierNode,
+  TypedNumberNode, TypedBooleanNode, TypedStringNode, TypedCallNode, TypedArrayNode,
   TypedDestructuredArrayNode, TypedFunctionNode, TypedIfNode
 } from './node-types'
 
@@ -40,19 +40,19 @@ function visit (node: TypedNode, env: RuntimeEnv): InterpreterResult {
       return visitProgram(node, env)
     case 'Def':
       return visitDef(node, env)
-    case 'Name':
+    case 'Identifier':
       return visitName(node, env)
-    case 'Numeral':
+    case 'Number':
       return visitNumeral(node, env)
-    case 'Bool':
+    case 'Boolean':
       return visitBool(node, env)
-    case 'Str':
+    case 'String':
       return visitStr(node, env)
     case 'Call':
       return visitCall(node, env)
     case 'Array':
       return visitArray(node, env)
-    case 'Fn':
+    case 'Function':
       return visitFn(node, env)
     case 'If':
       return visitIf(node, env)
@@ -82,7 +82,7 @@ function visitDef ({ name, value }: TypedDefNode, env: RuntimeEnv): InterpreterR
   return [result, env]
 }
 
-function visitName ({ name }: TypedNameNode, env: RuntimeEnv): InterpreterResult {
+function visitName ({ name }: TypedIdentifierNode, env: RuntimeEnv): InterpreterResult {
   if (!(name in env)) {
     throw new PeachError(`${name} is not defined`)
   }
@@ -90,7 +90,7 @@ function visitName ({ name }: TypedNameNode, env: RuntimeEnv): InterpreterResult
   return [env[name], env]
 }
 
-function visitNumeral ({ value }: TypedNumeralNode, env: RuntimeEnv): InterpreterResult {
+function visitNumeral ({ value }: TypedNumberNode, env: RuntimeEnv): InterpreterResult {
   return [value, env]
 }
 

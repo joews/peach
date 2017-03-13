@@ -11,14 +11,14 @@ program = head:expression tail:(eol e:expression { return e })* {
 
 expression
   = def
-  / fn
+  / function
   / if
-  / numeral
+  / number
   / boolean
   / string
-  / vector
+  / array
   / call
-  / name
+  / identifier
 
 // a list of whitespace-delimited expressions
 expression_list =
@@ -26,17 +26,17 @@ expression_list =
   return [head, ...tail];
 }
 
-def = name_expr:name __ "=" __ value:expression {
+def = identifier_expr:identifier __ "=" __ value:expression {
   return {
     kind: "Def",
-    name: name_expr.name,
+    name: identifier_expr.name,
     value
   }
 }
 
-fn = clauses:clause_list_optional_parens {
+function = clauses:clause_list_optional_parens {
   return {
-    kind: "Fn",
+    kind: "Function",
     clauses
   }
 }
@@ -69,12 +69,12 @@ pattern_term_list = lp head:pattern_term tail:(__ p:pattern_term { return p })* 
 // TODO I guess it makes sense for the syntax to allow any expression here.
 // unify.js can decide at compile time if the passed expression makes sense
 // (most types do, e.g. a function doesn't).
-pattern_term = literal / name / destructured_vector / empty_vector
+pattern_term = literal / identifier / destructured_array / empty_array
 
-destructure_head =  literal / name
-destructure_tail = name / destructured_vector
+destructure_head =  literal / identifier
+destructure_tail = identifier / destructured_array
 
-destructured_vector = ls head:destructure_head _ "|" tail:destructure_tail _ rs {
+destructured_array = ls head:destructure_head _ "|" tail:destructure_tail _ rs {
   return {
     kind: "DestructuredArray",
     head,
@@ -91,32 +91,31 @@ if = "if" _ lp condition:expression rp __ ifBranch:expression __ "else" __ elseB
   }
 }
 
-
-name = value:name_value {
+identifier = name:identifier_name {
   return {
-    kind: "Name",
-    name: value
+    kind: "Identifier",
+    name
   }
 }
 
-name_value
+identifier_name
   = reserved_name
   / first:[a-zA-Z_\$] chars:[a-zA-Z0-9\-_\$]* { return first + chars.join("") }
 
 reserved_name = "!" / "+" / "-" / "*" / "/" / "%" / "&&" / "||" / "==" / "=" / "<=>" / "<=" / "<" / ">=" / ">"
 
-literal = numeral / boolean / string
+literal = number / boolean / string
 
-numeral = digits:[0-9]+ {
+number = digits:[0-9]+ {
   return {
-    kind: "Numeral",
+    kind: "Number",
     value: parseInt(digits.join(""), 10)
   };
 }
 
 boolean = value:boolean_value {
   return {
-    kind: "Bool",
+    kind: "Boolean",
     value
   }
 }
@@ -127,7 +126,7 @@ boolean_value
 
 string = "`" tokens:string_token* "`" {
   return {
-    kind: "Str",
+    kind: "String",
     value: tokens.join("")
   }
 }
@@ -158,22 +157,21 @@ call = lp values:expression_list rp {
   }
 }
 
-vector = empty_vector / non_empty_vector
+array = empty_array / non_empty_array
 
-empty_vector = ls rs {
+empty_array = ls rs {
   return {
     kind: "Array",
     values: []
   }
 }
 
-non_empty_vector = ls values:expression_list rs {
+non_empty_array = ls values:expression_list rs {
   return {
     kind: "Array",
     values
   }
 }
-
 
 lp = "(" _ { return "(" }
 rp = _ ")" { return ")" }
