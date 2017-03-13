@@ -25,6 +25,7 @@ export type AstNode
   | AstFunctionNode
   | AstFunctionClauseNode
   | AstIfNode
+  | AstDefPreValueNode
 
 // Typed*: type checker output. AST nodes augmented with Peach static types.
 export type TypedNode
@@ -40,6 +41,7 @@ export type TypedNode
   | TypedFunctionNode
   | TypedFunctionClauseNode
   | TypedIfNode
+  | TypedDefPreValueNode
 
 export interface Typed {
   exprType: Type
@@ -155,6 +157,20 @@ export interface TypedIfNode extends AstIfNode, Typed {
   ifBranch: TypedNode,
   elseBranch: TypedNode
 }
+
+//
+// Pseudo-node types
+//
+
+// A special marker pseudo-node used to represent the value of a
+// `Def` node during type checking, before descending into the value itself.
+// We only need the Typed variant, but the Ast*Node is required to maintain
+// the AstNode -> TypedNode mapping.
+export interface AstDefPreValueNode {
+  type: 'DefPreValue'
+}
+
+export interface TypedDefPreValueNode extends Typed, AstDefPreValueNode { }
 
 //
 // Nodes with shared traits

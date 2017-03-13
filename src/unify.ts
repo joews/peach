@@ -3,7 +3,7 @@ import { isArray, isEqual } from './array'
 import { zip } from './util'
 import { AstNode, AstLiteralNode, AstDestructuredArrayNode, Value, isAstLiteralNode } from './node-types'
 
-// FIXME tagged union - with didMatch: false, there are never bindings.
+// FIXME tagged union - with didMatch: false, there are never bindings (hence binding | null return types)
 type binding = { [name: string]: Value }
 
 interface unification {
@@ -29,7 +29,7 @@ export default function unify (patterns: AstNode[], values: Value[]): unificatio
   return didMatch(bindings)
 }
 
-function unifyOne (pattern: AstNode, value: Value): binding {
+function unifyOne (pattern: AstNode, value: Value): binding | null {
   if (isAstLiteralNode(pattern) && pattern.value === value) {
     // the pattern matched, but there is nothing to bind
     return {}
@@ -54,7 +54,7 @@ function unifyOne (pattern: AstNode, value: Value): binding {
 }
 
 // TODO this will need to change when Array is a wrapped type
-function destructure ({ head, tail }: AstDestructuredArrayNode, values: Value[]): binding {
+function destructure ({ head, tail }: AstDestructuredArrayNode, values: Value[]): binding | null {
   if (values.length === 0) {
     throw new PeachError(`Empty arrays cannot be destructured because they don't have a head`)
   }

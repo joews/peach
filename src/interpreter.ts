@@ -21,7 +21,7 @@ export type Visitor = (node: TypedNode, env: RuntimeEnv) => InterpreterResult
 // Visit each of `nodes` in order, returning the result
 // and environment of the last node.
 function visitSerial (nodes: TypedNode[], rootEnv: RuntimeEnv): InterpreterResult {
-  const initialState: [TypedNode, RuntimeEnv] = [null, rootEnv]
+  const initialState: [TypedNode, RuntimeEnv] = [nodes[0], rootEnv]
   return nodes.reduce(([, env], node) => (
     visit(node, env)
   ), initialState)
