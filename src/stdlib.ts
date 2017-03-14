@@ -56,7 +56,7 @@ export default {
   str: makeNativeFunction('str', (x: any) => '' + x, [anyType], StringType),
 
   // utils
-  print: makeNativeFunction('print', (x: any) => '' + x, [anyType], StringType)
+  print: makeNativeFunction('print', (x: any) => (console.log(x), '' + x), [anyType], StringType)
 }
 
 function binaryOp (name: string, fn: (a: any, b: any) => any, argType: Type, returnType: Type) {
