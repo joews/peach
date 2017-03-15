@@ -1,12 +1,12 @@
 [
-  `str.peach before escape\`and after!`
-  `hey 🌟`
+  `str.peach before escape\`and after!`,
+  `hey 🌟`,
   `multi
       line
-  string`
-  `such\\\\\`escape`
-  `with\ttab`
-  `new\nline`
-  `back\slash`
+  string`,
+  `such\\\\\`escape`,
+  `with\ttab`,
+  `new\nline`,
+  `back\slash`,
   `back\\to\back`
 ]
