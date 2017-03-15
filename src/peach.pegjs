@@ -26,6 +26,11 @@ expression_list =
   return [head, ...tail];
 }
 
+value_list =
+  head:expression tail:("," _ e:expression { return e })* {
+  return [head, ...tail];
+}
+
 def = identifier_expr:identifier __ "=" __ value:expression {
   return {
     kind: "Def",
@@ -62,7 +67,7 @@ pattern
   / single:pattern_term { return [single] }
   / pattern_term_list
 
-pattern_term_list = lp head:pattern_term tail:(__ p:pattern_term { return p })* rp {
+pattern_term_list = lp head:pattern_term tail:(list_delim p:pattern_term { return p })* rp {
   return [head, ...tail];
 }
 
@@ -148,14 +153,16 @@ escape_sequence
   // binary
   // the weird whitespace things that nobody uses like \b and \v ?
 
-call = lp values:expression_list rp {
-  const [fn, ...args] = values
+call = lp fn:expression maybe_args:(__ a:value_list? { return a })? rp {
+  const args = maybe_args || []
   return {
     kind: "Call",
     fn,
     args
   }
 }
+
+
 
 array = empty_array / non_empty_array
 
@@ -166,7 +173,7 @@ empty_array = ls rs {
   }
 }
 
-non_empty_array = ls values:expression_list rs {
+non_empty_array = ls values:value_list rs {
   return {
     kind: "Array",
     values
@@ -193,9 +200,11 @@ ignored
   = whitespace
   / comment
 
-whitespace = [ \t\r\n,]
+whitespace = [ \t\r\n]
 
 eol = [\r\n]+ ignored*
 
 comment = comment_leader [^\r\n]*
 comment_leader = "#"
+
+list_delim = "," _

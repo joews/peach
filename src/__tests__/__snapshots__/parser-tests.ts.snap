@@ -1,5 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`((1, 2) => 1) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "clauses": Array [
+        Object {
+          "body": Array [
+            Object {
+              "kind": "Number",
+              "value": 1,
+            },
+          ],
+          "pattern": Array [
+            Object {
+              "kind": "Number",
+              "value": 1,
+            },
+            Object {
+              "kind": "Number",
+              "value": 2,
+            },
+          ],
+        },
+      ],
+      "kind": "Function",
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
 exports[`([true|tail] => 1) 1`] = `
 Object {
   "expressions": Array [
@@ -34,6 +65,68 @@ Object {
 }
 `;
 
+exports[`(test 1) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "args": Array [
+        Object {
+          "kind": "Number",
+          "value": 1,
+        },
+      ],
+      "fn": Object {
+        "kind": "Identifier",
+        "name": "test",
+      },
+      "kind": "Call",
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`(test 1, 2) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "args": Array [
+        Object {
+          "kind": "Number",
+          "value": 1,
+        },
+        Object {
+          "kind": "Number",
+          "value": 2,
+        },
+      ],
+      "fn": Object {
+        "kind": "Identifier",
+        "name": "test",
+      },
+      "kind": "Call",
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`(test) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "args": Array [],
+      "fn": Object {
+        "kind": "Identifier",
+        "name": "test",
+      },
+      "kind": "Call",
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
 exports[`(true => 1) 1`] = `
 Object {
   "expressions": Array [
@@ -55,6 +148,43 @@ Object {
         },
       ],
       "kind": "Function",
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`[] 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Array",
+      "values": Array [],
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`[1,2,3] 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Array",
+      "values": Array [
+        Object {
+          "kind": "Number",
+          "value": 1,
+        },
+        Object {
+          "kind": "Number",
+          "value": 2,
+        },
+        Object {
+          "kind": "Number",
+          "value": 3,
+        },
+      ],
     },
   ],
   "kind": "Program",

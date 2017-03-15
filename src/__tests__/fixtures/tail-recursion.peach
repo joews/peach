@@ -4,9 +4,9 @@
 #### factorial : Number -> Number -> Number
 factorial =
   (n, 1) => n
-  (n, x) => (factorial (* n x) (- x 1))
+  (n, x) => (factorial (* n, x), (- x, 1))
 
-f = n => (factorial 1 n)
+f = n => (factorial 1, n)
 
 # sure to overflow with a non-tail call
 (f 32768)

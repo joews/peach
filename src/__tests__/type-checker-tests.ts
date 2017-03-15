@@ -68,8 +68,8 @@ testTypeCheck(`
 testTypeCheck(`(a => 1)`)
 
 // array
-testTypeCheck(`[1 2 3]`)
-testFails(`[1 2 false]`)
+testTypeCheck(`[1, 2, 3]`)
+testFails(`[1, 2, false]`)
 
 // if
 testTypeCheck(`if (true) 1 else 2`)
@@ -164,10 +164,10 @@ testFails(`
 `, testEnv())
 
 // type mismatch in patterns
-testFails(`0 => 0, true => 1`, testEnv())
+testFails(`0 => 0 true => 1`, testEnv())
 
 // type mismatch in return
-testFails(`0 => 0, 1 => true`, testEnv())
+testFails(`0 => 0 1 => true`, testEnv())
 
 // type mismatch in arguments to `x`, because function arguments are non-generic
 testFails(`x => ((pair (x 3)) (x true))`, testEnv())
@@ -204,35 +204,35 @@ testTypeCheck(`f => g => arg => (g (f arg))`)
 // destructured aguments
 testTypeCheck(`[1|list] => list`)
 testTypeCheck(`([1|[2|t]] => t)`)
-testTypeCheck(`([x|[y|t]] => [[x y] t])`)
+testTypeCheck(`([x|[y|t]] => [[x, y], t])`)
 testFails(`([1|[true|t]] => t)`)
-testFails(`([h|[true|t]] => [[h 1] t])`)
+testFails(`([h|[true|t]] => [[h, 1], t])`)
 
 // curried function calls
 testTypeCheck(`
-  list = (a, b, c) => [a b c]
+  list = (a, b, c) => [a, b, c]
   (list 1)
-  (list 1 2)
-  (list 1 2 3)
-  ((list 1) 2 3)
-  (list true false true)
+  (list 1, 2)
+  (list 1, 2, 3)
+  ((list 1) 2, 3)
+  (list true, false, true)
 `)
 
 testFails(`
-  list = (a, b, c) => [a b c]
-  (list 1 true)
+  list = (a, b, c) => [a, b, c]
+  (list 1, true)
 `)
 
 testTypeCheck(`
   f =
-    (1 2) => [9 9]
-    (a b) => [a b]
+    (1, 2) => [9, 9]
+    (a, b) => [a, b]
 
   (f 1)
-  (f 1 2)
+  (f 1, 2)
   ((f 1) 2)
   (f 3)
-  (f 3 4)
+  (f 3, 4)
   ((f 3) 4)
 `)
 

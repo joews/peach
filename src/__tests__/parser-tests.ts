@@ -14,6 +14,7 @@ function testFixture (fixtureName: string) {
 
 function testParse (source: string) {
   test(source, () => {
+    console.log(JSON.stringify(parse(source)))
     expect(parse(source)).toMatchSnapshot()
   })
 }
@@ -24,3 +25,11 @@ testFixture('tail-recursion.peach')
 
 testParse('(true => 1)')
 testParse('([true|tail] => 1)')
+testParse('((1, 2) => 1)')
+
+testParse(`[]`)
+testParse(`[1,2,3]`)
+
+testParse(`(test)`)
+testParse(`(test 1)`)
+testParse(`(test 1, 2)`)

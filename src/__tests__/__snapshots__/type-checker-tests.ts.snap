@@ -2,14 +2,14 @@
 
 exports[`
   f =
-    (1 2) => [9 9]
-    (a b) => [a b]
+    (1, 2) => [9, 9]
+    (a, b) => [a, b]
 
   (f 1)
-  (f 1 2)
+  (f 1, 2)
   ((f 1) 2)
   (f 3)
-  (f 3 4)
+  (f 3, 4)
   ((f 3) 4)
  1`] = `"Array<Number>"`;
 
@@ -37,18 +37,18 @@ exports[`
  1`] = `"String"`;
 
 exports[`
-  list = (a, b, c) => [a b c]
-  (list 1 true)
- 1`] = `"Type error: type mismatch"`;
+  list = (a, b, c) => [a, b, c]
+  (list 1)
+  (list 1, 2)
+  (list 1, 2, 3)
+  ((list 1) 2, 3)
+  (list true, false, true)
+ 1`] = `"Array<Boolean>"`;
 
 exports[`
-  list = (a, b, c) => [a b c]
-  (list 1)
-  (list 1 2)
-  (list 1 2 3)
-  ((list 1) 2 3)
-  (list true false true)
- 1`] = `"Array<Boolean>"`;
+  list = (a, b, c) => [a, b, c]
+  (list 1, true)
+ 1`] = `"Type error: type mismatch"`;
 
 exports[`
   x = \`arf\`
@@ -93,9 +93,9 @@ exports[`([1|[2|t]] => t) 1`] = `"Array<Number> -> Array<Number>"`;
 
 exports[`([1|[true|t]] => t) 1`] = `"Type error: type mismatch"`;
 
-exports[`([h|[true|t]] => [[h 1] t]) 1`] = `"Type error: type mismatch"`;
+exports[`([h|[true|t]] => [[h, 1], t]) 1`] = `"Type error: type mismatch"`;
 
-exports[`([x|[y|t]] => [[x y] t]) 1`] = `"Array<G> -> Array<Array<G>>"`;
+exports[`([x|[y|t]] => [[x, y], t]) 1`] = `"Array<G> -> Array<Array<G>>"`;
 
 exports[`(a => 1) 1`] = `"B -> Number"`;
 
@@ -109,17 +109,17 @@ exports[`(pair 1) 1`] = `"C -> [Number*C]"`;
 
 exports[`(zero 0) 1`] = `"Boolean"`;
 
-exports[`[1 2 3] 1`] = `"Array<Number>"`;
+exports[`[1, 2, 3] 1`] = `"Array<Number>"`;
 
-exports[`[1 2 false] 1`] = `"Type error: type mismatch"`;
+exports[`[1, 2, false] 1`] = `"Type error: type mismatch"`;
 
 exports[`[1|list] => list 1`] = `"Array<Number> -> Array<Number>"`;
 
 exports[`\`the\` 1`] = `"String"`;
 
-exports[`0 => 0, 1 => true 1`] = `"Type error: type mismatch"`;
+exports[`0 => 0 1 => true 1`] = `"Type error: type mismatch"`;
 
-exports[`0 => 0, true => 1 1`] = `"Type error: type mismatch"`;
+exports[`0 => 0 true => 1 1`] = `"Type error: type mismatch"`;
 
 exports[`1 1`] = `"Number"`;
 
