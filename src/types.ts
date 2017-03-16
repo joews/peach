@@ -86,6 +86,24 @@ export class ArrayType extends TypeOperator {
   }
 }
 
+export class TupleType extends TypeOperator {
+  constructor (types: Type[]) {
+    super('Tuple', types)
+  }
+
+  static of (name: string, types: Type[]) {
+    return new TupleType(types)
+  }
+
+  getType () {
+    return this.typeArgs[0]
+  }
+
+  toString () {
+    return `(${this.typeArgs.join(', ')})`
+  }
+}
+
 export class TypeVariable extends Type {
   static nextId: number
   static nextName: number

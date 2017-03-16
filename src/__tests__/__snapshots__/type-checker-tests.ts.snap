@@ -139,6 +139,12 @@ exports[`if (true) 1 else 2 1`] = `"Number"`;
 
 exports[`str.peach 1`] = `"Array<String>"`;
 
+exports[`t() 1`] = `"()"`;
+
+exports[`t(1, 2) 1`] = `"(Number, Number)"`;
+
+exports[`t(t(), t(\`hi\`, 1, x => t(x, (+ x, 1)))) 1`] = `"((), (String, Number, Number -> (Number, Number)))"`;
+
 exports[`tail-recursion.peach 1`] = `"Number"`;
 
 exports[`true 1`] = `"Boolean"`;

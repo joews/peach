@@ -5,10 +5,11 @@ import { TypeEnv } from './env'
 import {
   Ast, AstNode, AstProgramNode, AstDefNode, AstIdentifierNode,
   AstNumberNode, AstBooleanNode, AstStringNode, AstCallNode, AstArrayNode,
-  AstDestructuredArrayNode, AstFunctionNode, AstIfNode,
+  AstDestructuredArrayNode, AstFunctionNode, AstIfNode, AstTupleNode,
   TypedAst, TypedNode, TypedProgramNode, TypedDefNode, TypedIdentifierNode,
   TypedNumberNode, TypedBooleanNode, TypedStringNode, TypedCallNode, TypedArrayNode,
   TypedDestructuredArrayNode, TypedFunctionNode, TypedFunctionClauseNode, TypedIfNode,
+  TypedTupleNode,
   TypedDefPreValueNode
 } from './node-types'
 
@@ -20,6 +21,7 @@ import {
   NumberType,
   StringType,
   BooleanType,
+  TupleType,
   makeFunctionType
 } from './types'
 
@@ -72,6 +74,8 @@ function visit (node: AstNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckRe
       return visitFn(node, env, nonGeneric)
     case 'If':
       return visitIf(node, env, nonGeneric)
+    case 'Tuple':
+      return visitTuple(node, env, nonGeneric)
     default:
       throw new Error(`Uncrecognised AST node type: ${node.kind}`)
   }
@@ -259,6 +263,14 @@ function visitIf (node: AstIfNode, env: TypeEnv, nonGeneric: Set<Type>): TypeChe
   unify(typeOf(ifBranch), typeOf(elseBranch))
 
   const typedNode = { ...node, condition, ifBranch, elseBranch, type: typeOf(ifBranch) }
+  return [typedNode, env]
+}
+
+function visitTuple (node: AstTupleNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedNode> {
+  const values = node.values.map(value => visit(value, env, nonGeneric)[0])
+  const type = new TupleType(typesOf(values))
+
+  const typedNode = { ...node, values, type }
   return [typedNode, env]
 }
 

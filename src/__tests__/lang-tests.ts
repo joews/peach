@@ -274,3 +274,9 @@ f = a => {
 }
 [[a], (f 2)]
 `, [[1], [2, 5]])
+
+
+// Tuples
+testResult(`t(1, 2)`, [1, 2])
+testResult(`t()`, [])
+testResult('t(t(), t(`hi`, 1))', [[], [`hi`, 1]])
