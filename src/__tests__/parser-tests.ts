@@ -14,7 +14,7 @@ function testFixture (fixtureName: string) {
 
 function testParse (source: string) {
   test(source, () => {
-    console.log(JSON.stringify(parse(source)))
+    // console.log(JSON.stringify(parse(source)))
     expect(parse(source)).toMatchSnapshot()
   })
 }
@@ -33,3 +33,7 @@ testParse(`[1,2,3]`)
 testParse(`(test)`)
 testParse(`(test 1)`)
 testParse(`(test 1, 2)`)
+
+testParse(`t()`)
+testParse(`t(1, 2)`)
+testParse(`t(\`1\`, (2), (x) => 3)`)

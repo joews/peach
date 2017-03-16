@@ -17,6 +17,7 @@ expression
   / boolean
   / string
   / array
+  / tuple
   / call
   / identifier
 
@@ -27,7 +28,7 @@ expression_list =
 }
 
 value_list =
-  head:expression tail:("," _ e:expression { return e })* {
+  head:expression tail:(list_delim e:expression { return e })* {
   return [head, ...tail];
 }
 
@@ -180,6 +181,15 @@ non_empty_array = ls values:value_list rs {
   }
 }
 
+// temp syntax
+tuple = "t" lp items:value_list? rp {
+  const values = items || []
+  return {
+    kind: "Tuple",
+    values
+  }
+}
+
 lp = "(" _ { return "(" }
 rp = _ ")" { return ")" }
 
@@ -207,4 +217,4 @@ eol = [\r\n]+ ignored*
 comment = comment_leader [^\r\n]*
 comment_leader = "#"
 
-list_delim = "," _
+list_delim = _ ',' _

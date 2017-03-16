@@ -12,7 +12,8 @@ import {
   TypeOperator,
   FunctionType,
   NumberType,
-  BooleanType
+  BooleanType,
+  TupleType
 } from '../types'
 
 function testTypeCheck (source: string, env = getTypeEnv(getRootEnv())) {
@@ -254,3 +255,8 @@ x => {
   x = 3
   x
 }`)
+
+// tuples
+testTypeCheck(`t(1, 2)`)
+testTypeCheck(`t()`)
+testTypeCheck('t(t(), t(`hi`, 1, x => t(x, (+ x, 1))))')

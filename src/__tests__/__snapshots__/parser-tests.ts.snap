@@ -417,6 +417,83 @@ line",
 }
 `;
 
+exports[`t() 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Tuple",
+      "values": Array [],
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`t(\`1\`, (2), (x) => 3) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Tuple",
+      "values": Array [
+        Object {
+          "kind": "String",
+          "value": "1",
+        },
+        Object {
+          "args": Array [],
+          "fn": Object {
+            "kind": "Number",
+            "value": 2,
+          },
+          "kind": "Call",
+        },
+        Object {
+          "clauses": Array [
+            Object {
+              "body": Array [
+                Object {
+                  "kind": "Number",
+                  "value": 3,
+                },
+              ],
+              "pattern": Array [
+                Object {
+                  "kind": "Identifier",
+                  "name": "x",
+                },
+              ],
+            },
+          ],
+          "kind": "Function",
+        },
+      ],
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`t(1, 2) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Tuple",
+      "values": Array [
+        Object {
+          "kind": "Number",
+          "value": 1,
+        },
+        Object {
+          "kind": "Number",
+          "value": 2,
+        },
+      ],
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
 exports[`tail-recursion.peach 1`] = `
 Object {
   "expressions": Array [

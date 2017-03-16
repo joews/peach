@@ -6,7 +6,7 @@ import { getRootEnv, RuntimeEnv } from './env'
 import {
   Value, TypedAst, TypedNode, TypedProgramNode, TypedDefNode, TypedIdentifierNode,
   TypedNumberNode, TypedBooleanNode, TypedStringNode, TypedCallNode, TypedArrayNode,
-  TypedDestructuredArrayNode, TypedFunctionNode, TypedIfNode
+  TypedDestructuredArrayNode, TypedFunctionNode, TypedIfNode, TypedTupleNode
 } from './node-types'
 
 export type InterpreterResult = [Value, RuntimeEnv]
@@ -56,6 +56,8 @@ function visit (node: TypedNode, env: RuntimeEnv): InterpreterResult {
       return visitFn(node, env)
     case 'If':
       return visitIf(node, env)
+    case 'Tuple':
+      return visitTuple(node, env)
     default:
       throw new Error(`Uncrecognised AST node kind: ${node.kind}`)
   }
@@ -123,4 +125,9 @@ function visitIf ({ condition, ifBranch, elseBranch }: TypedIfNode, env: Runtime
   const branch = (testResult) ? ifBranch : elseBranch
 
   return visit(branch, env)
+}
+
+function visitTuple({ values }: TypedTupleNode, env: RuntimeEnv): InterpreterResult {
+  const results = values.map((value) => visit(value, env)[0])
+  return [results, env]
 }
