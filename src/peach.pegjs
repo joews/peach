@@ -18,6 +18,7 @@ expression
   / string
   / array
   / tuple
+  / member
   / call
   / identifier
 
@@ -181,12 +182,22 @@ non_empty_array = ls values:value_list rs {
   }
 }
 
-// temp syntax
+// temp syntax until I figure out how I want syntax to look and feel on the whole
 tuple = "t" lp items:value_list? rp {
   const values = items || []
   return {
     kind: "Tuple",
     values
+  }
+}
+
+// access array / tuple member
+// temp syntax until we have left-recursive expressions
+member = "get" _ lp source:expression list_delim name:expression rp {
+  return {
+    kind: "Member",
+    source,
+    name
   }
 }
 

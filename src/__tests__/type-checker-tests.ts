@@ -260,3 +260,25 @@ x => {
 testTypeCheck(`t(1, 2)`)
 testTypeCheck(`t()`)
 testTypeCheck('t(t(), t(`hi`, 1, x => t(x, (+ x, 1))))')
+
+// member access
+
+// any index of an array may be fetched. All elements have the same type,
+// and there is no bounds check
+testTypeCheck(`get([1,2], 0)`)
+testTypeCheck(`get([1,2], 3)`) // TODO Maybe type for array access
+testTypeCheck(`
+x = 1
+get([1,2], x)
+`)
+
+// tuples have a static number of elements. Only indexoes in that range
+// may be fetched. The index must be a Number literal so we can guarantee
+// that the element exists.
+testTypeCheck(`get(t(1,2), 0)`)
+testTypeCheck('get(t(1,`2`), 1)')
+testFails(`get(t(1,2), 2)`)
+testFails(`
+x = 1
+get(t(1,2), x)
+`)

@@ -37,3 +37,5 @@ testParse(`(test 1, 2)`)
 testParse(`t()`)
 testParse(`t(1, 2)`)
 testParse(`t(\`1\`, (2), (x) => 3)`)
+
+testParse('get(t(`a`), 0)')

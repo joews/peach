@@ -78,6 +78,16 @@ x => {
 } 1`] = `"Number -> Number"`;
 
 exports[`
+x = 1
+get([1,2], x)
+ 1`] = `"Number"`;
+
+exports[`
+x = 1
+get(t(1,2), x)
+ 1`] = `"Type check error: Tuple index must be a literal number. Instead it was Identifier."`;
+
+exports[`
 x => {
   x = 3
   x
@@ -132,6 +142,16 @@ exports[`f => g => arg => (g (f arg)) 1`] = `"(D -> E) -> (E -> F) -> D -> F"`;
 exports[`fibonacci.peach 1`] = `"Array<Number>"`;
 
 exports[`function.peach 1`] = `"A -> A"`;
+
+exports[`get([1,2], 0) 1`] = `"Number"`;
+
+exports[`get([1,2], 3) 1`] = `"Number"`;
+
+exports[`get(t(1,\`2\`), 1) 1`] = `"String"`;
+
+exports[`get(t(1,2), 0) 1`] = `"Number"`;
+
+exports[`get(t(1,2), 2) 1`] = `"Type check error: Tuple index out of bounds for (Number, Number)."`;
 
 exports[`if (1) 1 else 2 1`] = `"Type error: type mismatch"`;
 

@@ -280,3 +280,8 @@ f = a => {
 testResult(`t(1, 2)`, [1, 2])
 testResult(`t()`, [])
 testResult('t(t(), t(`hi`, 1))', [[], [`hi`, 1]])
+
+// Member access
+testResult('get(t(`a`, `b`), 1)', `b`)
+testResult(`get([1,2,3], 0)`, 1)
+testResult(`get([1,2,3], 3)`, undefined)

@@ -369,6 +369,30 @@ Object {
 }
 `;
 
+exports[`get(t(\`a\`), 0) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Member",
+      "name": Object {
+        "kind": "Number",
+        "value": 0,
+      },
+      "source": Object {
+        "kind": "Tuple",
+        "values": Array [
+          Object {
+            "kind": "String",
+            "value": "a",
+          },
+        ],
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
 exports[`str.peach 1`] = `
 Object {
   "expressions": Array [
