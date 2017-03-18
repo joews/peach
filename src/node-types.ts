@@ -26,6 +26,7 @@ export type AstNode
   | AstFunctionClauseNode
   | AstIfNode
   | AstTupleNode
+  | AstMemberNode
   | AstDefPreValueNode
 
 // Typed*: type checker output. AST nodes augmented with Peach static types.
@@ -43,6 +44,7 @@ export type TypedNode
   | TypedFunctionClauseNode
   | TypedIfNode
   | TypedTupleNode
+  | TypedMemberNode
   | TypedDefPreValueNode
 
 export interface Typed {
@@ -167,6 +169,17 @@ export interface AstTupleNode {
 
 export interface TypedTupleNode extends AstTupleNode, Typed {
   values: TypedNode[]
+}
+
+export interface AstMemberNode {
+  kind: 'Member',
+  source: AstNode,
+  name: AstNode
+}
+
+export interface TypedMemberNode extends AstMemberNode, Typed {
+  source: TypedNode,
+  name: TypedNode
 }
 
 //

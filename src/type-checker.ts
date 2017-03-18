@@ -5,11 +5,11 @@ import { TypeEnv } from './env'
 import {
   Ast, AstNode, AstProgramNode, AstDefNode, AstIdentifierNode,
   AstNumberNode, AstBooleanNode, AstStringNode, AstCallNode, AstArrayNode,
-  AstDestructuredArrayNode, AstFunctionNode, AstIfNode, AstTupleNode,
+  AstDestructuredArrayNode, AstFunctionNode, AstIfNode, AstTupleNode, AstMemberNode,
   TypedAst, TypedNode, TypedProgramNode, TypedDefNode, TypedIdentifierNode,
   TypedNumberNode, TypedBooleanNode, TypedStringNode, TypedCallNode, TypedArrayNode,
   TypedDestructuredArrayNode, TypedFunctionNode, TypedFunctionClauseNode, TypedIfNode,
-  TypedTupleNode,
+  TypedTupleNode, TypedMemberNode,
   TypedDefPreValueNode
 } from './node-types'
 
@@ -76,6 +76,8 @@ function visit (node: AstNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckRe
       return visitIf(node, env, nonGeneric)
     case 'Tuple':
       return visitTuple(node, env, nonGeneric)
+    case 'Member':
+      return visitMember(node, env, nonGeneric)
     default:
       throw new Error(`Uncrecognised AST node type: ${node.kind}`)
   }
@@ -272,6 +274,37 @@ function visitTuple (node: AstTupleNode, env: TypeEnv, nonGeneric: Set<Type>): T
 
   const typedNode = { ...node, values, type }
   return [typedNode, env]
+}
+
+function visitMember (node: AstMemberNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedMemberNode> {
+  const [typedSource] = visit(node.source, env, nonGeneric)
+  const [typedName] = visit(node.name, env, nonGeneric)
+
+  if (typedSource.type instanceof TupleType) {
+    // Tuples need a literal index so we can statically check safety
+    if (typedName.kind !== 'Number') {
+      throw new PeachError(`Type check error: Tuple index must be a literal number. Instead it was ${typedName.kind}.`)
+    }
+
+    if (typedName.value >= typedSource.type.getLength()) {
+      throw new PeachError(`Type check error: Tuple index out of bounds for ${typedSource.type}.`)
+    }
+
+    const typedNode = { ...node, source: typedSource, name: typedName, type: typedSource.type.getTypeAt(typedName.value) }
+    return [typedNode, env]
+
+  } else if (typedSource.type instanceof ArrayType) {
+    // TODO cleaner pattern for comparing Type objects - should be able to rewrite as tagged unions to match
+    // node and value types.
+    if (typedName.type.name !== 'Number') {
+      throw new PeachError(`Type check error: Array index must be a number. Instead it was ${JSON.stringify(typedName.type)}.`)
+    }
+
+    const typedNode = { ...node, source: typedSource, name: typedName, type: typedSource.type.getType() }
+    return [typedNode, env]
+  } else {
+    throw new PeachError(`Type check error: can only access fields of Array and Tuple. Instead it was ${typedSource.type}.`)
+  }
 }
 
 function typeOf (node: TypedNode): Type {

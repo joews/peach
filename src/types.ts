@@ -95,12 +95,16 @@ export class TupleType extends TypeOperator {
     return new TupleType(types)
   }
 
-  getType () {
-    return this.typeArgs[0]
+  getTypeAt (i: number) {
+    return this.typeArgs[i]
   }
 
   toString () {
     return `(${this.typeArgs.join(', ')})`
+  }
+
+  getLength() {
+    return this.typeArgs.length
   }
 }
 
