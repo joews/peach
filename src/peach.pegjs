@@ -1,3 +1,14 @@
+{
+  function buildBinaryExpression(head, tail) {
+    return tail.reduce((result, [, operator, , right]) => ({
+      kind: "BinaryOperator",
+      left: result,
+      operator,
+      right
+    }), head)
+  }
+}
+
 start
   = _ program:program _ { return program }
 
@@ -9,18 +20,41 @@ program = head:expression tail:(eol e:expression { return e })* {
   }
 }
 
-expression
-  = def
-  / function
-  / if
-  / number
-  / boolean
-  / string
-  / array
-  / tuple
-  / member
-  / call
-  / identifier
+primary_expression
+  = number
+  // / boolean
+  // / string
+  // / array
+  // / tuple
+  // / identifier
+  / lp e:expression rp { return e }
+
+multiplicative_expression
+  = head:primary_expression
+    tail:(_ multiplicative_operator _ multiplicative_expression)*
+    { return buildBinaryExpression(head, tail) }
+
+multiplicative_operator = "/" / "*" / "%"
+
+additive_expression
+  = head:multiplicative_expression
+    tail:(_ additive_operator _ additive_expression)*
+    { return buildBinaryExpression(head, tail) }
+
+additive_operator = "+" / "-"
+
+// TODO WH adding remaining productions, highest precedence first
+
+expression = additive_expression
+
+// expression
+//   = member
+//   / primary_expression
+//   / def
+//   / function
+//   / if
+//   / call
+
 
 // a list of whitespace-delimited expressions
 expression_list =

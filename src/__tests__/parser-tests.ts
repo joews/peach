@@ -14,28 +14,33 @@ function testFixture (fixtureName: string) {
 
 function testParse (source: string) {
   test(source, () => {
-    // console.log(JSON.stringify(parse(source)))
+    console.log(JSON.stringify(parse(source)))
     expect(parse(source)).toMatchSnapshot()
   })
 }
 
-testFixture('fibonacci.peach')
-testFixture('str.peach')
-testFixture('tail-recursion.peach')
+// testFixture('fibonacci.peach')
+// testFixture('str.peach')
+// testFixture('tail-recursion.peach')
 
-testParse('(true => 1)')
-testParse('([true|tail] => 1)')
-testParse('((1, 2) => 1)')
+// testParse('(true => 1)')
+// testParse('([true|tail] => 1)')
+// testParse('((1, 2) => 1)')
 
-testParse(`[]`)
-testParse(`[1,2,3]`)
+// testParse(`[]`)
+// testParse(`[1,2,3]`)
 
-testParse(`(test)`)
-testParse(`(test 1)`)
-testParse(`(test 1, 2)`)
+// testParse(`(test)`)
+// testParse(`(test 1)`)
+// testParse(`(test 1, 2)`)
 
-testParse(`t()`)
-testParse(`t(1, 2)`)
-testParse(`t(\`1\`, (2), (x) => 3)`)
+// testParse(`t()`)
+// testParse(`t(1, 2)`)
+// testParse(`t(\`1\`, (2), (x) => 3)`)
 
-testParse('get(t(`a`), 0)')
+// testParse('get(t(`a`), 0)')
+
+testParse(`1`)
+testParse(`1 * 2/( 2 % 3)`)
+testParse(`1 * 2 + 2 - 3`)
+testParse(`1 * 2 + (2 - 3)`)

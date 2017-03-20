@@ -191,6 +191,200 @@ Object {
 }
 `;
 
+exports[`1 * 2 + (2 - 3) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "BinaryOperator",
+      "left": Object {
+        "kind": "BinaryOperator",
+        "left": Object {
+          "kind": "Number",
+          "value": 1,
+        },
+        "operator": "*",
+        "right": Object {
+          "kind": "Number",
+          "value": 2,
+        },
+      },
+      "operator": "+",
+      "right": Object {
+        "kind": "BinaryOperator",
+        "left": Object {
+          "kind": "Number",
+          "value": 2,
+        },
+        "operator": "-",
+        "right": Object {
+          "kind": "Number",
+          "value": 3,
+        },
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`1 * 2 + 2 - 3 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "BinaryOperator",
+      "left": Object {
+        "kind": "BinaryOperator",
+        "left": Object {
+          "kind": "Number",
+          "value": 1,
+        },
+        "operator": "*",
+        "right": Object {
+          "kind": "Number",
+          "value": 2,
+        },
+      },
+      "operator": "+",
+      "right": Object {
+        "kind": "BinaryOperator",
+        "left": Object {
+          "kind": "Number",
+          "value": 2,
+        },
+        "operator": "-",
+        "right": Object {
+          "kind": "Number",
+          "value": 3,
+        },
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`1 * 2 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "BinaryOperator",
+      "left": Object {
+        "kind": "Number",
+        "value": 1,
+      },
+      "operator": Array [
+        " ",
+      ],
+      "right": Array [
+        " ",
+      ],
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`1 * 2/( 2 % 3) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "BinaryOperator",
+      "left": Object {
+        "kind": "Number",
+        "value": 1,
+      },
+      "operator": "*",
+      "right": Object {
+        "kind": "BinaryOperator",
+        "left": Object {
+          "kind": "Number",
+          "value": 2,
+        },
+        "operator": "/",
+        "right": Object {
+          "kind": "BinaryOperator",
+          "left": Object {
+            "kind": "Number",
+            "value": 2,
+          },
+          "operator": "%",
+          "right": Object {
+            "kind": "Number",
+            "value": 3,
+          },
+        },
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`1 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Number",
+      "value": 1,
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`1*2 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "BinaryOperator",
+      "left": Object {
+        "kind": "Number",
+        "value": 1,
+      },
+      "operator": Array [],
+      "right": Array [],
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`1*2/(2%3) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "BinaryOperator",
+      "left": Object {
+        "kind": "Number",
+        "value": 1,
+      },
+      "operator": "*",
+      "right": Object {
+        "kind": "BinaryOperator",
+        "left": Object {
+          "kind": "Number",
+          "value": 2,
+        },
+        "operator": "/",
+        "right": Object {
+          "kind": "BinaryOperator",
+          "left": Object {
+            "kind": "Number",
+            "value": 2,
+          },
+          "operator": "%",
+          "right": Object {
+            "kind": "Number",
+            "value": 3,
+          },
+        },
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
 exports[`fibonacci.peach 1`] = `
 Object {
   "expressions": Array [
