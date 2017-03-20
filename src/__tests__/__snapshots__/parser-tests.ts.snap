@@ -1,197 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`((1, 2) => 1) 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "clauses": Array [
-        Object {
-          "body": Array [
-            Object {
-              "kind": "Number",
-              "value": 1,
-            },
-          ],
-          "pattern": Array [
-            Object {
-              "kind": "Number",
-              "value": 1,
-            },
-            Object {
-              "kind": "Number",
-              "value": 2,
-            },
-          ],
-        },
-      ],
-      "kind": "Function",
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`([true|tail] => 1) 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "clauses": Array [
-        Object {
-          "body": Array [
-            Object {
-              "kind": "Number",
-              "value": 1,
-            },
-          ],
-          "pattern": Array [
-            Object {
-              "head": Object {
-                "kind": "Boolean",
-                "value": true,
-              },
-              "kind": "DestructuredArray",
-              "tail": Object {
-                "kind": "Identifier",
-                "name": "tail",
-              },
-            },
-          ],
-        },
-      ],
-      "kind": "Function",
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`(test 1) 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "args": Array [
-        Object {
-          "kind": "Number",
-          "value": 1,
-        },
-      ],
-      "fn": Object {
-        "kind": "Identifier",
-        "name": "test",
-      },
-      "kind": "Call",
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`(test 1, 2) 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "args": Array [
-        Object {
-          "kind": "Number",
-          "value": 1,
-        },
-        Object {
-          "kind": "Number",
-          "value": 2,
-        },
-      ],
-      "fn": Object {
-        "kind": "Identifier",
-        "name": "test",
-      },
-      "kind": "Call",
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`(test) 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "args": Array [],
-      "fn": Object {
-        "kind": "Identifier",
-        "name": "test",
-      },
-      "kind": "Call",
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`(true => 1) 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "clauses": Array [
-        Object {
-          "body": Array [
-            Object {
-              "kind": "Number",
-              "value": 1,
-            },
-          ],
-          "pattern": Array [
-            Object {
-              "kind": "Boolean",
-              "value": true,
-            },
-          ],
-        },
-      ],
-      "kind": "Function",
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`[] 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "Array",
-      "values": Array [],
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`[1,2,3] 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "Array",
-      "values": Array [
-        Object {
-          "kind": "Number",
-          "value": 1,
-        },
-        Object {
-          "kind": "Number",
-          "value": 2,
-        },
-        Object {
-          "kind": "Number",
-          "value": 3,
-        },
-      ],
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`1 * 2 + (2 - 3) 1`] = `
+exports[`1 * 2 + (bob - [3]) 1`] = `
 Object {
   "expressions": Array [
     Object {
@@ -212,13 +21,18 @@ Object {
       "right": Object {
         "kind": "BinaryOperator",
         "left": Object {
-          "kind": "Number",
-          "value": 2,
+          "kind": "Identifier",
+          "name": "bob",
         },
         "operator": "-",
         "right": Object {
-          "kind": "Number",
-          "value": 3,
+          "kind": "Array",
+          "values": Array [
+            Object {
+              "kind": "Number",
+              "value": 3,
+            },
+          ],
         },
       },
     },
@@ -257,27 +71,6 @@ Object {
           "value": 3,
         },
       },
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`1 * 2 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "BinaryOperator",
-      "left": Object {
-        "kind": "Number",
-        "value": 1,
-      },
-      "operator": Array [
-        " ",
-      ],
-      "right": Array [
-        " ",
-      ],
     },
   ],
   "kind": "Program",
@@ -332,229 +125,14 @@ Object {
 }
 `;
 
-exports[`1*2 1`] = `
+exports[`a() 1`] = `
 Object {
   "expressions": Array [
     Object {
-      "kind": "BinaryOperator",
-      "left": Object {
-        "kind": "Number",
-        "value": 1,
-      },
-      "operator": Array [],
-      "right": Array [],
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`1*2/(2%3) 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "BinaryOperator",
-      "left": Object {
-        "kind": "Number",
-        "value": 1,
-      },
-      "operator": "*",
-      "right": Object {
-        "kind": "BinaryOperator",
-        "left": Object {
-          "kind": "Number",
-          "value": 2,
-        },
-        "operator": "/",
-        "right": Object {
-          "kind": "BinaryOperator",
-          "left": Object {
-            "kind": "Number",
-            "value": 2,
-          },
-          "operator": "%",
-          "right": Object {
-            "kind": "Number",
-            "value": 3,
-          },
-        },
-      },
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`fibonacci.peach 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "Def",
-      "name": "fib",
-      "value": Object {
-        "clauses": Array [
-          Object {
-            "body": Array [
-              Object {
-                "kind": "Number",
-                "value": 1,
-              },
-            ],
-            "pattern": Array [
-              Object {
-                "kind": "Number",
-                "value": 0,
-              },
-            ],
-          },
-          Object {
-            "body": Array [
-              Object {
-                "kind": "Number",
-                "value": 1,
-              },
-            ],
-            "pattern": Array [
-              Object {
-                "kind": "Number",
-                "value": 1,
-              },
-            ],
-          },
-          Object {
-            "body": Array [
-              Object {
-                "args": Array [
-                  Object {
-                    "args": Array [
-                      Object {
-                        "args": Array [
-                          Object {
-                            "kind": "Identifier",
-                            "name": "x",
-                          },
-                          Object {
-                            "kind": "Number",
-                            "value": 1,
-                          },
-                        ],
-                        "fn": Object {
-                          "kind": "Identifier",
-                          "name": "-",
-                        },
-                        "kind": "Call",
-                      },
-                    ],
-                    "fn": Object {
-                      "kind": "Identifier",
-                      "name": "fib",
-                    },
-                    "kind": "Call",
-                  },
-                  Object {
-                    "args": Array [
-                      Object {
-                        "args": Array [
-                          Object {
-                            "kind": "Identifier",
-                            "name": "x",
-                          },
-                          Object {
-                            "kind": "Number",
-                            "value": 2,
-                          },
-                        ],
-                        "fn": Object {
-                          "kind": "Identifier",
-                          "name": "-",
-                        },
-                        "kind": "Call",
-                      },
-                    ],
-                    "fn": Object {
-                      "kind": "Identifier",
-                      "name": "fib",
-                    },
-                    "kind": "Call",
-                  },
-                ],
-                "fn": Object {
-                  "kind": "Identifier",
-                  "name": "+",
-                },
-                "kind": "Call",
-              },
-            ],
-            "pattern": Array [
-              Object {
-                "kind": "Identifier",
-                "name": "x",
-              },
-            ],
-          },
-        ],
-        "kind": "Function",
-      },
-    },
-    Object {
-      "args": Array [
-        Object {
-          "kind": "Identifier",
-          "name": "fib",
-        },
-        Object {
-          "kind": "Array",
-          "values": Array [
-            Object {
-              "kind": "Number",
-              "value": 0,
-            },
-            Object {
-              "kind": "Number",
-              "value": 1,
-            },
-            Object {
-              "kind": "Number",
-              "value": 2,
-            },
-            Object {
-              "kind": "Number",
-              "value": 3,
-            },
-            Object {
-              "kind": "Number",
-              "value": 4,
-            },
-            Object {
-              "kind": "Number",
-              "value": 5,
-            },
-            Object {
-              "kind": "Number",
-              "value": 6,
-            },
-            Object {
-              "kind": "Number",
-              "value": 7,
-            },
-            Object {
-              "kind": "Number",
-              "value": 8,
-            },
-            Object {
-              "kind": "Number",
-              "value": 9,
-            },
-            Object {
-              "kind": "Number",
-              "value": 10,
-            },
-          ],
-        },
-      ],
+      "args": null,
       "fn": Object {
         "kind": "Identifier",
-        "name": "map",
+        "name": "a",
       },
       "kind": "Call",
     },
@@ -563,23 +141,126 @@ Object {
 }
 `;
 
-exports[`get(t(\`a\`), 0) 1`] = `
+exports[`a(b) 1`] = `
 Object {
   "expressions": Array [
     Object {
+      "args": Array [
+        Object {
+          "kind": "Identifier",
+          "name": "b",
+        },
+      ],
+      "fn": Object {
+        "kind": "Identifier",
+        "name": "a",
+      },
+      "kind": "Call",
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a(b)(c) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "args": Array [
+        Object {
+          "kind": "Identifier",
+          "name": "c",
+        },
+      ],
+      "fn": Object {
+        "args": Array [
+          Object {
+            "kind": "Identifier",
+            "name": "b",
+          },
+        ],
+        "fn": Object {
+          "kind": "Identifier",
+          "name": "a",
+        },
+        "kind": "Call",
+      },
+      "kind": "Call",
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a.b 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "computed": false,
+      "kind": "Member",
+      "name": Object {
+        "kind": "Identifier",
+        "name": "b",
+      },
+      "source": Object {
+        "kind": "Identifier",
+        "name": "a",
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a.b.c 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "computed": false,
+      "kind": "Member",
+      "name": Object {
+        "kind": "Identifier",
+        "name": "c",
+      },
+      "source": Object {
+        "computed": false,
+        "kind": "Member",
+        "name": Object {
+          "kind": "Identifier",
+          "name": "b",
+        },
+        "source": Object {
+          "kind": "Identifier",
+          "name": "a",
+        },
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a.b[0] 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "computed": true,
       "kind": "Member",
       "name": Object {
         "kind": "Number",
         "value": 0,
       },
       "source": Object {
-        "kind": "Tuple",
-        "values": Array [
-          Object {
-            "kind": "String",
-            "value": "a",
-          },
-        ],
+        "computed": false,
+        "kind": "Member",
+        "name": Object {
+          "kind": "Identifier",
+          "name": "b",
+        },
+        "source": Object {
+          "kind": "Identifier",
+          "name": "a",
+        },
       },
     },
   ],
@@ -587,266 +268,28 @@ Object {
 }
 `;
 
-exports[`str.peach 1`] = `
+exports[`a[b][0] 1`] = `
 Object {
   "expressions": Array [
     Object {
-      "kind": "Array",
-      "values": Array [
-        Object {
-          "kind": "String",
-          "value": "str.peach before escape\\\\\`and after!",
-        },
-        Object {
-          "kind": "String",
-          "value": "hey 🌟",
-        },
-        Object {
-          "kind": "String",
-          "value": "multi
-      line
-  string",
-        },
-        Object {
-          "kind": "String",
-          "value": "such\\\\\\\\\\\\\\\\\\\\\`escape",
-        },
-        Object {
-          "kind": "String",
-          "value": "with	tab",
-        },
-        Object {
-          "kind": "String",
-          "value": "new
-line",
-        },
-        Object {
-          "kind": "String",
-          "value": "back\\\\slash",
-        },
-        Object {
-          "kind": "String",
-          "value": "back\\\\\\\\to\\\\back",
-        },
-      ],
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`t() 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "Tuple",
-      "values": Array [],
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`t(\`1\`, (2), (x) => 3) 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "Tuple",
-      "values": Array [
-        Object {
-          "kind": "String",
-          "value": "1",
-        },
-        Object {
-          "args": Array [],
-          "fn": Object {
-            "kind": "Number",
-            "value": 2,
-          },
-          "kind": "Call",
-        },
-        Object {
-          "clauses": Array [
-            Object {
-              "body": Array [
-                Object {
-                  "kind": "Number",
-                  "value": 3,
-                },
-              ],
-              "pattern": Array [
-                Object {
-                  "kind": "Identifier",
-                  "name": "x",
-                },
-              ],
-            },
-          ],
-          "kind": "Function",
-        },
-      ],
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`t(1, 2) 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "Tuple",
-      "values": Array [
-        Object {
-          "kind": "Number",
-          "value": 1,
-        },
-        Object {
-          "kind": "Number",
-          "value": 2,
-        },
-      ],
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`tail-recursion.peach 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "Def",
-      "name": "factorial",
-      "value": Object {
-        "clauses": Array [
-          Object {
-            "body": Array [
-              Object {
-                "kind": "Identifier",
-                "name": "n",
-              },
-            ],
-            "pattern": Array [
-              Object {
-                "kind": "Identifier",
-                "name": "n",
-              },
-              Object {
-                "kind": "Number",
-                "value": 1,
-              },
-            ],
-          },
-          Object {
-            "body": Array [
-              Object {
-                "args": Array [
-                  Object {
-                    "args": Array [
-                      Object {
-                        "kind": "Identifier",
-                        "name": "n",
-                      },
-                      Object {
-                        "kind": "Identifier",
-                        "name": "x",
-                      },
-                    ],
-                    "fn": Object {
-                      "kind": "Identifier",
-                      "name": "*",
-                    },
-                    "kind": "Call",
-                  },
-                  Object {
-                    "args": Array [
-                      Object {
-                        "kind": "Identifier",
-                        "name": "x",
-                      },
-                      Object {
-                        "kind": "Number",
-                        "value": 1,
-                      },
-                    ],
-                    "fn": Object {
-                      "kind": "Identifier",
-                      "name": "-",
-                    },
-                    "kind": "Call",
-                  },
-                ],
-                "fn": Object {
-                  "kind": "Identifier",
-                  "name": "factorial",
-                },
-                "kind": "Call",
-              },
-            ],
-            "pattern": Array [
-              Object {
-                "kind": "Identifier",
-                "name": "n",
-              },
-              Object {
-                "kind": "Identifier",
-                "name": "x",
-              },
-            ],
-          },
-        ],
-        "kind": "Function",
+      "computed": true,
+      "kind": "Member",
+      "name": Object {
+        "kind": "Number",
+        "value": 0,
       },
-    },
-    Object {
-      "kind": "Def",
-      "name": "f",
-      "value": Object {
-        "clauses": Array [
-          Object {
-            "body": Array [
-              Object {
-                "args": Array [
-                  Object {
-                    "kind": "Number",
-                    "value": 1,
-                  },
-                  Object {
-                    "kind": "Identifier",
-                    "name": "n",
-                  },
-                ],
-                "fn": Object {
-                  "kind": "Identifier",
-                  "name": "factorial",
-                },
-                "kind": "Call",
-              },
-            ],
-            "pattern": Array [
-              Object {
-                "kind": "Identifier",
-                "name": "n",
-              },
-            ],
-          },
-        ],
-        "kind": "Function",
-      },
-    },
-    Object {
-      "args": Array [
-        Object {
-          "kind": "Number",
-          "value": 32768,
+      "source": Object {
+        "computed": true,
+        "kind": "Member",
+        "name": Object {
+          "kind": "Identifier",
+          "name": "b",
         },
-      ],
-      "fn": Object {
-        "kind": "Identifier",
-        "name": "f",
+        "source": Object {
+          "kind": "Identifier",
+          "name": "a",
+        },
       },
-      "kind": "Call",
     },
   ],
   "kind": "Program",

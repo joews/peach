@@ -121,7 +121,7 @@ exports[`(zero 0) 1`] = `"Boolean"`;
 
 exports[`[1, 2, 3] 1`] = `"Array<Number>"`;
 
-exports[`[1, 2, false] 1`] = `"Type error: type mismatch"`;
+exports[`[1, 2, false] 1`] = `"false is not defined"`;
 
 exports[`[1|list] => list 1`] = `"Array<Number> -> Array<Number>"`;
 

@@ -40,7 +40,17 @@ function testParse (source: string) {
 
 // testParse('get(t(`a`), 0)')
 
+// new grammar tests
+
 testParse(`1`)
 testParse(`1 * 2/( 2 % 3)`)
 testParse(`1 * 2 + 2 - 3`)
-testParse(`1 * 2 + (2 - 3)`)
+testParse(`1 * 2 + (bob - [3])`)
+testParse(`a.b`)
+testParse(`a.b.c`)
+testParse(`a[b][0]`)
+testParse(`a.b[0]`)
+
+testParse(`a()`)
+testParse(`a(b)`)
+testParse(`a(b)(c)`)

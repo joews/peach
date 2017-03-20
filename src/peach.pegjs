@@ -7,6 +7,25 @@
       right
     }), head)
   }
+
+  function buildMemberExpression(head, tail) {
+    return tail.reduce((result, { name, computed }) => ({
+      kind: "Member",
+      source: result,
+      name,
+      computed
+    }), head)
+  }
+
+  function buildCallExpression(head, tail) {
+    return tail.reduce((result, { args=[] }) => ({
+      kind: "Call",
+      fn: result,
+      args
+    }), head)
+  }
+
+
 }
 
 start
@@ -24,13 +43,28 @@ primary_expression
   = number
   // / boolean
   // / string
-  // / array
+  / array
   // / tuple
-  // / identifier
+  / identifier
   / lp e:expression rp { return e }
 
-multiplicative_expression
+member_expression
   = head:primary_expression
+    tail:(
+        (_ "." _ name:identifier { return { name, computed: false } })
+      / (_ ls name:expression rs { return { name, computed: true } })
+    )*
+    { return buildMemberExpression(head, tail) }
+
+call_expression
+  = head:member_expression
+  tail:(
+    _ lp args:value_list? rp { return { args } }
+  )*
+  { return buildCallExpression(head, tail) }
+
+multiplicative_expression
+  = head:call_expression
     tail:(_ multiplicative_operator _ multiplicative_expression)*
     { return buildBinaryExpression(head, tail) }
 
@@ -48,8 +82,6 @@ additive_operator = "+" / "-"
 expression = additive_expression
 
 // expression
-//   = member
-//   / primary_expression
 //   / def
 //   / function
 //   / if
