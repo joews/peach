@@ -77,9 +77,16 @@ additive_expression
 
 additive_operator = "+" / "-"
 
+comparison_expression
+  = head:additive_expression
+    tail:(_ comparison_operator _ comparison_expression)*
+    { return buildBinaryExpression(head, tail) }
+
+comparison_operator = "<" / "<=" / "=>" / ">" / "<=>"
+
 // TODO WH adding remaining productions, highest precedence first
 
-expression = additive_expression
+expression = comparison_expression
 
 // expression
 //   / def
