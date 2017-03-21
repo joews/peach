@@ -1,433 +1,107 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`1 * 2 + (bob - [3]) 1`] = `
+exports[`
+a =
+  a => a
+  b => 2
+ 1`] = `
 Object {
   "expressions": Array [
     Object {
-      "kind": "BinaryOperator",
-      "left": Object {
-        "kind": "BinaryOperator",
-        "left": Object {
-          "kind": "Number",
-          "value": 1,
-        },
-        "operator": "*",
-        "right": Object {
-          "kind": "Number",
-          "value": 2,
-        },
+      "kind": "Def",
+      "name": Object {
+        "kind": "Identifier",
+        "name": "a",
       },
-      "operator": "+",
-      "right": Object {
-        "kind": "BinaryOperator",
-        "left": Object {
-          "kind": "Identifier",
-          "name": "bob",
-        },
-        "operator": "-",
-        "right": Object {
-          "kind": "Array",
-          "values": Array [
+      "value": Object {
+        "clauses": Array [
+          Object {
+            "body": Array [
+              Object {
+                "kind": "Identifier",
+                "name": "a",
+              },
+            ],
+            "pattern": Array [
+              Object {
+                "kind": "Identifier",
+                "name": "a",
+              },
+            ],
+          },
+          Object {
+            "body": Array [
+              Object {
+                "kind": "Number",
+                "value": 2,
+              },
+            ],
+            "pattern": Array [
+              Object {
+                "kind": "Identifier",
+                "name": "b",
+              },
+            ],
+          },
+        ],
+        "kind": "Function",
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`(a, b) => {
+  1
+  2
+} (c, d) => true 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "clauses": Array [
+        Object {
+          "body": Array [
             Object {
-              "kind": "Number",
-              "value": 3,
-            },
-          ],
-        },
-      },
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`1 * 2 + 2 - 3 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "BinaryOperator",
-      "left": Object {
-        "kind": "BinaryOperator",
-        "left": Object {
-          "kind": "Number",
-          "value": 1,
-        },
-        "operator": "*",
-        "right": Object {
-          "kind": "Number",
-          "value": 2,
-        },
-      },
-      "operator": "+",
-      "right": Object {
-        "kind": "BinaryOperator",
-        "left": Object {
-          "kind": "Number",
-          "value": 2,
-        },
-        "operator": "-",
-        "right": Object {
-          "kind": "Number",
-          "value": 3,
-        },
-      },
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`1 * 2/( 2 % 3) 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "BinaryOperator",
-      "left": Object {
-        "kind": "Number",
-        "value": 1,
-      },
-      "operator": "*",
-      "right": Object {
-        "kind": "BinaryOperator",
-        "left": Object {
-          "kind": "Number",
-          "value": 2,
-        },
-        "operator": "/",
-        "right": Object {
-          "kind": "BinaryOperator",
-          "left": Object {
-            "kind": "Number",
-            "value": 2,
-          },
-          "operator": "%",
-          "right": Object {
-            "kind": "Number",
-            "value": 3,
-          },
-        },
-      },
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`1 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "Number",
-      "value": 1,
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`2 * (1 + a < b) < 3 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "BinaryOperator",
-      "left": Object {
-        "kind": "BinaryOperator",
-        "left": Object {
-          "kind": "Number",
-          "value": 2,
-        },
-        "operator": "*",
-        "right": Object {
-          "kind": "BinaryOperator",
-          "left": Object {
-            "kind": "BinaryOperator",
-            "left": Object {
               "kind": "Number",
               "value": 1,
             },
-            "operator": "+",
-            "right": Object {
+            Object {
+              "kind": "Number",
+              "value": 2,
+            },
+          ],
+          "pattern": Array [
+            Object {
               "kind": "Identifier",
               "name": "a",
             },
-          },
-          "operator": "<",
-          "right": Object {
-            "kind": "Identifier",
-            "name": "b",
-          },
+            Object {
+              "kind": "Identifier",
+              "name": "b",
+            },
+          ],
         },
-      },
-      "operator": "<",
-      "right": Object {
-        "kind": "Number",
-        "value": 3,
-      },
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`a = 2 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "Def",
-      "name": Object {
-        "kind": "Identifier",
-        "name": "a",
-      },
-      "value": Object {
-        "kind": "Number",
-        "value": 2,
-      },
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`a = b < 2 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "Def",
-      "name": Object {
-        "kind": "Identifier",
-        "name": "a",
-      },
-      "value": Object {
-        "kind": "BinaryOperator",
-        "left": Object {
-          "kind": "Identifier",
-          "name": "b",
-        },
-        "operator": "<",
-        "right": Object {
-          "kind": "Number",
-          "value": 2,
-        },
-      },
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`a == 2 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "BinaryOperator",
-      "left": Object {
-        "kind": "Identifier",
-        "name": "a",
-      },
-      "operator": "==",
-      "right": Object {
-        "kind": "Number",
-        "value": 2,
-      },
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`a == b <=> 2 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "BinaryOperator",
-      "left": Object {
-        "kind": "Identifier",
-        "name": "a",
-      },
-      "operator": "==",
-      "right": Object {
-        "kind": "BinaryOperator",
-        "left": Object {
-          "kind": "Identifier",
-          "name": "b",
-        },
-        "operator": "<=>",
-        "right": Object {
-          "kind": "Number",
-          "value": 2,
-        },
-      },
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`a() 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "args": null,
-      "fn": Object {
-        "kind": "Identifier",
-        "name": "a",
-      },
-      "kind": "Call",
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`a(b) 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "args": Array [
         Object {
-          "kind": "Identifier",
-          "name": "b",
+          "body": Array [
+            Object {
+              "kind": "Boolean",
+              "value": true,
+            },
+          ],
+          "pattern": Array [
+            Object {
+              "kind": "Identifier",
+              "name": "c",
+            },
+            Object {
+              "kind": "Identifier",
+              "name": "d",
+            },
+          ],
         },
       ],
-      "fn": Object {
-        "kind": "Identifier",
-        "name": "a",
-      },
-      "kind": "Call",
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`a(b)(c) 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "args": Array [
-        Object {
-          "kind": "Identifier",
-          "name": "c",
-        },
-      ],
-      "fn": Object {
-        "args": Array [
-          Object {
-            "kind": "Identifier",
-            "name": "b",
-          },
-        ],
-        "fn": Object {
-          "kind": "Identifier",
-          "name": "a",
-        },
-        "kind": "Call",
-      },
-      "kind": "Call",
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`a.b 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "computed": false,
-      "kind": "Member",
-      "name": Object {
-        "kind": "Identifier",
-        "name": "b",
-      },
-      "source": Object {
-        "kind": "Identifier",
-        "name": "a",
-      },
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`a.b.c 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "computed": false,
-      "kind": "Member",
-      "name": Object {
-        "kind": "Identifier",
-        "name": "c",
-      },
-      "source": Object {
-        "computed": false,
-        "kind": "Member",
-        "name": Object {
-          "kind": "Identifier",
-          "name": "b",
-        },
-        "source": Object {
-          "kind": "Identifier",
-          "name": "a",
-        },
-      },
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`a.b[0] 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "computed": true,
-      "kind": "Member",
-      "name": Object {
-        "kind": "Number",
-        "value": 0,
-      },
-      "source": Object {
-        "computed": false,
-        "kind": "Member",
-        "name": Object {
-          "kind": "Identifier",
-          "name": "b",
-        },
-        "source": Object {
-          "kind": "Identifier",
-          "name": "a",
-        },
-      },
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`a[b][0] 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "computed": true,
-      "kind": "Member",
-      "name": Object {
-        "kind": "Number",
-        "value": 0,
-      },
-      "source": Object {
-        "computed": true,
-        "kind": "Member",
-        "name": Object {
-          "kind": "Identifier",
-          "name": "b",
-        },
-        "source": Object {
-          "kind": "Identifier",
-          "name": "a",
-        },
-      },
+      "kind": "Function",
     },
   ],
   "kind": "Program",

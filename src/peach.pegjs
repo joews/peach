@@ -48,9 +48,11 @@ program = head:expression tail:(eol e:expression { return e })* {
 
 primary_expression
   = number
-  // / boolean
-  // / string
+  / boolean
+  / string
   / array
+  / function
+  / if
   // / tuple
   / identifier
   / lp e:expression rp { return e }
@@ -100,19 +102,10 @@ equality_operator = "==" / "!="
 
 // right-associative
 assignment_expression
-  = name:identifier _ "="!"=" _ value:assignment_expression { return buildAssignmentExpression(name, value) }
+  = name:identifier _ "="!"="!">" _ value:assignment_expression { return buildAssignmentExpression(name, value) }
   / equality_expression
 
-// TODO WH adding remaining productions, highest precedence first
-
 expression = assignment_expression
-
-// expression
-//   / def
-//   / function
-//   / if
-//   / call
-
 
 // a list of whitespace-delimited expressions
 expression_list =

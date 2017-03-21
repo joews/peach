@@ -41,16 +41,17 @@ function testParse (source: string) {
 // testParse('get(t(`a`), 0)')
 
 // new grammar tests
+/*
 
 testParse(`1`)
 testParse(`1 * 2/( 2 % 3)`)
 testParse(`1 * 2 + 2 - 3`)
 testParse(`1 * 2 + (bob - [3])`)
 testParse(`2 * (1 + a < b) < 3`)
-testParse(`a = 2`)
+testParse('a = `two`')
 testParse(`a = b < 2`)
 testParse(`a == 2`)
-testParse(`a == b <=> 2`)
+testParse(`a == b <=> true`)
 
 testParse(`a.b`)
 testParse(`a.b.c`)
@@ -60,3 +61,29 @@ testParse(`a.b[0]`)
 testParse(`a()`)
 testParse(`a(b)`)
 testParse(`a(b)(c)`)
+
+testParse(`a => 1`)
+testParse(`(a) => 1`)
+testParse(`(a, b) => {
+  1
+  2
+}`)
+*/
+
+// WH - can't deal with non-identifier arg types well
+// Function needs moving to the block of left-recursive expressions
+testParse(`(a, b) => {
+  1
+  2
+} (c, d) => true`)
+
+testParse(`
+a =
+  a => a
+  b => 2
+`)
+
+/*
+testParse(`if (a) 1 else 2`)
+testParse(`a < if (a) 1 else 2`)
+*/
