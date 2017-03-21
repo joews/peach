@@ -26,6 +26,13 @@
   }
 
 
+  function buildAssignmentExpression(name, value) {
+    return {
+      kind: "Def",
+      name,
+      value
+    }
+  }
 }
 
 start
@@ -84,9 +91,14 @@ comparison_expression
 
 comparison_operator = "<" / "<=" / "=>" / ">" / "<=>"
 
+// right-associative
+assignment_expression
+  = name:identifier _ "=" _ value:assignment_expression { return buildAssignmentExpression(name, value) }
+  / comparison_expression
+
 // TODO WH adding remaining productions, highest precedence first
 
-expression = comparison_expression
+expression = assignment_expression
 
 // expression
 //   / def

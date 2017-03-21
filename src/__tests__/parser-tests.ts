@@ -47,6 +47,8 @@ testParse(`1 * 2/( 2 % 3)`)
 testParse(`1 * 2 + 2 - 3`)
 testParse(`1 * 2 + (bob - [3])`)
 testParse(`2 * (1 + a < b) < 3`)
+testParse(`a = 2`)
+testParse(`a = b < 2`)
 
 testParse(`a.b`)
 testParse(`a.b.c`)

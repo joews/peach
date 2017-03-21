@@ -169,6 +169,52 @@ Object {
 }
 `;
 
+exports[`a = 2 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Def",
+      "name": Object {
+        "kind": "Identifier",
+        "name": "a",
+      },
+      "value": Object {
+        "kind": "Number",
+        "value": 2,
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a = b < 2 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Def",
+      "name": Object {
+        "kind": "Identifier",
+        "name": "a",
+      },
+      "value": Object {
+        "kind": "BinaryOperator",
+        "left": Object {
+          "kind": "Identifier",
+          "name": "b",
+        },
+        "operator": "<",
+        "right": Object {
+          "kind": "Number",
+          "value": 2,
+        },
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
 exports[`a() 1`] = `
 Object {
   "expressions": Array [
