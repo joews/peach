@@ -215,6 +215,54 @@ Object {
 }
 `;
 
+exports[`a == 2 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "BinaryOperator",
+      "left": Object {
+        "kind": "Identifier",
+        "name": "a",
+      },
+      "operator": "==",
+      "right": Object {
+        "kind": "Number",
+        "value": 2,
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a == b <=> 2 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "BinaryOperator",
+      "left": Object {
+        "kind": "Identifier",
+        "name": "a",
+      },
+      "operator": "==",
+      "right": Object {
+        "kind": "BinaryOperator",
+        "left": Object {
+          "kind": "Identifier",
+          "name": "b",
+        },
+        "operator": "<=>",
+        "right": Object {
+          "kind": "Number",
+          "value": 2,
+        },
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
 exports[`a() 1`] = `
 Object {
   "expressions": Array [

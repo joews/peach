@@ -89,12 +89,19 @@ comparison_expression
     tail:(_ comparison_operator _ comparison_expression)*
     { return buildBinaryExpression(head, tail) }
 
-comparison_operator = "<" / "<=" / "=>" / ">" / "<=>"
+comparison_operator = "<=>" / "<=" / "<" / ">=" / ">"
+
+equality_expression
+  = head:comparison_expression
+    tail:(_ equality_operator _ equality_expression)*
+    { return buildBinaryExpression(head, tail) }
+
+equality_operator = "==" / "!="
 
 // right-associative
 assignment_expression
-  = name:identifier _ "=" _ value:assignment_expression { return buildAssignmentExpression(name, value) }
-  / comparison_expression
+  = name:identifier _ "="!"=" _ value:assignment_expression { return buildAssignmentExpression(name, value) }
+  / equality_expression
 
 // TODO WH adding remaining productions, highest precedence first
 
