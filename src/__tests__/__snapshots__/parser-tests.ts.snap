@@ -2,8 +2,8 @@
 
 exports[`
 a =
-  a => a
-  b => 2
+  (1) => a,
+  (1) => 2
  1`] = `
 Object {
   "expressions": Array [
@@ -24,8 +24,8 @@ Object {
             ],
             "pattern": Array [
               Object {
-                "kind": "Identifier",
-                "name": "a",
+                "kind": "Number",
+                "value": 1,
               },
             ],
           },
@@ -38,8 +38,8 @@ Object {
             ],
             "pattern": Array [
               Object {
-                "kind": "Identifier",
-                "name": "b",
+                "kind": "Number",
+                "value": 1,
               },
             ],
           },
@@ -52,10 +52,75 @@ Object {
 }
 `;
 
+exports[`(a) => 1 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "clauses": Array [
+        Object {
+          "body": Array [
+            Object {
+              "kind": "Number",
+              "value": 1,
+            },
+          ],
+          "pattern": Array [
+            Object {
+              "kind": "Identifier",
+              "name": "a",
+            },
+          ],
+        },
+      ],
+      "kind": "Function",
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
 exports[`(a, b) => {
   1
   2
-} (c, d) => true 1`] = `
+} 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "clauses": Array [
+        Object {
+          "body": Array [
+            Object {
+              "kind": "Number",
+              "value": 1,
+            },
+            Object {
+              "kind": "Number",
+              "value": 2,
+            },
+          ],
+          "pattern": Array [
+            Object {
+              "kind": "Identifier",
+              "name": "a",
+            },
+            Object {
+              "kind": "Identifier",
+              "name": "b",
+            },
+          ],
+        },
+      ],
+      "kind": "Function",
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`(a, b) => {
+  1
+  2
+}, (c, d) => true 1`] = `
 Object {
   "expressions": Array [
     Object {
@@ -102,6 +167,658 @@ Object {
         },
       ],
       "kind": "Function",
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`1 * 2 + (bob - [3]) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "BinaryOperator",
+      "left": Object {
+        "kind": "BinaryOperator",
+        "left": Object {
+          "kind": "Number",
+          "value": 1,
+        },
+        "operator": "*",
+        "right": Object {
+          "kind": "Number",
+          "value": 2,
+        },
+      },
+      "operator": "+",
+      "right": Object {
+        "kind": "BinaryOperator",
+        "left": Object {
+          "kind": "Identifier",
+          "name": "bob",
+        },
+        "operator": "-",
+        "right": Object {
+          "kind": "Array",
+          "values": Array [
+            Object {
+              "kind": "Number",
+              "value": 3,
+            },
+          ],
+        },
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`1 * 2 + 2 - 3 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "BinaryOperator",
+      "left": Object {
+        "kind": "BinaryOperator",
+        "left": Object {
+          "kind": "Number",
+          "value": 1,
+        },
+        "operator": "*",
+        "right": Object {
+          "kind": "Number",
+          "value": 2,
+        },
+      },
+      "operator": "+",
+      "right": Object {
+        "kind": "BinaryOperator",
+        "left": Object {
+          "kind": "Number",
+          "value": 2,
+        },
+        "operator": "-",
+        "right": Object {
+          "kind": "Number",
+          "value": 3,
+        },
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`1 * 2/( 2 % 3) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "BinaryOperator",
+      "left": Object {
+        "kind": "Number",
+        "value": 1,
+      },
+      "operator": "*",
+      "right": Object {
+        "kind": "BinaryOperator",
+        "left": Object {
+          "kind": "Number",
+          "value": 2,
+        },
+        "operator": "/",
+        "right": Object {
+          "kind": "BinaryOperator",
+          "left": Object {
+            "kind": "Number",
+            "value": 2,
+          },
+          "operator": "%",
+          "right": Object {
+            "kind": "Number",
+            "value": 3,
+          },
+        },
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`1 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Number",
+      "value": 1,
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`2 * (1 + a < b) < 3 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "BinaryOperator",
+      "left": Object {
+        "kind": "BinaryOperator",
+        "left": Object {
+          "kind": "Number",
+          "value": 2,
+        },
+        "operator": "*",
+        "right": Object {
+          "kind": "BinaryOperator",
+          "left": Object {
+            "kind": "BinaryOperator",
+            "left": Object {
+              "kind": "Number",
+              "value": 1,
+            },
+            "operator": "+",
+            "right": Object {
+              "kind": "Identifier",
+              "name": "a",
+            },
+          },
+          "operator": "<",
+          "right": Object {
+            "kind": "Identifier",
+            "name": "b",
+          },
+        },
+      },
+      "operator": "<",
+      "right": Object {
+        "kind": "Number",
+        "value": 3,
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a < if (a) 1 else 2 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "BinaryOperator",
+      "left": Object {
+        "kind": "Identifier",
+        "name": "a",
+      },
+      "operator": "<",
+      "right": Object {
+        "condition": Object {
+          "kind": "Identifier",
+          "name": "a",
+        },
+        "elseBranch": Object {
+          "kind": "Number",
+          "value": 2,
+        },
+        "ifBranch": Object {
+          "kind": "Number",
+          "value": 1,
+        },
+        "kind": "If",
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a = \`two\` 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Def",
+      "name": Object {
+        "kind": "Identifier",
+        "name": "a",
+      },
+      "value": Object {
+        "kind": "String",
+        "value": "two",
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a = b < 2 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Def",
+      "name": Object {
+        "kind": "Identifier",
+        "name": "a",
+      },
+      "value": Object {
+        "kind": "BinaryOperator",
+        "left": Object {
+          "kind": "Identifier",
+          "name": "b",
+        },
+        "operator": "<",
+        "right": Object {
+          "kind": "Number",
+          "value": 2,
+        },
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a == 2 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "BinaryOperator",
+      "left": Object {
+        "kind": "Identifier",
+        "name": "a",
+      },
+      "operator": "==",
+      "right": Object {
+        "kind": "Number",
+        "value": 2,
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a == b <=> true 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "BinaryOperator",
+      "left": Object {
+        "kind": "Identifier",
+        "name": "a",
+      },
+      "operator": "==",
+      "right": Object {
+        "kind": "BinaryOperator",
+        "left": Object {
+          "kind": "Identifier",
+          "name": "b",
+        },
+        "operator": "<=>",
+        "right": Object {
+          "kind": "Boolean",
+          "value": true,
+        },
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a => 1 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "clauses": Array [
+        Object {
+          "body": Array [
+            Object {
+              "kind": "Number",
+              "value": 1,
+            },
+          ],
+          "pattern": Array [
+            Object {
+              "kind": "Identifier",
+              "name": "a",
+            },
+          ],
+        },
+      ],
+      "kind": "Function",
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a() 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "args": null,
+      "fn": Object {
+        "kind": "Identifier",
+        "name": "a",
+      },
+      "kind": "Call",
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a(b) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "args": Array [
+        Object {
+          "kind": "Identifier",
+          "name": "b",
+        },
+      ],
+      "fn": Object {
+        "kind": "Identifier",
+        "name": "a",
+      },
+      "kind": "Call",
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a(b)(c) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "args": Array [
+        Object {
+          "kind": "Identifier",
+          "name": "c",
+        },
+      ],
+      "fn": Object {
+        "args": Array [
+          Object {
+            "kind": "Identifier",
+            "name": "b",
+          },
+        ],
+        "fn": Object {
+          "kind": "Identifier",
+          "name": "a",
+        },
+        "kind": "Call",
+      },
+      "kind": "Call",
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a.b 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "computed": false,
+      "kind": "Member",
+      "name": Object {
+        "kind": "Identifier",
+        "name": "b",
+      },
+      "source": Object {
+        "kind": "Identifier",
+        "name": "a",
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a.b.c 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "computed": false,
+      "kind": "Member",
+      "name": Object {
+        "kind": "Identifier",
+        "name": "c",
+      },
+      "source": Object {
+        "computed": false,
+        "kind": "Member",
+        "name": Object {
+          "kind": "Identifier",
+          "name": "b",
+        },
+        "source": Object {
+          "kind": "Identifier",
+          "name": "a",
+        },
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a.b[0] 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "computed": true,
+      "kind": "Member",
+      "name": Object {
+        "kind": "Number",
+        "value": 0,
+      },
+      "source": Object {
+        "computed": false,
+        "kind": "Member",
+        "name": Object {
+          "kind": "Identifier",
+          "name": "b",
+        },
+        "source": Object {
+          "kind": "Identifier",
+          "name": "a",
+        },
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`a[b][0] 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "computed": true,
+      "kind": "Member",
+      "name": Object {
+        "kind": "Number",
+        "value": 0,
+      },
+      "source": Object {
+        "computed": true,
+        "kind": "Member",
+        "name": Object {
+          "kind": "Identifier",
+          "name": "b",
+        },
+        "source": Object {
+          "kind": "Identifier",
+          "name": "a",
+        },
+      },
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`if (a) 1 else 2 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "condition": Object {
+        "kind": "Identifier",
+        "name": "a",
+      },
+      "elseBranch": Object {
+        "kind": "Number",
+        "value": 2,
+      },
+      "ifBranch": Object {
+        "kind": "Number",
+        "value": 1,
+      },
+      "kind": "If",
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`tail-recursion.peach 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Def",
+      "name": Object {
+        "kind": "Identifier",
+        "name": "factorial",
+      },
+      "value": Object {
+        "clauses": Array [
+          Object {
+            "body": Array [
+              Object {
+                "kind": "Identifier",
+                "name": "n",
+              },
+            ],
+            "pattern": Array [
+              Object {
+                "kind": "Identifier",
+                "name": "n",
+              },
+              Object {
+                "kind": "Number",
+                "value": 1,
+              },
+            ],
+          },
+          Object {
+            "body": Array [
+              Object {
+                "args": Array [
+                  Object {
+                    "kind": "BinaryOperator",
+                    "left": Object {
+                      "kind": "Identifier",
+                      "name": "n",
+                    },
+                    "operator": "*",
+                    "right": Object {
+                      "kind": "Identifier",
+                      "name": "x",
+                    },
+                  },
+                  Object {
+                    "kind": "BinaryOperator",
+                    "left": Object {
+                      "kind": "Identifier",
+                      "name": "x",
+                    },
+                    "operator": "-",
+                    "right": Object {
+                      "kind": "Number",
+                      "value": 1,
+                    },
+                  },
+                ],
+                "fn": Object {
+                  "kind": "Identifier",
+                  "name": "factorial",
+                },
+                "kind": "Call",
+              },
+            ],
+            "pattern": Array [
+              Object {
+                "kind": "Identifier",
+                "name": "n",
+              },
+              Object {
+                "kind": "Identifier",
+                "name": "x",
+              },
+            ],
+          },
+        ],
+        "kind": "Function",
+      },
+    },
+    Object {
+      "kind": "Def",
+      "name": Object {
+        "kind": "Identifier",
+        "name": "f",
+      },
+      "value": Object {
+        "clauses": Array [
+          Object {
+            "body": Array [
+              Object {
+                "args": Array [
+                  Object {
+                    "kind": "Number",
+                    "value": 1,
+                  },
+                  Object {
+                    "kind": "Identifier",
+                    "name": "n",
+                  },
+                ],
+                "fn": Object {
+                  "kind": "Identifier",
+                  "name": "factorial",
+                },
+                "kind": "Call",
+              },
+            ],
+            "pattern": Array [
+              Object {
+                "kind": "Identifier",
+                "name": "n",
+              },
+            ],
+          },
+        ],
+        "kind": "Function",
+      },
+    },
+    Object {
+      "args": Array [
+        Object {
+          "kind": "Number",
+          "value": 32768,
+        },
+      ],
+      "fn": Object {
+        "kind": "Identifier",
+        "name": "f",
+      },
+      "kind": "Call",
     },
   ],
   "kind": "Program",

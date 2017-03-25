@@ -21,7 +21,7 @@ function testParse (source: string) {
 
 // testFixture('fibonacci.peach')
 // testFixture('str.peach')
-// testFixture('tail-recursion.peach')
+testFixture('tail-recursion.peach')
 
 // testParse('(true => 1)')
 // testParse('([true|tail] => 1)')
@@ -41,7 +41,6 @@ function testParse (source: string) {
 // testParse('get(t(`a`), 0)')
 
 // new grammar tests
-/*
 
 testParse(`1`)
 testParse(`1 * 2/( 2 % 3)`)
@@ -68,22 +67,17 @@ testParse(`(a, b) => {
   1
   2
 }`)
-*/
 
-// WH - can't deal with non-identifier arg types well
-// Function needs moving to the block of left-recursive expressions
 testParse(`(a, b) => {
   1
   2
-} (c, d) => true`)
+}, (c, d) => true`)
 
 testParse(`
 a =
-  a => a
-  b => 2
+  (1) => a,
+  (1) => 2
 `)
 
-/*
 testParse(`if (a) 1 else 2`)
 testParse(`a < if (a) 1 else 2`)
-*/

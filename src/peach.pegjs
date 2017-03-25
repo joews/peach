@@ -137,7 +137,7 @@ clause_list_optional_parens
   = clause_list
   / lp c:clause_list rp { return c }
 
-clause_list = head:clause tail:(__ c:clause { return c })* {
+clause_list = head:clause tail:(list_delim c:clause { return c })* {
   return [head, ...tail];
 }
 
