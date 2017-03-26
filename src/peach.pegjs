@@ -25,7 +25,6 @@
     }), head)
   }
 
-
   function buildAssignmentExpression(name, value) {
     return {
       kind: "Def",
@@ -46,6 +45,8 @@ program = head:expression tail:(eol e:expression { return e })* {
   }
 }
 
+// expressions that don't start with an expression
+// these rules can be be parsed unambiguously with no left recursion
 primary_expression
   = number
   / boolean
@@ -53,10 +54,11 @@ primary_expression
   / array
   / function
   / if
-  // / tuple
+  / tuple
   / identifier
   / lp e:expression rp { return e }
 
+// left-recursive expressions, highest precedence first
 member_expression
   = head:primary_expression
     tail:(
@@ -116,14 +118,6 @@ expression_list =
 value_list =
   head:expression tail:(list_delim e:expression { return e })* {
   return [head, ...tail];
-}
-
-def = identifier_expr:identifier __ "=" __ value:expression {
-  return {
-    kind: "Def",
-    name: identifier_expr.name,
-    value
-  }
 }
 
 function = clauses:clause_list_optional_parens {
@@ -194,7 +188,7 @@ identifier_name
   = reserved_name
   / first:[a-zA-Z_\$] chars:[a-zA-Z0-9\-_\$]* { return first + chars.join("") }
 
-reserved_name = "!" / "+" / "-" / "*" / "/" / "%" / "&&" / "||" / "==" / "=" / "<=>" / "<=" / "<" / ">=" / ">"
+reserved_name = "!" / "+" / "-" / "*" / "/" / "%" / "&&" / "||" / "==" / "=" / "<=>" / "<=" / "<"!">" / ">=" / ">"
 
 literal = number / boolean / string
 
@@ -249,8 +243,6 @@ call = lp fn:expression maybe_args:(__ a:value_list? { return a })? rp {
   }
 }
 
-
-
 array = empty_array / non_empty_array
 
 empty_array = ls rs {
@@ -268,13 +260,14 @@ non_empty_array = ls values:value_list rs {
 }
 
 // temp syntax until I figure out how I want syntax to look and feel on the whole
-tuple = "t" lp items:value_list? rp {
-  const values = items || []
-  return {
-    kind: "Tuple",
-    values
+tuple
+  = la ra  { return { kind: "Tuple", values: [] } }
+  / la values:value_list ra {
+    return {
+      kind: "Tuple",
+      values
+    }
   }
-}
 
 // access array / tuple member
 // temp syntax until we have left-recursive expressions
@@ -295,6 +288,9 @@ rs = _ "]" { return "]" }
 // FIXME for some reason { and } cause pegjs syntax errors in return blocks
 lb = "{" _ { return "lb" }
 rb = _ "}" { return "rb" }
+
+la = "<" _ { return "<" }
+ra = ">" _ { return ">"  }
 
 // mandatory whitespace
 __ = ignored+

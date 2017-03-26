@@ -19,28 +19,26 @@ function testParse (source: string) {
   })
 }
 
-// testFixture('fibonacci.peach')
-// testFixture('str.peach')
+// TODO more, better organised grammar tests!
+
+testFixture('fibonacci.peach')
+testFixture('str.peach')
 testFixture('tail-recursion.peach')
 
-// testParse('(true => 1)')
-// testParse('([true|tail] => 1)')
-// testParse('((1, 2) => 1)')
+testParse('(true => 1)')
+testParse('([true|tail] => 1)')
+testParse('((1, 2) => 1)()')
 
-// testParse(`[]`)
-// testParse(`[1,2,3]`)
+testParse(`[]`)
+testParse(`[1,2,3]`)
 
-// testParse(`(test)`)
-// testParse(`(test 1)`)
-// testParse(`(test 1, 2)`)
+testParse(`(test)`)
+testParse(`test(1)`)
+testParse(`(test (1, 2))`)
 
-// testParse(`t()`)
-// testParse(`t(1, 2)`)
-// testParse(`t(\`1\`, (2), (x) => 3)`)
-
-// testParse('get(t(`a`), 0)')
-
-// new grammar tests
+testParse(`t()`)
+testParse(`t(1, 2)`)
+testParse(`t(\`1\`, (2), (x) => 3)`)
 
 testParse(`1`)
 testParse(`1 * 2/( 2 % 3)`)
@@ -81,3 +79,7 @@ a =
 
 testParse(`if (a) 1 else 2`)
 testParse(`a < if (a) 1 else 2`)
+
+testParse(`<>`)
+testParse(`<1, a < b > c(<>, <> <=> <1,2>), 3>`)
+testParse(`<1>`)
