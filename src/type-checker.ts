@@ -6,10 +6,11 @@ import {
   Ast, AstNode, AstProgramNode, AstDefNode, AstIdentifierNode,
   AstNumberNode, AstBooleanNode, AstStringNode, AstCallNode, AstArrayNode,
   AstDestructuredArrayNode, AstFunctionNode, AstIfNode, AstTupleNode, AstMemberNode,
+  AstBinaryOperatorNode,
   TypedAst, TypedNode, TypedProgramNode, TypedDefNode, TypedIdentifierNode,
   TypedNumberNode, TypedBooleanNode, TypedStringNode, TypedCallNode, TypedArrayNode,
   TypedDestructuredArrayNode, TypedFunctionNode, TypedFunctionClauseNode, TypedIfNode,
-  TypedTupleNode, TypedMemberNode,
+  TypedTupleNode, TypedMemberNode, TypedBinaryOperatorNode,
   TypedDefPreValueNode
 } from './node-types'
 
@@ -49,7 +50,7 @@ function visitAll (nodes: AstNode[], rootEnv: TypeEnv, nonGeneric: Set<any>): [T
 }
 
 function visit (node: AstNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedNode> {
-  // console.log(`TRACE typecheck: ${node.type}\n${JSON.stringify(node)}`)
+  // console.log(`TRACE typecheck: ${node.kind}\n${JSON.stringify(node)}`)
 
   switch (node.kind) {
     case 'Program':
@@ -78,6 +79,8 @@ function visit (node: AstNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckRe
       return visitTuple(node, env, nonGeneric)
     case 'Member':
       return visitMember(node, env, nonGeneric)
+    case 'BinaryOperator':
+      return visitBinaryOperator(node, env, nonGeneric)
     default:
       throw new Error(`Uncrecognised AST node type: ${node.kind}`)
   }
@@ -108,6 +111,7 @@ function visitDef (node: AstDefNode, env: TypeEnv, nonGeneric: Set<Type>): TypeC
   const t = new TypeVariable()
   const typedStubNode: TypedDefPreValueNode = { kind: 'DefPreValue', type: t }
   env[node.name] = typedStubNode
+
 
   // if we are defining a function, mark the new identifier as
   //  non-generic inside the evaluation of the body.
@@ -305,6 +309,27 @@ function visitMember (node: AstMemberNode, env: TypeEnv, nonGeneric: Set<Type>):
   } else {
     throw new PeachError(`Type check error: can only access fields of Array and Tuple. Instead it was ${typedSource.type}.`)
   }
+}
+
+function visitBinaryOperator (node: AstBinaryOperatorNode, env: TypeEnv, nonGeneric: Set<Type>): TypeCheckResult<TypedBinaryOperatorNode> {
+
+  const identifierNode: AstIdentifierNode = {
+    kind: 'Identifier',
+    name: node.operator
+  }
+
+  const callNode: AstCallNode = {
+    kind: 'Call',
+    fn: identifierNode,
+    args: [node.left, node.right]
+  }
+
+  const [typedLeft] = visit(node.left, env, nonGeneric)
+  const [typedRight] = visit(node.right, env, nonGeneric)
+
+  const [typedCallNode] = visitCall(callNode, env, nonGeneric)
+  const typedNode = { ...node, left: typedLeft, right: typedRight, type: typeOf(typedCallNode) }
+  return [typedNode, env]
 }
 
 function typeOf (node: TypedNode): Type {

@@ -9,10 +9,7 @@ Object {
   "expressions": Array [
     Object {
       "kind": "Def",
-      "name": Object {
-        "kind": "Identifier",
-        "name": "a",
-      },
+      "name": "a",
       "value": Object {
         "clauses": Array [
           Object {
@@ -56,7 +53,7 @@ exports[`((1, 2) => 1)() 1`] = `
 Object {
   "expressions": Array [
     Object {
-      "args": null,
+      "args": Array [],
       "fn": Object {
         "clauses": Array [
           Object {
@@ -648,10 +645,7 @@ Object {
   "expressions": Array [
     Object {
       "kind": "Def",
-      "name": Object {
-        "kind": "Identifier",
-        "name": "a",
-      },
+      "name": "a",
       "value": Object {
         "kind": "String",
         "value": "two",
@@ -667,10 +661,7 @@ Object {
   "expressions": Array [
     Object {
       "kind": "Def",
-      "name": Object {
-        "kind": "Identifier",
-        "name": "a",
-      },
+      "name": "a",
       "value": Object {
         "kind": "BinaryOperator",
         "left": Object {
@@ -768,7 +759,7 @@ exports[`a() 1`] = `
 Object {
   "expressions": Array [
     Object {
-      "args": null,
+      "args": Array [],
       "fn": Object {
         "kind": "Identifier",
         "name": "a",
@@ -940,10 +931,7 @@ Object {
   "expressions": Array [
     Object {
       "kind": "Def",
-      "name": Object {
-        "kind": "Identifier",
-        "name": "fib",
-      },
+      "name": "fib",
       "value": Object {
         "clauses": Array [
           Object {
@@ -974,9 +962,119 @@ Object {
               },
             ],
           },
+          Object {
+            "body": Array [
+              Object {
+                "kind": "BinaryOperator",
+                "left": Object {
+                  "args": Array [
+                    Object {
+                      "kind": "BinaryOperator",
+                      "left": Object {
+                        "kind": "Identifier",
+                        "name": "x",
+                      },
+                      "operator": "-",
+                      "right": Object {
+                        "kind": "Number",
+                        "value": 1,
+                      },
+                    },
+                  ],
+                  "fn": Object {
+                    "kind": "Identifier",
+                    "name": "fib",
+                  },
+                  "kind": "Call",
+                },
+                "operator": "+",
+                "right": Object {
+                  "args": Array [
+                    Object {
+                      "kind": "BinaryOperator",
+                      "left": Object {
+                        "kind": "Identifier",
+                        "name": "x",
+                      },
+                      "operator": "-",
+                      "right": Object {
+                        "kind": "Number",
+                        "value": 2,
+                      },
+                    },
+                  ],
+                  "fn": Object {
+                    "kind": "Identifier",
+                    "name": "fib",
+                  },
+                  "kind": "Call",
+                },
+              },
+            ],
+            "pattern": Array [
+              Object {
+                "kind": "Identifier",
+                "name": "x",
+              },
+            ],
+          },
         ],
         "kind": "Function",
       },
+    },
+    Object {
+      "args": Array [
+        Object {
+          "kind": "Identifier",
+          "name": "fib",
+        },
+        Object {
+          "kind": "Array",
+          "values": Array [
+            Object {
+              "kind": "Number",
+              "value": 1,
+            },
+            Object {
+              "kind": "Number",
+              "value": 2,
+            },
+            Object {
+              "kind": "Number",
+              "value": 3,
+            },
+            Object {
+              "kind": "Number",
+              "value": 4,
+            },
+            Object {
+              "kind": "Number",
+              "value": 5,
+            },
+            Object {
+              "kind": "Number",
+              "value": 6,
+            },
+            Object {
+              "kind": "Number",
+              "value": 7,
+            },
+            Object {
+              "kind": "Number",
+              "value": 8,
+            },
+            Object {
+              "kind": "Number",
+              "value": 9,
+            },
+          ],
+        },
+      ],
+      "fn": Object {
+        "kind": "Identifier",
+        "name": "map",
+      },
+      "kind": "Call",
     },
   ],
   "kind": "Program",
@@ -1058,7 +1156,7 @@ exports[`t() 1`] = `
 Object {
   "expressions": Array [
     Object {
-      "args": null,
+      "args": Array [],
       "fn": Object {
         "kind": "Identifier",
         "name": "t",
@@ -1144,10 +1242,7 @@ Object {
   "expressions": Array [
     Object {
       "kind": "Def",
-      "name": Object {
-        "kind": "Identifier",
-        "name": "factorial",
-      },
+      "name": "factorial",
       "value": Object {
         "clauses": Array [
           Object {
@@ -1221,10 +1316,7 @@ Object {
     },
     Object {
       "kind": "Def",
-      "name": Object {
-        "kind": "Identifier",
-        "name": "f",
-      },
+      "name": "f",
       "value": Object {
         "clauses": Array [
           Object {

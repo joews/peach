@@ -27,6 +27,7 @@ export type AstNode
   | AstIfNode
   | AstTupleNode
   | AstMemberNode
+  | AstBinaryOperatorNode
   | AstDefPreValueNode
 
 // Typed*: type checker output. AST nodes augmented with Peach static types.
@@ -45,6 +46,7 @@ export type TypedNode
   | TypedIfNode
   | TypedTupleNode
   | TypedMemberNode
+  | TypedBinaryOperatorNode
   | TypedDefPreValueNode
 
 export interface Typed {
@@ -180,6 +182,19 @@ export interface AstMemberNode {
 export interface TypedMemberNode extends AstMemberNode, Typed {
   source: TypedNode,
   name: TypedNode
+}
+
+export interface AstBinaryOperatorNode {
+  kind: 'BinaryOperator',
+  operator: string,
+  left: AstNode,
+  right: AstNode
+}
+
+export interface TypedBinaryOperatorNode extends AstBinaryOperatorNode, Typed {
+  operator: string,
+  left: TypedNode,
+  right: TypedNode
 }
 
 //

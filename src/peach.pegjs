@@ -70,7 +70,7 @@ member_expression
 call_expression
   = head:member_expression
   tail:(
-    _ lp args:value_list? rp { return { args } }
+    _ lp args:value_list? rp { return { args: args || [] } }
   )*
   { return buildCallExpression(head, tail) }
 
@@ -103,8 +103,9 @@ equality_expression
 equality_operator = "==" / "!="
 
 // right-associative
+// TODO: notion of l-values including destructuring terms
 assignment_expression
-  = name:identifier _ "="!"="!">" _ value:assignment_expression { return buildAssignmentExpression(name, value) }
+  = name:identifier _ "="!"="!">" _ value:assignment_expression { return buildAssignmentExpression(name.name, value) }
   / equality_expression
 
 expression = assignment_expression
@@ -188,7 +189,7 @@ identifier_name
   = reserved_name
   / first:[a-zA-Z_\$] chars:[a-zA-Z0-9\-_\$]* { return first + chars.join("") }
 
-reserved_name = "!" / "+" / "-" / "*" / "/" / "%" / "&&" / "||" / "==" / "=" / "<=>" / "<=" / "<"!">" / ">=" / ">"
+reserved_name = "!" / "+" / "-" / "*" / "/" / "%" / "&&" / "||" / "==" / "=" / "<=>" / "<=" / "<"!">" / ">=" / ">"!">"
 
 literal = number / boolean / string
 
