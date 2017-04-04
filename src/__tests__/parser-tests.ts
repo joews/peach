@@ -14,13 +14,12 @@ function testFixture (fixtureName: string) {
 
 function testParse (source: string) {
   test(source, () => {
-    console.log(JSON.stringify(parse(source)))
+    // console.log(JSON.stringify(parse(source)))
     expect(parse(source)).toMatchSnapshot()
   })
 }
 
 // TODO more, better organised grammar tests!
-
 testFixture('fibonacci.peach')
 testFixture('str.peach')
 testFixture('tail-recursion.peach')
@@ -79,7 +78,9 @@ a =
 
 testParse(`if (a) 1 else 2`)
 testParse(`a < if (a) 1 else 2`)
-
-testParse(`<>`)
-testParse(`<1, a < b > c(<>, <> <=> <1,2>), 3>`)
-testParse(`<1>`)
+testParse(`()`)
+testParse(`(1,)`)
+testParse(`(1,2)`)
+testParse(`(1, 2, 3,)`)
+testParse(`(1, (1 + 2, ((3,),)), (), (2), (3,))`)
+testParse(`((((()))))`)

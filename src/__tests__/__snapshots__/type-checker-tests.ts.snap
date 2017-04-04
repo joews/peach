@@ -33,26 +33,8 @@ exports[`
 
 exports[`
   id = x => x
-  pair(id(3))(id(true))
-  pair(id(3))(id(true))
- 1`] = `"[Number*Boolean]"`;
-
-exports[`
-  id = x => x
-  pair(id(true))(id(false))
-  pair(id(1))(id(0))
- 1`] = `"[Number*Number]"`;
-
-exports[`
-  id = x => x
   pair(id(true))(id(false))
   pair(id(1))(id(false))
- 1`] = `"[Number*Boolean]"`;
-
-exports[`
-  id = x => x
-  pair(id(true))(id(true))
-  pair(id(3))(id(true))
  1`] = `"[Number*Boolean]"`;
 
 exports[`
@@ -99,19 +81,9 @@ x => {
   x
 } 1`] = `"x has already been defined"`;
 
-exports[`((() => \`look ma no args\`)) 1`] = `"() -> String"`;
-
-exports[`(() => \`look ma no args\`) 1`] = `"() -> String"`;
-
 exports[`(() => \`look ma no args\`)() 1`] = `"String"`;
 
-exports[`(() => \`look ma no args\`)(1) 1`] = `"String"`;
-
-exports[`() => \`look ma no args\` 1`] = `"() -> String"`;
-
-exports[`(<1, 2>) [0] 1`] = `"Number"`;
-
-exports[`(<1, 2>)[0] 1`] = `"Number"`;
+exports[`() 1`] = `"()"`;
 
 exports[`([1|[2|t]] => t) 1`] = `"Array<Number> -> Array<Number>"`;
 
@@ -125,19 +97,19 @@ exports[`(0) => 0, (1) => true 1`] = `"Type error: type mismatch"`;
 
 exports[`(0) => 0, (true) => 1 1`] = `"Type error: type mismatch"`;
 
+exports[`(1, ((()))) 1`] = `"(Number, ())"`;
+
+exports[`(1, \`two\`)[1] 1`] = `"String"`;
+
+exports[`(1, 2) 1`] = `"(Number, Number)"`;
+
+exports[`(1, 2)[0] 1`] = `"Number"`;
+
+exports[`(1, 2)[2] 1`] = `"Type check error: Tuple index out of bounds for (Number, Number)."`;
+
+exports[`(1,) 1`] = `"(Number)"`;
+
 exports[`(if (true) 1 else \`two\`) 1`] = `"Type error: type mismatch"`;
-
-exports[`<> 1`] = `"()"`;
-
-exports[`<1, <<>>, <>> 1`] = `"(Number, (()), ())"`;
-
-exports[`<1, <>, <>> 1`] = `"(Number, (), ())"`;
-
-exports[`<1, <>> 1`] = `"(Number, ())"`;
-
-exports[`<1, 2> 1`] = `"(Number, Number)"`;
-
-exports[`<1> 1`] = `"(Number)"`;
 
 exports[`[1, 2, 3] 1`] = `"Array<Number>"`;
 
@@ -154,8 +126,6 @@ exports[`\`the\` 1`] = `"String"`;
 exports[`1 + 2 * 3 1`] = `"Number"`;
 
 exports[`1 + 2 1`] = `"Number"`;
-
-exports[`1 - 2 1`] = `"Number"`;
 
 exports[`1 1`] = `"Number"`;
 

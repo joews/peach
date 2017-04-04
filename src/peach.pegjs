@@ -54,8 +54,8 @@ primary_expression
   / array
   / function
   / if
-  / tuple
   / identifier
+  / tuple
   / lp e:expression rp { return e }
 
 // left-recursive expressions, highest precedence first
@@ -119,6 +119,23 @@ expression_list =
 value_list =
   head:expression tail:(list_delim e:expression { return e })* {
   return [head, ...tail];
+}
+
+tuple
+  = tuple_0
+  / tuple_1
+  / tuple_n
+
+tuple_0 = lp rp { return { kind: "Tuple", values: [] } }
+
+// length-1 tuples have a mandatory trailing comma to remove ambiguity with
+// a single expression in parentheses
+tuple_1 = lp value:primary_expression list_delim rp {
+  return { kind: "Tuple", values:[value] }
+}
+
+tuple_n = lp head:expression list_delim tail:value_list list_delim? rp {
+  return { kind: "Tuple", values: [head, ...tail] }
 }
 
 function = clauses:clause_list_optional_parens {
@@ -259,16 +276,6 @@ non_empty_array = ls values:value_list rs {
     values
   }
 }
-
-// temp syntax until I figure out how I want syntax to look and feel on the whole
-tuple
-  = la ra  { return { kind: "Tuple", values: [] } }
-  / la values:value_list ra {
-    return {
-      kind: "Tuple",
-      values
-    }
-  }
 
 // access array / tuple member
 // temp syntax until we have left-recursive expressions

@@ -262,9 +262,11 @@ x => {
 }`)
 
 // tuples
-testTypeCheck(`<1, 2>`)
-testTypeCheck(`<>`)
-testTypeCheck('<1, <<>>, <>>') // FIXME still a problem with more deeply-nested tuples
+testTypeCheck(`()`)
+testTypeCheck(`(1,)`)
+testTypeCheck(`(1, 2)`)
+
+testTypeCheck('(1, ((())))') // FIXME still a problem with more deeply-nested tuples
 
 
 // member access
@@ -281,16 +283,13 @@ x = 1
 // tuples have a static number of elements. Only indexoes in that range
 // may be fetched. The index must be a Number literal so we can guarantee
 // that the element exists.
-testTypeCheck(`<1, 2>[0]`) // FIXME doesn't parse
-/*
-testTypeCheck('<1, `two`>[1]')
-testFails(`<1, 2>[2]`)
+testTypeCheck(`(1, 2)[0]`)
+testTypeCheck('(1, `two`)[1]')
+testFails(`(1, 2)[2]`)
 testFails(`
-x = 1
-<1, 2>[x]
+x = 1     // WIP ASI type issue!
+(1, 2)[x]
 `)
-
-*/
 
 // binary operators
 testTypeCheck('1 + 2')

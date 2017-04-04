@@ -49,6 +49,18 @@ Object {
 }
 `;
 
+exports[`((((())))) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Tuple",
+      "values": Array [],
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
 exports[`((1, 2) => 1)() 1`] = `
 Object {
   "expressions": Array [
@@ -84,6 +96,18 @@ Object {
 }
 `;
 
+exports[`() 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Tuple",
+      "values": Array [],
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
 exports[`([true|tail] => 1) 1`] = `
 Object {
   "expressions": Array [
@@ -112,6 +136,248 @@ Object {
         },
       ],
       "kind": "Function",
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`(1, (1 + 2)) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Tuple",
+      "values": Array [
+        Object {
+          "kind": "Number",
+          "value": 1,
+        },
+        Object {
+          "kind": "Tuple",
+          "values": Array [
+            Object {
+              "kind": "BinaryOperator",
+              "left": Object {
+                "kind": "Number",
+                "value": 1,
+              },
+              "operator": "+",
+              "right": Object {
+                "kind": "Number",
+                "value": 2,
+              },
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`(1, (1 + 2), (), (2), (3,)) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Tuple",
+      "values": Array [
+        Object {
+          "kind": "Number",
+          "value": 1,
+        },
+        Object {
+          "kind": "BinaryOperator",
+          "left": Object {
+            "kind": "Number",
+            "value": 1,
+          },
+          "operator": "+",
+          "right": Object {
+            "kind": "Number",
+            "value": 2,
+          },
+        },
+        Object {
+          "kind": "Tuple",
+          "values": Array [],
+        },
+        Object {
+          "kind": "Number",
+          "value": 2,
+        },
+        Object {
+          "kind": "Tuple",
+          "values": Array [
+            Object {
+              "kind": "Number",
+              "value": 3,
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`(1, (1 + 2),) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Tuple",
+      "values": Array [
+        Object {
+          "kind": "Number",
+          "value": 1,
+        },
+        Object {
+          "kind": "Tuple",
+          "values": Array [
+            Object {
+              "kind": "BinaryOperator",
+              "left": Object {
+                "kind": "Number",
+                "value": 1,
+              },
+              "operator": "+",
+              "right": Object {
+                "kind": "Number",
+                "value": 2,
+              },
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`(1, (1 + 2, ((3,),)), (), (2), (3,)) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Tuple",
+      "values": Array [
+        Object {
+          "kind": "Number",
+          "value": 1,
+        },
+        Object {
+          "kind": "Tuple",
+          "values": Array [
+            Object {
+              "kind": "BinaryOperator",
+              "left": Object {
+                "kind": "Number",
+                "value": 1,
+              },
+              "operator": "+",
+              "right": Object {
+                "kind": "Number",
+                "value": 2,
+              },
+            },
+            Object {
+              "kind": "Tuple",
+              "values": Array [
+                Object {
+                  "kind": "Tuple",
+                  "values": Array [
+                    Object {
+                      "kind": "Number",
+                      "value": 3,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        Object {
+          "kind": "Tuple",
+          "values": Array [],
+        },
+        Object {
+          "kind": "Number",
+          "value": 2,
+        },
+        Object {
+          "kind": "Tuple",
+          "values": Array [
+            Object {
+              "kind": "Number",
+              "value": 3,
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`(1, 2, 3,) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Tuple",
+      "values": Array [
+        Object {
+          "kind": "Number",
+          "value": 1,
+        },
+        Object {
+          "kind": "Number",
+          "value": 2,
+        },
+        Object {
+          "kind": "Number",
+          "value": 3,
+        },
+      ],
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`(1,) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Tuple",
+      "values": Array [
+        Object {
+          "kind": "Number",
+          "value": 1,
+        },
+      ],
+    },
+  ],
+  "kind": "Program",
+}
+`;
+
+exports[`(1,2) 1`] = `
+Object {
+  "expressions": Array [
+    Object {
+      "kind": "Tuple",
+      "values": Array [
+        Object {
+          "kind": "Number",
+          "value": 1,
+        },
+        Object {
+          "kind": "Number",
+          "value": 2,
+        },
+      ],
     },
   ],
   "kind": "Program",
@@ -297,18 +563,6 @@ Object {
         },
       ],
       "kind": "Function",
-    },
-  ],
-  "kind": "Program",
-}
-`;
-
-exports[`<> 1`] = `
-Object {
-  "expressions": Array [
-    Object {
-      "kind": "Tuple",
-      "values": Array [],
     },
   ],
   "kind": "Program",
