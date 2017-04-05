@@ -248,10 +248,11 @@ testTypeCheck('(() => `look ma no args`)()')
 // FIXME
 testTypeCheck(`
 (1) => 0,
-(x) =>
+(x) => {
   y = 3
   f = (a => 2)
   f(y)
+ }
 `)
 
 // defs can't use already-bound names

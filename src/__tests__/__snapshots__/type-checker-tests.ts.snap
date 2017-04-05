@@ -71,6 +71,15 @@ exports[`
  1`] = `"Number -> Number"`;
 
 exports[`
+(1) => 0,
+(x) => {
+  y = 3
+  f = (a => 2)
+  f(y)
+ }
+ 1`] = `"Number -> Number"`;
+
+exports[`
 x = 0
 (1, 2) [x]
  1`] = `"Type check error: Tuple index must be a literal number. Instead it was Identifier."`;
