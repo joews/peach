@@ -287,8 +287,8 @@ testTypeCheck(`(1, 2)[0]`)
 testTypeCheck('(1, `two`)[1]')
 testFails(`(1, 2)[2]`)
 testFails(`
-x = 1     // WIP ASI type issue!
-(1, 2)[x]
+x = 0
+(1, 2) [x]
 `)
 
 // binary operators

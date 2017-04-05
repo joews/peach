@@ -35,10 +35,10 @@
 }
 
 start
-  = _ program:program _ { return program }
+  = program:program { return program }
 
 // a program is a list of newline-delimted expressions
-program = head:expression tail:(eol e:expression { return e })* {
+program = _ head:expression tail:(eol e:expression { return e })* _ {
   return {
     kind: "Program",
     expressions: [head, ...tail]
@@ -70,7 +70,7 @@ member_expression
 call_expression
   = head:member_expression
   tail:(
-    _ lp args:value_list? rp { return { args: args || [] } }
+    lp args:value_list? rp { return { args: args || [] } }
   )*
   { return buildCallExpression(head, tail) }
 

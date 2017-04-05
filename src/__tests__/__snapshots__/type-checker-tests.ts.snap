@@ -71,6 +71,11 @@ exports[`
  1`] = `"Number -> Number"`;
 
 exports[`
+x = 0
+(1, 2) [x]
+ 1`] = `"Type check error: Tuple index must be a literal number. Instead it was Identifier."`;
+
+exports[`
 x = 1
 [1,2][x]
  1`] = `"Number"`;
