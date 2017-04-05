@@ -11,8 +11,8 @@ import PeachError from '../errors'
 testResult(`
   x = 2
   y = 5
-  (* (+ x, y), x)
-`, 14)
+  (x + y) * x
+`, 14, true)
 
 // arrays
 testResult(`array = [1, 2, 3]`, [1, 2, 3])

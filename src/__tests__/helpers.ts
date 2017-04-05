@@ -21,8 +21,14 @@ export function run (source: string) {
   return interpret(typed, getRootEnv())
 }
 
-export function testResult (source: string, expectedOutput: any) {
-  test(source, () => {
-    expect(run(source)[0]).toEqual(expectedOutput)
-  })
+export function testResult (source: string, expectedOutput: any, only = false) {
+  if(only) {
+    test.only(source, () => {
+      expect(run(source)[0]).toEqual(expectedOutput)
+    }
+  } else {
+    test(source, () => {
+      expect(run(source)[0]).toEqual(expectedOutput)
+    })
+  }
 }

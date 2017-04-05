@@ -6,7 +6,8 @@ import { getRootEnv, RuntimeEnv } from './env'
 import {
   Value, TypedAst, TypedNode, TypedProgramNode, TypedDefNode, TypedIdentifierNode,
   TypedNumberNode, TypedBooleanNode, TypedStringNode, TypedCallNode, TypedArrayNode,
-  TypedDestructuredArrayNode, TypedFunctionNode, TypedIfNode, TypedTupleNode, TypedMemberNode
+  TypedDestructuredArrayNode, TypedFunctionNode, TypedIfNode, TypedTupleNode, TypedMemberNode,
+  TypedBinaryOperatorNode, AstCallNode
 } from './node-types'
 
 export type InterpreterResult = [Value, RuntimeEnv]
@@ -60,6 +61,8 @@ function visit (node: TypedNode, env: RuntimeEnv): InterpreterResult {
       return visitTuple(node, env)
     case 'Member':
       return visitMember(node, env)
+    case 'BinaryOperator':
+      return visitBinaryOperator(node, env)
     default:
       throw new Error(`Uncrecognised AST node kind: ${node.kind}`)
   }
@@ -142,4 +145,8 @@ function visitMember({ source, name }: TypedMemberNode, env: RuntimeEnv): Interp
   const result = sourceValue[index as number]
 
   return [result, env]
+}
+
+function visitBinaryOperator({ operator, left, right }: TypedBinaryOperatorNode, env: RuntimeEnv) {
+  // WH make this a function call
 }
