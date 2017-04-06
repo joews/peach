@@ -7,7 +7,7 @@ import {
   Value, TypedAst, TypedNode, TypedProgramNode, TypedDefNode, TypedIdentifierNode,
   TypedNumberNode, TypedBooleanNode, TypedStringNode, TypedCallNode, TypedArrayNode,
   TypedDestructuredArrayNode, TypedFunctionNode, TypedIfNode, TypedTupleNode, TypedMemberNode,
-  TypedBinaryOperatorNode, AstCallNode
+  TypedBinaryOperatorNode
 } from './node-types'
 
 export type InterpreterResult = [Value, RuntimeEnv]
@@ -30,7 +30,7 @@ function visitSerial (nodes: TypedNode[], rootEnv: RuntimeEnv): InterpreterResul
 
 function visitUnknown (node: TypedNode, env: RuntimeEnv): InterpreterResult {
   console.log(JSON.stringify(node, null, 2))
-  throw new PeachError(`unknown node type: ${node.kind}`)
+  throw new PeachError(`Unknown AST node kind: ${node.kind}`)
 }
 
 function visit (node: TypedNode, env: RuntimeEnv): InterpreterResult {
@@ -64,7 +64,7 @@ function visit (node: TypedNode, env: RuntimeEnv): InterpreterResult {
     case 'BinaryOperator':
       return visitBinaryOperator(node, env)
     default:
-      throw new Error(`Uncrecognised AST node kind: ${node}`)
+      return visitUnknown(node, env)
   }
 }
 
