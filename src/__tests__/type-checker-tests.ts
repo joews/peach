@@ -19,8 +19,10 @@ import {
 function testTypeCheck (source: string, env = getTypeEnv(getRootEnv())) {
   test(source, () => {
     const parsed = parse(source)
+    // console.log(JSON.stringify(parsed))
     const [lastNode] = typeCheck(parsed, env)
     const type = lastNode.type.toString()
+    // console.log(type)
     expect(type).toMatchSnapshot()
   })
 };
@@ -28,6 +30,7 @@ function testTypeCheck (source: string, env = getTypeEnv(getRootEnv())) {
 function testFails (source: string, env = getTypeEnv(getRootEnv())) {
   test(source, () => {
     const parsed = parse(source)
+    // console.log(JSON.stringify(parsed))
     expect(() => typeCheck(parsed, env)).toThrowErrorMatchingSnapshot()
   })
 }
@@ -66,7 +69,7 @@ testTypeCheck(`
 `)
 
 // lambda
-testTypeCheck(`(a => 1)`)
+testTypeCheck(`a => 1`)
 
 // array
 testTypeCheck(`[1, 2, 3]`)
@@ -133,59 +136,61 @@ const testEnv = () => ({
   pair: typed(new FunctionType(A, new FunctionType(B, AB)))
 })
 
-// testTypeCheck(`inc`, testEnv())
-testTypeCheck(`(inc 1)`, testEnv())
+testTypeCheck(`inc`, testEnv())
+testTypeCheck(`inc(1)`, testEnv())
 
 testTypeCheck(`zero`, testEnv())
-testTypeCheck(`(zero 0)`, testEnv())
-testTypeCheck(`(addZero 1)`, testEnv())
-testTypeCheck(`((addZero 1) 2)`, testEnv())
+testTypeCheck(`zero(0)`, testEnv())
+testTypeCheck(`addZero(1)`, testEnv())
+testTypeCheck(`addZero(1)(2)`, testEnv())
 
-testTypeCheck(`(pair 1)`, testEnv())
-testTypeCheck(`((pair 1) 2)`, testEnv())
+testTypeCheck(`pair(1)`, testEnv())
+testTypeCheck(`pair(1)(2)`, testEnv())
 testTypeCheck(`
   id = x => x
-  (id 3)
-  (id \`hello\`)
+  id(3)
+  id(\`hello\`)
 `, testEnv())
 
 testTypeCheck(`
  fib =
-    0 => 1
-    1 => 1
-    x => ((add (fib ((sub x) 1))) (fib ((sub x) 2)))
+    (0) => 1,
+    (1) => 1,
+    (x) => add(fib(sub(x, 1)), fib(sub(x, 2)))
 `, testEnv())
 
 // type mismatch in recursive call
 testFails(`
   fibc =
-    0 => 1
-    1 => 1
-    x => ((add (fibc true)) (fibc ((sub x) 3)))
+    (0) => 1,
+    (1) => 1,
+    (x) => add(fib(true), fib(sub(x, 2)))
 `, testEnv())
 
 // type mismatch in patterns
-testFails(`0 => 0 true => 1`, testEnv())
+testFails(`(0) => 0, (true) => 1`, testEnv())
 
 // type mismatch in return
-testFails(`0 => 0 1 => true`, testEnv())
+testFails(`(0) => 0, (1) => true`, testEnv())
 
 // type mismatch in arguments to `x`, because function arguments are non-generic
-testFails(`x => ((pair (x 3)) (x true))`, testEnv())
+testFails(`x => pair(x(3))(x(true))`, testEnv())
+
 
 // polymorphic function call
 testTypeCheck(`
   id = x => x
-  ((pair (id 3)) (id true))
+  pair(id(true))(id(false))
+  pair(id(1))(id(false))
 `, testEnv())
 
 // recursive function arguments can't be unified with no further type information
-testFails(`f => (f f)`)
+testFails(`f => f(f)`)
 
 // ...but it's ok when there is more information available
 testTypeCheck(`
   g = f => 5
-  (g g)
+  g(g)
 `)
 
 // // TODO I can't run this test from Rob Smallshire's implementation
@@ -200,7 +205,7 @@ testTypeCheck(`
 // `, testEnv())
 
 // function composition
-testTypeCheck(`f => g => arg => (g (f arg))`)
+testTypeCheck(`f => g => arg => g(f(arg))`)
 
 // destructured aguments
 testTypeCheck(`[1|list] => list`)
@@ -212,42 +217,43 @@ testFails(`([h|[true|t]] => [[h, 1], t])`)
 // curried function calls
 testTypeCheck(`
   list = (a, b, c) => [a, b, c]
-  (list 1)
-  (list 1, 2)
-  (list 1, 2, 3)
-  ((list 1) 2, 3)
-  (list true, false, true)
+  list(1)
+  list(1, 2)
+  list(1, 2, 3)
+  list(1)(2, 3)
+  list(true, false, true)
 `)
 
 testFails(`
   list = (a, b, c) => [a, b, c]
-  (list 1, true)
+  list(1, true)
 `)
 
 testTypeCheck(`
   f =
-    (1, 2) => [9, 9]
+    (1, 2) => [9, 9],
     (a, b) => [a, b]
 
-  (f 1)
-  (f 1, 2)
-  ((f 1) 2)
-  (f 3)
-  (f 3, 4)
-  ((f 3) 4)
+  f(1)
+  f(1, 2)
+  f(1)(2)
+  f(3)
+  f(3, 4)
+  f(3)(4)
 `)
 
-// FIXME #6 - extra parens needed to immediately invoke a no-arg function
-testTypeCheck('((() => `look ma no args`))')
+testTypeCheck('(() => `look ma no args`)()')
 
 // Functions with multi expression bodies
+// FIXME
 testTypeCheck(`
-1 => 2
-x => {
+(1) => 0,
+(x) => {
   y = 3
-  f = a => 2
-  (f y)
-}`)
+  f = (a => 2)
+  f(y)
+ }
+`)
 
 // defs can't use already-bound names
 testFails(`
@@ -257,28 +263,35 @@ x => {
 }`)
 
 // tuples
-testTypeCheck(`t(1, 2)`)
-testTypeCheck(`t()`)
-testTypeCheck('t(t(), t(`hi`, 1, x => t(x, (+ x, 1))))')
+testTypeCheck(`()`)
+testTypeCheck(`(1,)`)
+testTypeCheck(`(1, 2)`)
+
+testTypeCheck('(1, ((())))') // FIXME still a problem with more deeply-nested tuples
+
 
 // member access
 
 // any index of an array may be fetched. All elements have the same type,
 // and there is no bounds check
-testTypeCheck(`get([1,2], 0)`)
-testTypeCheck(`get([1,2], 3)`) // TODO Maybe type for array access
+testTypeCheck(`[1,2][0]`)
+testTypeCheck(`[1,2][3]`) // TODO Maybe type for array access
 testTypeCheck(`
 x = 1
-get([1,2], x)
+[1,2][x]
 `)
 
 // tuples have a static number of elements. Only indexoes in that range
 // may be fetched. The index must be a Number literal so we can guarantee
 // that the element exists.
-testTypeCheck(`get(t(1,2), 0)`)
-testTypeCheck('get(t(1,`2`), 1)')
-testFails(`get(t(1,2), 2)`)
+testTypeCheck(`(1, 2)[0]`)
+testTypeCheck('(1, `two`)[1]')
+testFails(`(1, 2)[2]`)
 testFails(`
-x = 1
-get(t(1,2), x)
+x = 0
+(1, 2) [x]
 `)
+
+// binary operators
+testTypeCheck('1 + 2')
+testTypeCheck('1 + 2 * 3')

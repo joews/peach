@@ -2,52 +2,53 @@
 
 exports[`
   f =
-    (1, 2) => [9, 9]
+    (1, 2) => [9, 9],
     (a, b) => [a, b]
 
-  (f 1)
-  (f 1, 2)
-  ((f 1) 2)
-  (f 3)
-  (f 3, 4)
-  ((f 3) 4)
+  f(1)
+  f(1, 2)
+  f(1)(2)
+  f(3)
+  f(3, 4)
+  f(3)(4)
  1`] = `"Array<Number>"`;
 
 exports[`
   fibc =
-    0 => 1
-    1 => 1
-    x => ((add (fibc true)) (fibc ((sub x) 3)))
- 1`] = `"Type error: type mismatch"`;
+    (0) => 1,
+    (1) => 1,
+    (x) => add(fib(true), fib(sub(x, 2)))
+ 1`] = `"fib is not defined"`;
 
 exports[`
   g = f => 5
-  (g g)
+  g(g)
  1`] = `"Number"`;
 
 exports[`
   id = x => x
-  ((pair (id 3)) (id true))
- 1`] = `"[Number*Boolean]"`;
-
-exports[`
-  id = x => x
-  (id 3)
-  (id \`hello\`)
+  id(3)
+  id(\`hello\`)
  1`] = `"String"`;
 
 exports[`
+  id = x => x
+  pair(id(true))(id(false))
+  pair(id(1))(id(false))
+ 1`] = `"[Number*Boolean]"`;
+
+exports[`
   list = (a, b, c) => [a, b, c]
-  (list 1)
-  (list 1, 2)
-  (list 1, 2, 3)
-  ((list 1) 2, 3)
-  (list true, false, true)
+  list(1)
+  list(1, 2)
+  list(1, 2, 3)
+  list(1)(2, 3)
+  list(true, false, true)
  1`] = `"Array<Boolean>"`;
 
 exports[`
   list = (a, b, c) => [a, b, c]
-  (list 1, true)
+  list(1, true)
  1`] = `"Type error: type mismatch"`;
 
 exports[`
@@ -64,28 +65,29 @@ exports[`
 
 exports[`
  fib =
-    0 => 1
-    1 => 1
-    x => ((add (fib ((sub x) 1))) (fib ((sub x) 2)))
+    (0) => 1,
+    (1) => 1,
+    (x) => add(fib(sub(x, 1)), fib(sub(x, 2)))
  1`] = `"Number -> Number"`;
 
 exports[`
-1 => 2
-x => {
+(1) => 0,
+(x) => {
   y = 3
-  f = a => 2
-  (f y)
-} 1`] = `"Number -> Number"`;
+  f = (a => 2)
+  f(y)
+ }
+ 1`] = `"Number -> Number"`;
 
 exports[`
-x = 1
-get([1,2], x)
- 1`] = `"Number"`;
-
-exports[`
-x = 1
-get(t(1,2), x)
+x = 0
+(1, 2) [x]
  1`] = `"Type check error: Tuple index must be a literal number. Instead it was Identifier."`;
+
+exports[`
+x = 1
+[1,2][x]
+ 1`] = `"Number"`;
 
 exports[`
 x => {
@@ -93,11 +95,9 @@ x => {
   x
 } 1`] = `"x has already been defined"`;
 
-exports[`((() => \`look ma no args\`)) 1`] = `"String"`;
+exports[`(() => \`look ma no args\`)() 1`] = `"String"`;
 
-exports[`((addZero 1) 2) 1`] = `"Boolean"`;
-
-exports[`((pair 1) 2) 1`] = `"[Number*Number]"`;
+exports[`() 1`] = `"()"`;
 
 exports[`([1|[2|t]] => t) 1`] = `"Array<Number> -> Array<Number>"`;
 
@@ -107,68 +107,78 @@ exports[`([h|[true|t]] => [[h, 1], t]) 1`] = `"Type error: type mismatch"`;
 
 exports[`([x|[y|t]] => [[x, y], t]) 1`] = `"Array<G> -> Array<Array<G>>"`;
 
-exports[`(a => 1) 1`] = `"B -> Number"`;
+exports[`(0) => 0, (1) => true 1`] = `"Type error: type mismatch"`;
 
-exports[`(addZero 1) 1`] = `"Number -> Boolean"`;
+exports[`(0) => 0, (true) => 1 1`] = `"Type error: type mismatch"`;
+
+exports[`(1, ((()))) 1`] = `"(Number, ())"`;
+
+exports[`(1, \`two\`)[1] 1`] = `"String"`;
+
+exports[`(1, 2) 1`] = `"(Number, Number)"`;
+
+exports[`(1, 2)[0] 1`] = `"Number"`;
+
+exports[`(1, 2)[2] 1`] = `"Type check error: Tuple index out of bounds for (Number, Number)."`;
+
+exports[`(1,) 1`] = `"(Number)"`;
 
 exports[`(if (true) 1 else \`two\`) 1`] = `"Type error: type mismatch"`;
-
-exports[`(inc 1) 1`] = `"Number"`;
-
-exports[`(pair 1) 1`] = `"C -> [Number*C]"`;
-
-exports[`(zero 0) 1`] = `"Boolean"`;
 
 exports[`[1, 2, 3] 1`] = `"Array<Number>"`;
 
 exports[`[1, 2, false] 1`] = `"Type error: type mismatch"`;
 
+exports[`[1,2][0] 1`] = `"Number"`;
+
+exports[`[1,2][3] 1`] = `"Number"`;
+
 exports[`[1|list] => list 1`] = `"Array<Number> -> Array<Number>"`;
 
 exports[`\`the\` 1`] = `"String"`;
 
-exports[`0 => 0 1 => true 1`] = `"Type error: type mismatch"`;
+exports[`1 + 2 * 3 1`] = `"Number"`;
 
-exports[`0 => 0 true => 1 1`] = `"Type error: type mismatch"`;
+exports[`1 + 2 1`] = `"Number"`;
 
 exports[`1 1`] = `"Number"`;
 
+exports[`a => 1 1`] = `"B -> Number"`;
+
+exports[`addZero(1) 1`] = `"Number -> Boolean"`;
+
+exports[`addZero(1)(2) 1`] = `"Boolean"`;
+
 exports[`array-destructure.peach 1`] = `"Array<Number>"`;
 
-exports[`f => (f f) 1`] = `"Type error: recursive unification"`;
+exports[`f => f(f) 1`] = `"Type error: recursive unification"`;
 
-exports[`f => g => arg => (g (f arg)) 1`] = `"(D -> E) -> (E -> F) -> D -> F"`;
+exports[`f => g => arg => g(f(arg)) 1`] = `"(D -> E) -> (E -> F) -> D -> F"`;
 
 exports[`fibonacci.peach 1`] = `"Array<Number>"`;
 
 exports[`function.peach 1`] = `"A -> A"`;
 
-exports[`get([1,2], 0) 1`] = `"Number"`;
-
-exports[`get([1,2], 3) 1`] = `"Number"`;
-
-exports[`get(t(1,\`2\`), 1) 1`] = `"String"`;
-
-exports[`get(t(1,2), 0) 1`] = `"Number"`;
-
-exports[`get(t(1,2), 2) 1`] = `"Type check error: Tuple index out of bounds for (Number, Number)."`;
-
 exports[`if (1) 1 else 2 1`] = `"Type error: type mismatch"`;
 
 exports[`if (true) 1 else 2 1`] = `"Number"`;
 
+exports[`inc 1`] = `"Number -> Number"`;
+
+exports[`inc(1) 1`] = `"Number"`;
+
+exports[`pair(1) 1`] = `"C -> [Number*C]"`;
+
+exports[`pair(1)(2) 1`] = `"[Number*Number]"`;
+
 exports[`str.peach 1`] = `"Array<String>"`;
-
-exports[`t() 1`] = `"()"`;
-
-exports[`t(1, 2) 1`] = `"(Number, Number)"`;
-
-exports[`t(t(), t(\`hi\`, 1, x => t(x, (+ x, 1)))) 1`] = `"((), (String, Number, Number -> (Number, Number)))"`;
 
 exports[`tail-recursion.peach 1`] = `"Number"`;
 
 exports[`true 1`] = `"Boolean"`;
 
-exports[`x => ((pair (x 3)) (x true)) 1`] = `"Type error: type mismatch"`;
+exports[`x => pair(x(3))(x(true)) 1`] = `"Type error: type mismatch"`;
 
 exports[`zero 1`] = `"Number -> Boolean"`;
+
+exports[`zero(0) 1`] = `"Boolean"`;

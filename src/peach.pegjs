@@ -1,26 +1,114 @@
+{
+  function buildBinaryExpression(head, tail) {
+    return tail.reduce((result, [, operator, , right]) => ({
+      kind: "BinaryOperator",
+      left: result,
+      operator,
+      right
+    }), head)
+  }
+
+  function buildMemberExpression(head, tail) {
+    return tail.reduce((result, { name, computed }) => ({
+      kind: "Member",
+      source: result,
+      name,
+      computed
+    }), head)
+  }
+
+  function buildCallExpression(head, tail) {
+    return tail.reduce((result, { args=[] }) => ({
+      kind: "Call",
+      fn: result,
+      args
+    }), head)
+  }
+
+  function buildAssignmentExpression(name, value) {
+    return {
+      kind: "Def",
+      name,
+      value
+    }
+  }
+}
+
 start
-  = _ program:program _ { return program }
+  = program:program { return program }
 
 // a program is a list of newline-delimted expressions
-program = head:expression tail:(eol e:expression { return e })* {
+program = _ head:expression tail:(eol e:expression { return e })* _ {
   return {
     kind: "Program",
     expressions: [head, ...tail]
   }
 }
 
-expression
-  = def
-  / function
-  / if
-  / number
+// expressions that don't start with an expression
+// these rules can be be parsed unambiguously with no left recursion
+primary_expression
+  = number
   / boolean
   / string
   / array
-  / tuple
-  / member
-  / call
+  / function
+  / if
   / identifier
+  / tuple
+  / lp e:expression rp { return e }
+
+// left-recursive expressions, highest precedence first
+member_expression
+  = head:primary_expression
+    tail:(
+        (_ "." _ name:identifier { return { name, computed: false } })
+      / (_ ls name:expression rs { return { name, computed: true } })
+    )*
+    { return buildMemberExpression(head, tail) }
+
+call_expression
+  = head:member_expression
+  tail:(
+    lp args:value_list? rp { return { args: args || [] } }
+  )*
+  { return buildCallExpression(head, tail) }
+
+multiplicative_expression
+  = head:call_expression
+    tail:(_ multiplicative_operator _ multiplicative_expression)*
+    { return buildBinaryExpression(head, tail) }
+
+multiplicative_operator = "/" / "*" / "%"
+
+additive_expression
+  = head:multiplicative_expression
+    tail:(_ additive_operator _ additive_expression)*
+    { return buildBinaryExpression(head, tail) }
+
+additive_operator = "+" / "-"
+
+comparison_expression
+  = head:additive_expression
+    tail:(_ comparison_operator _ comparison_expression)*
+    { return buildBinaryExpression(head, tail) }
+
+comparison_operator = "<=>" / "<=" / "<" / ">=" / ">"
+
+equality_expression
+  = head:comparison_expression
+    tail:(_ equality_operator _ equality_expression)*
+    { return buildBinaryExpression(head, tail) }
+
+equality_operator = "==" / "!="
+
+// right-associative
+// TODO: notion of l-values including destructuring terms
+assignment_expression
+  = name:identifier _ "="!"="!">" _ value:assignment_expression { return buildAssignmentExpression(name.name, value) }
+  / equality_expression
+
+expression = assignment_expression
 
 // a list of whitespace-delimited expressions
 expression_list =
@@ -33,12 +121,21 @@ value_list =
   return [head, ...tail];
 }
 
-def = identifier_expr:identifier __ "=" __ value:expression {
-  return {
-    kind: "Def",
-    name: identifier_expr.name,
-    value
-  }
+tuple
+  = tuple_0
+  / tuple_1
+  / tuple_n
+
+tuple_0 = lp rp { return { kind: "Tuple", values: [] } }
+
+// length-1 tuples have a mandatory trailing comma to remove ambiguity with
+// a single expression in parentheses
+tuple_1 = lp value:primary_expression list_delim rp {
+  return { kind: "Tuple", values:[value] }
+}
+
+tuple_n = lp head:expression list_delim tail:value_list list_delim? rp {
+  return { kind: "Tuple", values: [head, ...tail] }
 }
 
 function = clauses:clause_list_optional_parens {
@@ -52,7 +149,7 @@ clause_list_optional_parens
   = clause_list
   / lp c:clause_list rp { return c }
 
-clause_list = head:clause tail:(__ c:clause { return c })* {
+clause_list = head:clause tail:(list_delim c:clause { return c })* {
   return [head, ...tail];
 }
 
@@ -109,7 +206,7 @@ identifier_name
   = reserved_name
   / first:[a-zA-Z_\$] chars:[a-zA-Z0-9\-_\$]* { return first + chars.join("") }
 
-reserved_name = "!" / "+" / "-" / "*" / "/" / "%" / "&&" / "||" / "==" / "=" / "<=>" / "<=" / "<" / ">=" / ">"
+reserved_name = "!" / "+" / "-" / "*" / "/" / "%" / "&&" / "||" / "==" / "=" / "<=>" / "<=" / "<"!">" / ">=" / ">"!">"
 
 literal = number / boolean / string
 
@@ -164,8 +261,6 @@ call = lp fn:expression maybe_args:(__ a:value_list? { return a })? rp {
   }
 }
 
-
-
 array = empty_array / non_empty_array
 
 empty_array = ls rs {
@@ -178,15 +273,6 @@ empty_array = ls rs {
 non_empty_array = ls values:value_list rs {
   return {
     kind: "Array",
-    values
-  }
-}
-
-// temp syntax until I figure out how I want syntax to look and feel on the whole
-tuple = "t" lp items:value_list? rp {
-  const values = items || []
-  return {
-    kind: "Tuple",
     values
   }
 }
@@ -210,6 +296,9 @@ rs = _ "]" { return "]" }
 // FIXME for some reason { and } cause pegjs syntax errors in return blocks
 lb = "{" _ { return "lb" }
 rb = _ "}" { return "rb" }
+
+la = "<" _ { return "<" }
+ra = ">" _ { return ">"  }
 
 // mandatory whitespace
 __ = ignored+

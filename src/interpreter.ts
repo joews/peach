@@ -1,12 +1,13 @@
 'use strict'
-import { makeFunction, applyFunction } from './function'
+import { makeFunction, applyFunction, PeachFunction } from './function'
 import { extend, clone } from './util'
 import PeachError from './errors'
 import { getRootEnv, RuntimeEnv } from './env'
 import {
   Value, TypedAst, TypedNode, TypedProgramNode, TypedDefNode, TypedIdentifierNode,
   TypedNumberNode, TypedBooleanNode, TypedStringNode, TypedCallNode, TypedArrayNode,
-  TypedDestructuredArrayNode, TypedFunctionNode, TypedIfNode, TypedTupleNode, TypedMemberNode
+  TypedDestructuredArrayNode, TypedFunctionNode, TypedIfNode, TypedTupleNode, TypedMemberNode,
+  TypedBinaryOperatorNode, AstCallNode
 } from './node-types'
 
 export type InterpreterResult = [Value, RuntimeEnv]
@@ -60,8 +61,10 @@ function visit (node: TypedNode, env: RuntimeEnv): InterpreterResult {
       return visitTuple(node, env)
     case 'Member':
       return visitMember(node, env)
+    case 'BinaryOperator':
+      return visitBinaryOperator(node, env)
     default:
-      throw new Error(`Uncrecognised AST node kind: ${node.kind}`)
+      throw new Error(`Uncrecognised AST node kind: ${node}`)
   }
 }
 
@@ -141,5 +144,17 @@ function visitMember({ source, name }: TypedMemberNode, env: RuntimeEnv): Interp
   // TODO runtime types for Array and Type
   const result = sourceValue[index as number]
 
+  return [result, env]
+}
+
+// TODO an AST rewrite step could translate BinaryOperator into Call to avoid
+// repetition here
+function visitBinaryOperator({ operator, left, right, type }: TypedBinaryOperatorNode, env: RuntimeEnv): InterpreterResult {
+  const fn: PeachFunction = env[operator]
+
+  const [leftResult] = visit(left, env)
+  const [rightResult] = visit(right, env)
+
+  const result = applyFunction(fn, [leftResult, rightResult])
   return [result, env]
 }
