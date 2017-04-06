@@ -2,7 +2,7 @@ import unify from './unify'
 import { create, restAndLast } from './util'
 import PeachError from './errors'
 import { Type, makeFunctionType } from './types'
-import { AstFunctionNode, Value } from './node-types'
+import { TypedFunctionNode, Value } from './node-types'
 import { RuntimeEnv } from './env'
 import { Visitor } from './interpreter'
 
@@ -19,7 +19,7 @@ export interface PeachFunction {
 // https://jsfiddle.net/v6j4a9qh/6/
 
 // Make a user-defined function from an AST node
-export function makeFunction (functionNode: AstFunctionNode, parentEnv: RuntimeEnv, visit: Visitor) {
+export function makeFunction (functionNode: TypedFunctionNode, parentEnv: RuntimeEnv, visit: Visitor) {
   const { clauses } = functionNode
   const name = getName(functionNode)
 

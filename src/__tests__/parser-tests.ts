@@ -33,7 +33,7 @@ testParse(`[1,2,3]`)
 
 testParse(`(test)`)
 testParse(`test(1)`)
-testParse(`(test (1, 2))`)
+testParse(`test(1, 2)`)
 
 testParse(`t()`)
 testParse(`t(1, 2)`)

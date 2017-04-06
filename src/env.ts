@@ -1,6 +1,6 @@
 import stdlib from './stdlib'
 import { clone, extend } from './util'
-import { AstNode, TypedNode, ValueNode } from './node-types'
+import { AstNode, TypedNode, Value } from './node-types'
 
 // Return the default environment for a new program
 export function getRootEnv (): RuntimeEnv {
@@ -21,4 +21,4 @@ export function getTypeEnv (valueEnv: RuntimeEnv): TypeEnv {
 export type TypeEnv = { [name: string]: TypedNode }
 
 // TODO
-export type RuntimeEnv = { [name: string]: ValueNode }
+export type RuntimeEnv = { [name: string]: Value }

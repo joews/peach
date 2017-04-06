@@ -1,5 +1,5 @@
 'use strict'
-import { makeFunction, applyFunction } from './function'
+import { makeFunction, applyFunction, PeachFunction } from './function'
 import { extend, clone } from './util'
 import PeachError from './errors'
 import { getRootEnv, RuntimeEnv } from './env'
@@ -64,7 +64,7 @@ function visit (node: TypedNode, env: RuntimeEnv): InterpreterResult {
     case 'BinaryOperator':
       return visitBinaryOperator(node, env)
     default:
-      throw new Error(`Uncrecognised AST node kind: ${node.kind}`)
+      throw new Error(`Uncrecognised AST node kind: ${node}`)
   }
 }
 
@@ -147,6 +147,14 @@ function visitMember({ source, name }: TypedMemberNode, env: RuntimeEnv): Interp
   return [result, env]
 }
 
-function visitBinaryOperator({ operator, left, right }: TypedBinaryOperatorNode, env: RuntimeEnv) {
-  // WH make this a function call
+// TODO an AST rewrite step could translate BinaryOperator into Call to avoid
+// repetition here
+function visitBinaryOperator({ operator, left, right, type }: TypedBinaryOperatorNode, env: RuntimeEnv): InterpreterResult {
+  const fn: PeachFunction = env[operator]
+
+  const [leftResult] = visit(left, env)
+  const [rightResult] = visit(right, env)
+
+  const result = applyFunction(fn, [leftResult, rightResult])
+  return [result, env]
 }
