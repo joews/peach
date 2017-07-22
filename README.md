@@ -1,6 +1,6 @@
 # peach
 
-[![Build](https://travis-ci.org/jwhitfieldseed/peach.svg?branch=master)](https://travis-ci.org/jwhitfieldseed/peach)
+[![Build](https://travis-ci.org/joews/peach.svg?branch=master)](https://travis-ci.org/joews/peach)
 
 A statically typed functional language.
 

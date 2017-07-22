@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jwhitfieldseed/peach.git"
+    "url": "git+https://github.com/joews/peach.git"
   },
   "keywords": [
     "peach",
@@ -25,9 +25,9 @@
   "author": "Joe Whitfield-Seed <joeseed86@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jwhitfieldseed/peach/issues"
+    "url": "https://github.com/joews/peach/issues"
   },
-  "homepage": "https://github.com/jwhitfieldseed/peach#readme",
+  "homepage": "https://github.com/joews/peach#readme",
   "dependencies": {
     "minimist": "^1.2.0",
     "pegjs": "^0.10.0"
